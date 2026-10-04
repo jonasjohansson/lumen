@@ -14,9 +14,9 @@
 </head>
 <body>
   <aside class="panel">
-    <header class="panel__head">
-      <a class="brand" href="https://lumenproject.se">Lumen Project</a>
-      <span class="brand__sub">Studio</span>
+    <header class="row">
+      <a class="brand" href="https://lumenproject.se">Lumen Project <span>Studio</span></a>
+      <button class="link" id="resetAll" type="button" title="Reset text, type, colour, image adjustments and formats">Reset</button>
     </header>
 
     <section class="group">
@@ -26,10 +26,7 @@
         <img class="drop__thumb" id="thumb" alt="" hidden>
         <span class="drop__text" id="dropText">Drop an image, click to choose, or paste</span>
       </label>
-      <div class="row">
-        <label class="check"><input type="checkbox" id="bw"> Black &amp; white</label>
-        <button class="link" id="clearImage" type="button" hidden>Remove</button>
-      </div>
+      <button class="link" id="clearImage" type="button" hidden>Remove image</button>
       <label class="field">
         <span>Brightness <output id="brightnessOut">100</output></span>
         <input type="range" id="brightness" min="40" max="160" value="100">
@@ -86,28 +83,33 @@ PROJECT
       <div class="formats" id="formatToggles"></div>
     </section>
 
-    <section class="group group--export">
-      <label class="field field--inline">
-        <span>File type</span>
-        <select id="fileType">
-          <option value="jpeg">JPG</option>
-          <option value="png">PNG</option>
-        </select>
-      </label>
-      <button class="btn" id="exportAll" type="button">Download all</button>
-      <button class="link" id="resetAll" type="button">Reset text and settings</button>
-    </section>
   </aside>
 
-  <main class="stage" id="stage"></main>
+  <main class="stage">
+    <div class="toolbar">
+      <span class="toolbar__hint">Drop an image anywhere. Drag to move, pinch or slide to zoom.</span>
+      <select id="res" aria-label="Resolution" title="Width of a 1080-wide format when exported">
+        <option value="1080">1080 px · standard</option>
+        <option value="1440">1440 px · Instagram max</option>
+        <option value="2160">2160 px · 2×</option>
+        <option value="3240">3240 px · 3×</option>
+      </select>
+      <select id="fileType" aria-label="File type">
+        <option value="jpeg">JPG</option>
+        <option value="png">PNG</option>
+      </select>
+      <button class="btn" id="exportAll" type="button">Download all</button>
+    </div>
+    <div class="cards" id="cards"></div>
+  </main>
 
   <template id="cardTpl">
     <figure class="card">
-      <div class="card__frame"><canvas class="card__canvas"></canvas></div>
+      <div class="card__frame"><canvas class="card__canvas"></canvas><span class="card__empty">Drop image</span></div>
       <figcaption class="card__bar">
         <span class="card__name"></span>
         <span class="card__size"></span>
-        <button class="btn btn--small card__dl" type="button">Download</button>
+        <button class="link card__dl" type="button">Download</button>
         <span class="card__tools">
           <span class="card__label">Zoom</span>
           <input class="card__zoom" type="range" min="100" max="400" value="100" aria-label="Zoom">

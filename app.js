@@ -1,21 +1,24 @@
 // Lumen Studio: one image, two text blocks, every social media format.
 // All layout is in each format's own pixel space; previews are the same drawing scaled down.
 
+// Sizes current as of October 2026. Instagram's profile grid is 3:4 since 2025, so 1080×1440
+// shows uncropped in both feed and grid; 4:5 is still the most common feed size (Facebook too).
 const FORMATS = [
-  { id: "post",   name: "Instagram post",  w: 1080, h: 1350 },
-  { id: "square", name: "Square",          w: 1080, h: 1080 },
-  { id: "story",  name: "Story / Reel",    w: 1080, h: 1920, safeTop: 250, safeBottom: 330 },
-  { id: "event",  name: "Facebook event",  w: 1920, h: 1005 },
-  { id: "link",   name: "Link preview",    w: 1200, h: 630 },
-  { id: "wide",   name: "Widescreen 16:9", w: 1920, h: 1080 },
+  { id: "post34", name: "Instagram post 3:4", w: 1080, h: 1440 },
+  { id: "post45", name: "Feed post 4:5",      w: 1080, h: 1350 },
+  { id: "square", name: "Square 1:1",         w: 1080, h: 1080 },
+  { id: "story",  name: "Story / Reel 9:16",  w: 1080, h: 1920, safeTop: 250, safeBottom: 340 },
+  { id: "event",  name: "Facebook event",     w: 1920, h: 1005 },
+  { id: "link",   name: "Link preview",       w: 1200, h: 630 },
+  { id: "wide",   name: "Widescreen 16:9",    w: 1920, h: 1080 },
 ];
 
 // Measured from the Lumen Project Instagram posts, in px at 1080 on the short side.
 const TYPE = { size: 56, lineHeight: 1.04, tracking: 0.03, marginX: 50, marginY: 88 };
 const EMPTY_BG = "#111111";
-const MAX_SOURCE = 5000;   // longest side kept for export
+const MAX_SOURCE = 6000;   // longest side kept for export (3× story is 3240×5760)
 const MAX_PREVIEW = 1600;  // longest side used for the live previews
-const STORE_KEY = "lumen-studio-v1";
+const STORE_KEY = "lumen-studio-v2";
 
 const DEFAULTS = {
   top: "LUMEN\nPROJECT\n//",
@@ -25,11 +28,11 @@ const DEFAULTS = {
   size: 100,
   margin: 100,
   upper: true,
-  bw: false,
   brightness: 100,
   contrast: 100,
   fileType: "jpeg",
-  enabled: { post: true, square: true, story: true, event: false, link: false, wide: false },
+  res: "1440",
+  enabled: { post34: true, post45: true, square: false, story: true, event: false, link: false, wide: false },
 };
 
 const $ = (id) => document.getElementById(id);
@@ -71,10 +74,12 @@ async function loadImage(file) {
     return;
   }
   const full = scaledCopy(img, MAX_SOURCE);
-  image = { full, small: scaledCopy(full, MAX_PREVIEW), w: full.width, h: full.height, name: file.name };
+  const srcW = img.naturalWidth;
+  image = { full, small: scaledCopy(full, MAX_PREVIEW), w: full.width, h: full.height, name: file.name, srcW };
   processed = { key: "", small: null };
   FORMATS.forEach((f) => (views[f.id] = { fx: 0.5, fy: 0.5, zoom: 1 }));
   Object.values(cards).forEach((c) => (c.zoom.value = 100));
+  syncSizes();
 
   $("thumb").src = url;
   $("thumb").hidden = false;
@@ -110,13 +115,13 @@ function scaledCopy(src, max) {
   return c;
 }
 
-// Black & white, brightness and contrast, done on pixels so every browser exports the same thing.
+// Brightness and contrast, done on pixels so every browser exports the same thing.
 function filterKey() {
-  return `${state.bw}|${state.brightness}|${state.contrast}`;
+  return `${state.brightness}|${state.contrast}`;
 }
 
 function isNeutral() {
-  return !state.bw && +state.brightness === 100 && +state.contrast === 100;
+  return +state.brightness === 100 && +state.contrast === 100;
 }
 
 function applyFilters(src) {
@@ -132,11 +137,9 @@ function applyFilters(src) {
   const lut = new Uint8ClampedArray(256);
   for (let i = 0; i < 256; i++) lut[i] = (i * b - 128) * k + 128;
   for (let i = 0; i < px.length; i += 4) {
-    let r = px[i], g = px[i + 1], bl = px[i + 2];
-    if (state.bw) r = g = bl = 0.2126 * r + 0.7152 * g + 0.0722 * bl;
-    px[i] = lut[r | 0];
-    px[i + 1] = lut[g | 0];
-    px[i + 2] = lut[bl | 0];
+    px[i] = lut[px[i]];
+    px[i + 1] = lut[px[i + 1]];
+    px[i + 2] = lut[px[i + 2]];
   }
   ctx.putImageData(data, 0, 0);
   return c;
@@ -262,7 +265,7 @@ function render() {
 
 function buildCards() {
   const tpl = $("cardTpl");
-  const stage = $("stage");
+  const stage = $("cards");
   const toggles = $("formatToggles");
   const ro = new ResizeObserver(render);
 
@@ -272,12 +275,12 @@ function buildCards() {
     el.style.setProperty("--ar", `${fmt.w} / ${fmt.h}`);
     el.style.setProperty("--card-w", `${Math.round(Math.min(560, 430 * ar))}px`);
     el.querySelector(".card__name").textContent = fmt.name;
-    el.querySelector(".card__size").textContent = `${fmt.w}×${fmt.h}`;
     const card = {
       el,
       frame: el.querySelector(".card__frame"),
       canvas: el.querySelector(".card__canvas"),
       zoom: el.querySelector(".card__zoom"),
+      size: el.querySelector(".card__size"),
     };
     cards[fmt.id] = card;
     stage.append(el);
@@ -285,6 +288,7 @@ function buildCards() {
 
     card.zoom.addEventListener("input", () => {
       views[fmt.id].zoom = card.zoom.value / 100;
+      syncSizes();
       render();
     });
     el.querySelector(".card__reset").addEventListener("click", () => {
@@ -308,7 +312,7 @@ function buildCards() {
     label.className = "check";
     label.innerHTML = `<input type="checkbox"> ${fmt.name} <span>${fmt.w}×${fmt.h}</span>`;
     const box = label.querySelector("input");
-    box.checked = !!state.enabled[fmt.id];
+    syncers.push(() => (box.checked = !!state.enabled[fmt.id]));
     box.addEventListener("change", () => {
       state.enabled[fmt.id] = box.checked;
       save();
@@ -321,7 +325,34 @@ function buildCards() {
 
 function syncCards() {
   FORMATS.forEach((f) => (cards[f.id].el.hidden = !state.enabled[f.id]));
+  const n = FORMATS.filter((f) => state.enabled[f.id]).length;
+  $("exportAll").textContent = n > 1 ? `Download all (${n})` : "Download";
+  $("exportAll").disabled = !n;
+  syncSizes();
   render();
+}
+
+// Output size per card, flagged when the crop has fewer pixels than the export (upscaled = soft).
+function exportScale() {
+  return +state.res / 1080;
+}
+
+function outSize(fmt) {
+  const k = exportScale();
+  return { w: Math.round(fmt.w * k), h: Math.round(fmt.h * k), k };
+}
+
+function syncSizes() {
+  const k = exportScale();
+  FORMATS.forEach((fmt) => {
+    const o = outSize(fmt);
+    let text = `${o.w}×${o.h}`;
+    if (image) {
+      const up = (coverScale(fmt) * views[fmt.id].zoom * k * image.w) / image.srcW;
+      if (up > 1.05) text += ` · image upscaled ${up.toFixed(1)}×`;
+    }
+    cards[fmt.id].size.textContent = text;
+  });
 }
 
 // Drag to move the image, pinch (trackpad or two fingers) to zoom.
@@ -333,8 +364,13 @@ function attachGestures(fmt, card) {
     const v = views[fmt.id];
     v.zoom = clamp(z, 1, 4);
     card.zoom.value = Math.round(v.zoom * 100);
+    syncSizes();
     render();
   };
+
+  card.frame.addEventListener("click", () => {
+    if (!image) $("file").click();
+  });
 
   card.frame.addEventListener("pointerdown", (e) => {
     if (!image) return;
@@ -400,11 +436,14 @@ async function exportBlob(fmt) {
     source = fullProcessed.canvas;
   }
   const c = document.createElement("canvas");
-  c.width = fmt.w;
-  c.height = fmt.h;
-  draw(c.getContext("2d"), fmt, source);
+  const o = outSize(fmt);
+  c.width = o.w;
+  c.height = o.h;
+  const ctx = c.getContext("2d");
+  ctx.scale(o.w / fmt.w, o.h / fmt.h);
+  draw(ctx, fmt, source);
   const type = state.fileType === "png" ? "image/png" : "image/jpeg";
-  return new Promise((resolve) => c.toBlob(resolve, type, 0.92));
+  return new Promise((resolve) => c.toBlob(resolve, type, 0.95));
 }
 
 function slug(text) {
@@ -417,7 +456,8 @@ function slug(text) {
 function fileName(fmt) {
   const name = slug(state.bottom) || slug(state.top) || "lumen";
   const ext = state.fileType === "png" ? "png" : "jpg";
-  return `${name}-${fmt.id}-${fmt.w}x${fmt.h}.${ext}`;
+  const o = outSize(fmt);
+  return `${name}-${fmt.id}-${o.w}x${o.h}.${ext}`;
 }
 
 function downloadBlob(blob, name) {
@@ -446,17 +486,31 @@ async function exportAll() {
       for (const fmt of chosen) downloadBlob(await exportBlob(fmt), fileName(fmt));
     }
   } finally {
-    btn.disabled = false;
-    btn.textContent = "Download all";
+    syncCards();
   }
 }
 
 // ---------------------------------------------------------------- controls
 
+const syncers = [];
+
+function syncControls() {
+  syncers.forEach((fn) => fn());
+}
+
+function resetSettings() {
+  const enabled = { ...DEFAULTS.enabled };
+  Object.assign(state, structuredClone(DEFAULTS), { enabled });
+  save();
+  syncControls();
+  syncCards();
+  loadFont().then(render);
+}
+
 function bindControls() {
   const text = (id, key) => {
     const el = $(id);
-    el.value = state[key];
+    syncers.push(() => (el.value = state[key]));
     el.addEventListener("input", () => {
       state[key] = el.value;
       save();
@@ -469,8 +523,10 @@ function bindControls() {
 
   const range = (id, key) => {
     const el = $(id), out = $(id + "Out");
-    el.value = state[key];
-    out.textContent = state[key];
+    syncers.push(() => {
+      el.value = state[key];
+      out.textContent = state[key];
+    });
     el.addEventListener("input", () => {
       state[key] = +el.value;
       out.textContent = el.value;
@@ -485,7 +541,7 @@ function bindControls() {
 
   const check = (id, key, after) => {
     const el = $(id);
-    el.checked = state[key];
+    syncers.push(() => (el.checked = state[key]));
     el.addEventListener("change", () => {
       state[key] = el.checked;
       save();
@@ -493,12 +549,11 @@ function bindControls() {
       render();
     });
   };
-  check("bw", "bw");
   check("upper", "upper", syncCase);
 
   const select = (id, key, after) => {
     const el = $(id);
-    el.value = state[key];
+    syncers.push(() => (el.value = state[key]));
     el.addEventListener("change", () => {
       state[key] = el.value;
       save();
@@ -508,39 +563,61 @@ function bindControls() {
   };
   select("weight", "weight", () => loadFont().then(render));
   select("fileType", "fileType");
+  select("res", "res", syncSizes);
 
+  const showColor = () => {
+    const c = state.color;
+    $("color").value = c;
+    let preset = false;
+    document.querySelectorAll(".swatch[data-color]").forEach((s) => {
+      const on = s.dataset.color === c;
+      s.classList.toggle("is-active", on);
+      preset ||= on;
+    });
+    const custom = document.querySelector(".swatch--custom");
+    custom.classList.toggle("is-active", !preset);
+    custom.style.setProperty("--c", c);
+  };
+  syncers.push(showColor, syncCase);
   const setColor = (c) => {
     state.color = c;
-    $("color").value = c;
-    document.querySelectorAll(".swatch[data-color]").forEach((s) => s.classList.toggle("is-active", s.dataset.color === c));
+    showColor();
     save();
     render();
   };
   document.querySelectorAll(".swatch[data-color]").forEach((s) => s.addEventListener("click", () => setColor(s.dataset.color)));
   $("color").addEventListener("input", (e) => setColor(e.target.value));
-  setColor(state.color);
-  syncCase();
+  syncControls();
 
   $("file").addEventListener("change", (e) => loadImage(e.target.files[0]));
   $("clearImage").addEventListener("click", clearImage);
   $("exportAll").addEventListener("click", exportAll);
-  $("resetAll").addEventListener("click", () => {
-    try { localStorage.removeItem(STORE_KEY); } catch {}
-    location.reload();
-  });
+  $("resetAll").addEventListener("click", resetSettings);
 
-  // Drop anywhere on the page; paste from the clipboard.
-  const drop = $("drop");
+  // Drop anywhere on the page (the image goes to every format); paste from the clipboard.
+  let depth = 0;
+  const overCard = (el) => document.querySelectorAll(".card__frame").forEach((f) => f.classList.toggle("is-over", f === el));
+  const hasFiles = (e) => [...(e.dataTransfer?.types || [])].includes("Files");
+  window.addEventListener("dragenter", (e) => {
+    if (!hasFiles(e)) return;
+    depth++;
+    document.body.classList.add("is-dropping");
+  });
   window.addEventListener("dragover", (e) => {
+    if (!hasFiles(e)) return;
     e.preventDefault();
-    drop.classList.add("is-over");
+    overCard(e.target.closest?.(".card__frame"));
   });
   window.addEventListener("dragleave", (e) => {
-    if (!e.relatedTarget) drop.classList.remove("is-over");
+    if (!hasFiles(e) || --depth > 0) return;
+    document.body.classList.remove("is-dropping");
+    overCard(null);
   });
   window.addEventListener("drop", (e) => {
     e.preventDefault();
-    drop.classList.remove("is-over");
+    depth = 0;
+    document.body.classList.remove("is-dropping");
+    overCard(null);
     loadImage([...e.dataTransfer.files].find((f) => f.type.startsWith("image/")));
   });
   window.addEventListener("paste", (e) => {
@@ -555,4 +632,5 @@ function syncCase() {
 
 bindControls();
 buildCards();
+syncControls();
 loadFont().then(render);
