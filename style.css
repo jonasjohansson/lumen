@@ -1,0 +1,145 @@
+/* Lumen Studio — social media image tool for Lumen Project */
+
+@font-face { font-family: "Barlow"; font-weight: 500; font-display: swap; src: url(fonts/barlow-500-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Barlow"; font-weight: 500; font-display: swap; src: url(fonts/barlow-500-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Barlow"; font-weight: 600; font-display: swap; src: url(fonts/barlow-600-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Barlow"; font-weight: 600; font-display: swap; src: url(fonts/barlow-600-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+@font-face { font-family: "Barlow"; font-weight: 700; font-display: swap; src: url(fonts/barlow-700-latin.woff2) format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: "Barlow"; font-weight: 700; font-display: swap; src: url(fonts/barlow-700-latin-ext.woff2) format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+
+:root {
+  --font: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  --paper:   #0a0b11;
+  --paper-2: #12131e;
+  --paper-3: #1b1d2b;
+  --ink:     #e6e9f3;
+  --ink-dim: #9aa0b8;
+  --line:    #262838;
+  --accent:  #f2c12e;
+  --on-accent: #0a0b11;
+  --radius: 10px;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --paper: #e9e7d6; --paper-2: #e1dec8; --paper-3: #d6d3bb;
+    --ink: #191b2b; --ink-dim: #565849; --line: #cbc8ae;
+    --accent: #191b2b; --on-accent: #e9e7d6;
+    color-scheme: light;
+  }
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; }
+body {
+  font-family: var(--font); font-size: 15px; line-height: 1.4;
+  background: var(--paper); color: var(--ink);
+  display: grid; grid-template-columns: 300px 1fr; min-height: 100vh;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+
+/* — Panel —————————————————————————————————————————————— */
+.panel {
+  background: var(--paper-2); border-right: 1px solid var(--line);
+  padding: 20px; display: flex; flex-direction: column; gap: 22px;
+  height: 100vh; overflow-y: auto; position: sticky; top: 0;
+}
+.panel__head { display: flex; align-items: baseline; gap: 8px; }
+.brand { font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink); text-decoration: none; }
+.brand__sub { color: var(--ink-dim); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500; }
+
+.group { display: flex; flex-direction: column; gap: 12px; }
+.group__title {
+  margin: 0; font-size: 12px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--ink-dim);
+}
+.group--export { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--line); }
+
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field > span { display: flex; justify-content: space-between; color: var(--ink-dim); font-size: 13px; }
+.field output { font-variant-numeric: tabular-nums; }
+.field--inline { flex-direction: row; align-items: center; justify-content: space-between; }
+
+textarea, select {
+  width: 100%; background: var(--paper); border: 1px solid var(--line); border-radius: 8px;
+  padding: 8px 10px; resize: vertical;
+}
+textarea { text-transform: uppercase; letter-spacing: 0.03em; font-weight: 600; line-height: 1.15; }
+textarea.is-mixed { text-transform: none; }
+.field--inline select { width: auto; }
+textarea:focus, select:focus, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+
+.row { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.check { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.check input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+
+.drop {
+  position: relative; display: grid; place-items: center; min-height: 120px;
+  border: 1.5px dashed var(--line); border-radius: var(--radius); background: var(--paper);
+  cursor: pointer; overflow: hidden; text-align: center; transition: border-color 0.15s;
+}
+.drop:hover, .drop.is-over { border-color: var(--accent); }
+.drop__thumb { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.55; }
+.drop__text { position: relative; padding: 12px; color: var(--ink-dim); font-size: 13px; }
+.drop.has-image .drop__text { color: var(--ink); font-weight: 600; text-shadow: 0 1px 6px rgb(0 0 0 / 0.6); }
+
+.swatches { display: flex; gap: 8px; }
+.swatch {
+  width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line);
+  background: var(--c); cursor: pointer; padding: 0; position: relative;
+}
+.swatch.is-active { outline: 2px solid var(--ink); outline-offset: 2px; }
+.swatch--custom {
+  background: conic-gradient(#f2c12e, #e8553e, #8aa2ff, #5fd39a, #f2c12e); overflow: hidden;
+}
+.swatch--custom input { opacity: 0; width: 100%; height: 100%; cursor: pointer; }
+
+.formats { display: flex; flex-direction: column; gap: 6px; }
+.formats .check span { color: var(--ink-dim); font-size: 13px; margin-left: auto; font-variant-numeric: tabular-nums; }
+
+.btn {
+  background: var(--accent); color: var(--on-accent); border: 0; border-radius: 8px;
+  padding: 10px 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; cursor: pointer;
+}
+.btn:hover { filter: brightness(1.08); }
+.btn:disabled { opacity: 0.5; cursor: progress; }
+.btn--small { padding: 6px 10px; font-size: 12px; }
+.link { background: none; border: 0; padding: 0; color: var(--ink-dim); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; font-size: 13px; }
+.link:hover { color: var(--ink); }
+
+/* — Stage ——————————————————————————————————————————————— */
+.stage {
+  padding: 28px; display: flex; flex-wrap: wrap; align-items: flex-start; align-content: flex-start; gap: 28px;
+}
+.card { margin: 0; display: flex; flex-direction: column; gap: 10px; width: var(--card-w, 340px); max-width: 100%; }
+.card__frame {
+  aspect-ratio: var(--ar); background: var(--paper-3); border-radius: 4px; overflow: hidden;
+  cursor: grab; box-shadow: 0 1px 0 var(--line), 0 12px 32px rgb(0 0 0 / 0.25);
+}
+.has-image .card__frame { touch-action: none; }
+.card__frame.is-dragging { cursor: grabbing; }
+.card__canvas { display: block; width: 100%; height: 100%; }
+.card__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: 13px; }
+.card__name { font-weight: 600; }
+.card__size { color: var(--ink-dim); font-variant-numeric: tabular-nums; }
+.card__dl { margin-left: auto; }
+.card__tools { flex-basis: 100%; display: flex; align-items: center; gap: 10px; color: var(--ink-dim); }
+.card__zoom { flex: 1; width: auto; min-width: 60px; }
+body:not(.has-image) .card__tools { visibility: hidden; }
+
+/* — Small screens ——————————————————————————————————————— */
+@media (max-width: 760px) {
+  body { grid-template-columns: 1fr; }
+  .panel { height: auto; position: static; border-right: 0; border-bottom: 1px solid var(--line); padding: 16px; }
+  .stage { padding: 16px; gap: 20px; }
+  .card { width: 100% !important; }
+}

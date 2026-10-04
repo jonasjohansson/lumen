@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lumen Studio</title>
+  <meta name="description" content="Make Lumen Project social media images: upload an artist photo, set the text, export every format.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="preload" href="fonts/barlow-600-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <aside class="panel">
+    <header class="panel__head">
+      <a class="brand" href="https://lumenproject.se">Lumen Project</a>
+      <span class="brand__sub">Studio</span>
+    </header>
+
+    <section class="group">
+      <h2 class="group__title">Image</h2>
+      <label class="drop" id="drop">
+        <input type="file" id="file" accept="image/*" hidden>
+        <img class="drop__thumb" id="thumb" alt="" hidden>
+        <span class="drop__text" id="dropText">Drop an image, click to choose, or paste</span>
+      </label>
+      <div class="row">
+        <label class="check"><input type="checkbox" id="bw"> Black &amp; white</label>
+        <button class="link" id="clearImage" type="button" hidden>Remove</button>
+      </div>
+      <label class="field">
+        <span>Brightness <output id="brightnessOut">100</output></span>
+        <input type="range" id="brightness" min="40" max="160" value="100">
+      </label>
+      <label class="field">
+        <span>Contrast <output id="contrastOut">100</output></span>
+        <input type="range" id="contrast" min="50" max="160" value="100">
+      </label>
+    </section>
+
+    <section class="group">
+      <h2 class="group__title">Text</h2>
+      <label class="field">
+        <span>Top left</span>
+        <textarea id="topText" rows="3" spellcheck="false">LUMEN
+PROJECT
+//</textarea>
+      </label>
+      <label class="field">
+        <span>Bottom left</span>
+        <textarea id="bottomText" rows="3" spellcheck="false" placeholder="ARTIST NAME (SE)"></textarea>
+      </label>
+      <div class="field">
+        <span>Colour</span>
+        <div class="swatches" id="swatches">
+          <button type="button" class="swatch" data-color="#f2c12e" style="--c:#f2c12e" aria-label="Yellow"></button>
+          <button type="button" class="swatch" data-color="#ffffff" style="--c:#ffffff" aria-label="White"></button>
+          <button type="button" class="swatch" data-color="#3a3a3a" style="--c:#3a3a3a" aria-label="Dark grey"></button>
+          <button type="button" class="swatch" data-color="#000000" style="--c:#000000" aria-label="Black"></button>
+          <label class="swatch swatch--custom" aria-label="Custom colour"><input type="color" id="color" value="#f2c12e"></label>
+        </div>
+      </div>
+      <label class="field">
+        <span>Weight</span>
+        <select id="weight">
+          <option value="500">Medium</option>
+          <option value="600" selected>SemiBold</option>
+          <option value="700">Bold</option>
+        </select>
+      </label>
+      <label class="field">
+        <span>Size <output id="sizeOut">100</output></span>
+        <input type="range" id="size" min="60" max="200" value="100">
+      </label>
+      <label class="field">
+        <span>Margin <output id="marginOut">100</output></span>
+        <input type="range" id="margin" min="40" max="250" value="100">
+      </label>
+      <label class="check"><input type="checkbox" id="upper" checked> Uppercase</label>
+    </section>
+
+    <section class="group">
+      <h2 class="group__title">Formats</h2>
+      <div class="formats" id="formatToggles"></div>
+    </section>
+
+    <section class="group group--export">
+      <label class="field field--inline">
+        <span>File type</span>
+        <select id="fileType">
+          <option value="jpeg">JPG</option>
+          <option value="png">PNG</option>
+        </select>
+      </label>
+      <button class="btn" id="exportAll" type="button">Download all</button>
+      <button class="link" id="resetAll" type="button">Reset text and settings</button>
+    </section>
+  </aside>
+
+  <main class="stage" id="stage"></main>
+
+  <template id="cardTpl">
+    <figure class="card">
+      <div class="card__frame"><canvas class="card__canvas"></canvas></div>
+      <figcaption class="card__bar">
+        <span class="card__name"></span>
+        <span class="card__size"></span>
+        <button class="btn btn--small card__dl" type="button">Download</button>
+        <span class="card__tools">
+          <span class="card__label">Zoom</span>
+          <input class="card__zoom" type="range" min="100" max="400" value="100" aria-label="Zoom">
+          <button class="link card__reset" type="button" title="Re-centre the image">Reset</button>
+        </span>
+      </figcaption>
+    </figure>
+  </template>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
