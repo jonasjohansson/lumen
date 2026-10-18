@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lumen Logo Lab</title>
+<meta name="description" content="Blurred-dot lettering for Lumen Project: type Lp or the full name, drag the letter skeletons, tune the blobs, the blur and the shadow where one letter passes under the next, then export PNG or SVG.">
+<link rel="icon" href="../favicon.svg">
+<style>
+@font-face { font-family: "Barlow"; font-weight: 500; font-display: swap; src: url(../fonts/barlow-500-latin.woff2) format("woff2"); }
+@font-face { font-family: "Barlow"; font-weight: 600; font-display: swap; src: url(../fonts/barlow-600-latin.woff2) format("woff2"); }
+@font-face { font-family: "Barlow"; font-weight: 700; font-display: swap; src: url(../fonts/barlow-700-latin.woff2) format("woff2"); }
+
+:root {
+  --font: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  --paper: #0a0a0a; --panel: #111; --ink: #f2f2f2; --ink-dim: #8a8a8a; --line: #242424; --accent: #e0e0c7; --track: #2a2a2a;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --paper: #f4f4f1; --panel: #fff; --ink: #111; --ink-dim: #6c6c6c; --line: #e2e2e2; --accent: #0645b2; --track: #ddd;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] { --paper: #f4f4f1; --panel: #fff; --ink: #111; --ink-dim: #6c6c6c; --line: #e2e2e2; --accent: #0645b2; --track: #ddd; color-scheme: light; }
+:root[data-theme="dark"]  { --paper: #0a0a0a; --panel: #111; --ink: #f2f2f2; --ink-dim: #8a8a8a; --line: #242424; --accent: #e0e0c7; --track: #2a2a2a; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; }
+body {
+  font: 500 14px/1.4 var(--font); background: var(--paper); color: var(--ink);
+  display: grid; grid-template-columns: 1fr 340px; grid-template-rows: 100vh;
+}
+@media (max-width: 820px) {
+  body { grid-template-columns: 1fr; grid-template-rows: auto auto; height: auto; }
+  #stage { height: 60vh; }
+}
+
+#stage { position: relative; overflow: hidden; }
+#stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+#stage.editing canvas { cursor: crosshair; }
+#hud {
+  position: absolute; left: 16px; top: 14px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase;
+  font-size: 12px; color: var(--ink-dim); pointer-events: none;
+}
+#hud b { color: var(--ink); }
+#stat { position: absolute; left: 16px; bottom: 12px; font-size: 12px; color: var(--ink-dim); font-variant-numeric: tabular-nums; pointer-events: none; }
+
+aside { background: var(--panel); border-left: 1px solid var(--line); overflow-y: auto; padding: 16px 16px 40px; }
+@media (max-width: 820px) { aside { border-left: 0; border-top: 1px solid var(--line); } }
+
+h1 { font-size: 13px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin: 4px 0 12px; }
+.text { display: flex; gap: 6px; margin-bottom: 12px; }
+.text input { flex: 1; height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); font: 600 16px var(--font); }
+.text button { height: 36px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; background: transparent; color: var(--ink); font: 600 12px var(--font); cursor: pointer; }
+
+details { border-top: 1px solid var(--line); padding: 8px 0; }
+details:last-of-type { border-bottom: 1px solid var(--line); }
+summary {
+  cursor: pointer; list-style: none; font-weight: 700; font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink-dim); display: flex; justify-content: space-between; padding: 4px 0; user-select: none;
+}
+summary::after { content: "+"; font-weight: 500; }
+details[open] summary::after { content: "–"; }
+details[open] summary { color: var(--ink); }
+
+.row { display: grid; grid-template-columns: 1fr 52px; gap: 6px 10px; align-items: center; padding: 6px 0; }
+.row output { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink-dim); font-size: 12px; }
+.row input[type=range] { grid-column: 1 / -1; width: 100%; margin: 0; height: 22px; accent-color: var(--accent); }
+.row.check { grid-template-columns: 1fr auto; }
+.row.check input { width: 18px; height: 18px; margin: 0; accent-color: var(--accent); }
+.row.color input[type=color] { width: 52px; height: 24px; border: 1px solid var(--line); border-radius: 4px; padding: 0; background: none; }
+.row.select select { height: 28px; border: 1px solid var(--line); border-radius: 6px; background: var(--paper); color: var(--ink); font: 600 12px var(--font); }
+.row.select { grid-template-columns: 1fr auto; }
+
+textarea {
+  width: 100%; min-height: 160px; margin-top: 6px; padding: 8px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--paper); color: var(--ink); font: 12px/1.4 ui-monospace, Menlo, monospace; resize: vertical;
+}
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.actions button, .actions select {
+  height: 34px; padding: 0 12px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--paper); color: var(--ink); font: 600 13px var(--font); cursor: pointer; flex: 1 1 auto;
+}
+.actions button.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.actions button:hover { border-color: var(--ink-dim); }
+.hint { color: var(--ink-dim); font-size: 12px; margin: 10px 0 0; }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 12px; }
+.presets button { height: 28px; padding: 0 10px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--ink); font: 600 12px var(--font); cursor: pointer; }
+.presets button:hover { border-color: var(--ink-dim); }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <canvas id="c"></canvas>
+  <div id="hud"><b>Lumen</b> logo lab</div>
+  <div id="stat"></div>
+</div>
+
+<aside>
+  <h1>Blurred blobs</h1>
+  <div class="text">
+    <input id="text" value="Lp" spellcheck="false" aria-label="Text">
+    <button data-t="Lp">Lp</button>
+    <button data-t="Lumen Project">Full name</button>
+  </div>
+  <div class="presets" id="presets"></div>
+  <div id="controls"></div>
+  <div class="actions">
+    <button class="primary" id="png">PNG</button>
+    <button id="svg">SVG</button>
+    <select id="pngSize" title="PNG width">
+      <option value="1024">1024 px</option>
+      <option value="2048" selected>2048 px</option>
+      <option value="4096">4096 px</option>
+    </select>
+  </div>
+  <div class="actions">
+    <button id="copy">Copy settings</button>
+    <button id="reset">Reset all</button>
+  </div>
+  <p class="hint">Everything auto-saves in this browser. Turn on <b>Edit letters</b> to drag the skeleton points on the canvas (a change edits that letter everywhere), or edit the letter JSON below it. Later letters sit on top; the shadow is where an earlier letter passes under one.</p>
+</aside>
+
+<script>
+// ============ letter skeletons ============
+// Logo units, baseline y = 0, y up. x-height ≈ 4.4, ascender 7.2, descender 2.6, drawn with a stroke ≈ 1.1.
+// A glyph = { adv, strokes[] }, stroke = { pts:[[x,y],…], smooth?:true } or { ring:[cx, cy, r] }.
+// A single point stroke { pts:[[x,y]] } is a round dot of stroke width.
+const DEFAULT_GLYPHS = {
+  "L": { adv: 3.3, strokes: [ { pts: [[0,0],[0,7.2]] }, { pts: [[0,0],[4.6,0]] } ] },
+  "p": { adv: 4.6, strokes: [ { pts: [[0,4.6],[0,-2.6]] }, { ring: [1.85, 2.5, 1.85] } ] },
+  "P": { adv: 4.6, strokes: [ { pts: [[0,0],[0,7.2]] }, { ring: [1.85, 5.35, 1.85] } ] },
+  "u": { adv: 4.6, strokes: [ { pts: [[0,4.4],[0,1.3],[0.9,0],[2.2,0],[3.1,1.3],[3.1,4.4]], smooth: true }, { pts: [[3.1,4.4],[3.1,0]] } ] },
+  "m": { adv: 7.3, strokes: [ { pts: [[0,4.4],[0,0]] },
+                               { pts: [[0,2.5],[0.6,4.2],[1.7,4.4],[2.7,3.6],[2.9,2.4],[2.9,0]], smooth: true },
+                               { pts: [[2.9,2.5],[3.5,4.2],[4.6,4.4],[5.6,3.6],[5.8,2.4],[5.8,0]], smooth: true } ] },
+  "n": { adv: 4.4, strokes: [ { pts: [[0,4.4],[0,0]] }, { pts: [[0,2.5],[0.6,4.2],[1.7,4.4],[2.7,3.6],[2.9,2.4],[2.9,0]], smooth: true } ] },
+  "e": { adv: 4.8, strokes: [ { pts: [[0.3,2.3],[3.3,2.3],[3.3,3.4],[2.2,4.4],[0.9,4.0],[0,2.5],[0.4,0.7],[1.8,0],[3.3,0.5]], smooth: true } ] },
+  "r": { adv: 3.4, strokes: [ { pts: [[0,4.4],[0,0]] }, { pts: [[0,2.6],[0.5,4.0],[1.5,4.4],[2.5,4.0]], smooth: true } ] },
+  "o": { adv: 5.4, strokes: [ { ring: [2.2, 2.2, 2.2] } ] },
+  "j": { adv: 1.9, strokes: [ { pts: [[0,4.4],[0,-1.2],[-0.5,-2.4],[-1.6,-2.6],[-2.3,-1.9]], smooth: true }, { pts: [[0,6.3]] } ] },
+  "c": { adv: 4.4, strokes: [ { pts: [[3.2,3.6],[2.2,4.4],[0.9,4.0],[0,2.2],[0.9,0.4],[2.2,0],[3.2,0.8]], smooth: true } ] },
+  "t": { adv: 3.6, strokes: [ { pts: [[0.9,6.0],[0.9,0.9],[1.6,0],[2.6,0.5]], smooth: true }, { pts: [[-0.3,4.4],[2.4,4.4]] } ] },
+  "i": { adv: 2.2, strokes: [ { pts: [[0,4.4],[0,0]] }, { pts: [[0,6.3]] } ] },
+  "l": { adv: 2.2, strokes: [ { pts: [[0,7.2],[0,0]] } ] },
+  "a": { adv: 4.8, strokes: [ { ring: [1.9, 2.2, 1.9] }, { pts: [[3.8,4.4],[3.8,0]] } ] },
+  "s": { adv: 4.0, strokes: [ { pts: [[2.9,3.8],[1.8,4.4],[0.6,3.8],[0.9,2.6],[2.2,2.0],[3.0,1.0],[2.2,0],[0.4,0.3]], smooth: true } ] },
+  " ": { adv: 3.0, strokes: [] },
+};
+
+// ============ parameter spec ============
+const SPEC = [
+  { group: "Letters", open: true, items: [
+    { k: "stroke",   l: "Stroke width",     min: 0.4, max: 2.4, step: 0.01, d: 1.1 },
+    { k: "tracking", l: "Letter spacing",   min: -2,  max: 3,   step: 0.05, d: 0 },
+    { k: "slant",    l: "Slant",            min: -0.4, max: 0.6, step: 0.01, d: 0 },
+    { k: "stack",    l: "On top",           type: "select", opts: { later: "Later letter", earlier: "Earlier letter" }, d: "later" },
+    { k: "edit",     l: "Edit letters",     type: "check", d: false },
+  ]},
+  { group: "Blobs", open: true, items: [
+    { k: "spacing", l: "Grid spacing",      min: 0.14, max: 0.8, step: 0.005, d: 0.32 },
+    { k: "dotMax",  l: "Max blob (× spacing)", min: 0.2, max: 0.9, step: 0.005, d: 0.5 },
+    { k: "gamma",   l: "Edge falloff",      min: 0.3, max: 3,   step: 0.01, d: 1.1 },
+    { k: "bleed",   l: "Edge bleed",        min: 0,   max: 1,   step: 0.01, d: 0.35 },
+    { k: "minDot",  l: "Smallest blob",     min: 0,   max: 0.3, step: 0.005, d: 0.03 },
+    { k: "sizeJit", l: "Size variation",    min: 0,   max: 1,   step: 0.01, d: 0.25 },
+    { k: "posJit",  l: "Position scatter",  min: 0,   max: 1,   step: 0.01, d: 0.1 },
+    { k: "seed",    l: "Seed",              min: 1,   max: 99,  step: 1,    d: 7 },
+    { k: "stagger", l: "Stagger rows",      type: "check", d: false },
+  ]},
+  { group: "Blur", open: true, items: [
+    { k: "blur",     l: "Blur (× blob)",    min: 0,   max: 2,   step: 0.01, d: 0.45 },
+    { k: "glow",     l: "Glow spread",      min: 0,   max: 6,   step: 0.05, d: 2.0 },
+    { k: "glowStr",  l: "Glow strength",    min: 0,   max: 1,   step: 0.01, d: 0.35 },
+  ]},
+  { group: "Depth (under / over)", open: true, items: [
+    { k: "shadowW",   l: "Shadow width",    min: 0,   max: 2.5, step: 0.01, d: 0.9 },
+    { k: "shadowStr", l: "Shadow strength", min: 0,   max: 1,   step: 0.01, d: 0.9 },
+    { k: "shadowSoft",l: "Shadow softness", min: 0.3, max: 3,   step: 0.01, d: 1.3 },
+    { k: "shadowDx",  l: "Shadow offset X", min: -1.2, max: 1.2, step: 0.01, d: 0 },
+    { k: "shadowDy",  l: "Shadow offset Y", min: -1.2, max: 1.2, step: 0.01, d: 0.2 },
+    { k: "lift",      l: "Top letter lift", min: 0.8, max: 1.3, step: 0.005, d: 1.0 },
+  ]},
+  { group: "Colour", open: false, items: [
+    { k: "fg", l: "Blobs",      type: "color", d: "#ffffff" },
+    { k: "bg", l: "Background", type: "color", d: "#000000" },
+    { k: "pad", l: "Padding",   min: 0, max: 3, step: 0.05, d: 1.2 },
+  ]},
+];
+const PRESETS = {
+  "Reference": { blur: 0, glow: 0, sizeJit: 0, posJit: 0 },
+  "Soft": {},
+  "Very blurred": { blur: 1.2, glow: 3, glowStr: 0.5, sizeJit: 0.4, posJit: 0.25 },
+  "Cursive": { slant: 0.22, tracking: -0.6, blur: 0.6, sizeJit: 0.35, posJit: 0.2, spacing: 0.28 },
+  "Deep shadow": { shadowW: 1.4, shadowStr: 1, shadowSoft: 0.9, shadowDy: 0.35, lift: 1.08 },
+  "Flat": { shadowW: 0, shadowStr: 0, lift: 1 },
+  "Inverted": { fg: "#000000", bg: "#ffffff" },
+};
+const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d));
+const KEY = "lumen-logo-lab-v2", GKEY = "lumen-logo-lab-glyphs-v2", TKEY = "lumen-logo-lab-text-v2";
+let P = Object.assign({}, DEFAULTS);
+let G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS));
+let TEXT = "Lp";
+try {
+  Object.assign(P, JSON.parse(localStorage.getItem(KEY) || "{}"));
+  const g = JSON.parse(localStorage.getItem(GKEY) || "null"); if (g) G = g;
+  const t = localStorage.getItem(TKEY); if (t) TEXT = t;
+} catch (e) {}
+P.edit = false;
+
+// ============ controls ============
+const controls = document.getElementById("controls"), inputs = {};
+SPEC.forEach(g => {
+  const d = document.createElement("details"); d.open = g.open;
+  d.innerHTML = `<summary>${g.group}</summary>`;
+  g.items.forEach(i => {
+    const row = document.createElement("div"); row.className = "row" + (i.type ? " " + i.type : "");
+    let el;
+    if (i.type === "check") {
+      row.innerHTML = `<label for="in-${i.k}">${i.l}</label><input id="in-${i.k}" type="checkbox">`;
+      el = row.querySelector("input"); el.checked = !!P[i.k];
+      el.oninput = () => { P[i.k] = el.checked; changed(); };
+    } else if (i.type === "color") {
+      row.innerHTML = `<label for="in-${i.k}">${i.l}</label><input id="in-${i.k}" type="color">`;
+      el = row.querySelector("input"); el.value = P[i.k];
+      el.oninput = () => { P[i.k] = el.value; changed(); };
+    } else if (i.type === "select") {
+      row.innerHTML = `<label for="in-${i.k}">${i.l}</label><select id="in-${i.k}">${Object.entries(i.opts).map(([v, t]) => `<option value="${v}">${t}</option>`).join("")}</select>`;
+      el = row.querySelector("select"); el.value = P[i.k];
+      el.oninput = () => { P[i.k] = el.value; changed(); };
+    } else {
+      row.innerHTML = `<label for="in-${i.k}">${i.l}</label><output></output><input id="in-${i.k}" type="range" min="${i.min}" max="${i.max}" step="${i.step}">`;
+      el = row.querySelector("input"); const out = row.querySelector("output");
+      el.value = P[i.k]; out.textContent = fmt(P[i.k]);
+      el.oninput = () => { P[i.k] = +el.value; out.textContent = fmt(P[i.k]); changed(); };
+    }
+    inputs[i.k] = el; d.appendChild(row);
+  });
+  if (g.group === "Letters") {
+    const ta = document.createElement("textarea"); ta.id = "glyphs"; ta.spellcheck = false;
+    const act = document.createElement("div"); act.className = "actions";
+    act.innerHTML = `<button id="applyGlyphs">Apply letter JSON</button><button id="resetGlyphs">Reset letters</button>`;
+    d.appendChild(ta); d.appendChild(act);
+  }
+  controls.appendChild(d);
+});
+function fmt(v) { return (+v).toFixed(2).replace(/\.?0+$/, "") || "0"; }
+function syncInputs() {
+  SPEC.forEach(g => g.items.forEach(i => {
+    const el = inputs[i.k];
+    if (i.type === "check") el.checked = !!P[i.k]; else el.value = P[i.k];
+    const out = el.parentElement.querySelector("output"); if (out) out.textContent = fmt(P[i.k]);
+  }));
+  textEl.value = TEXT;
+}
+const textEl = document.getElementById("text");
+textEl.value = TEXT;
+textEl.oninput = () => { TEXT = textEl.value; changed(); };
+document.querySelectorAll(".text button").forEach(b => b.onclick = () => { TEXT = b.dataset.t; textEl.value = TEXT; changed(); });
+
+const presetsEl = document.getElementById("presets");
+Object.keys(PRESETS).forEach(name => {
+  const b = document.createElement("button"); b.textContent = name;
+  b.onclick = () => { P = Object.assign({}, DEFAULTS, PRESETS[name]); syncInputs(); changed(); };
+  presetsEl.appendChild(b);
+});
+document.getElementById("reset").onclick = () => { P = Object.assign({}, DEFAULTS); G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS)); TEXT = "Lp"; syncInputs(); glyphsDirty = true; changed(); };
+document.getElementById("copy").onclick = async () => {
+  const diff = {}; Object.keys(P).forEach(k => { if (P[k] !== DEFAULTS[k] && k !== "edit") diff[k] = P[k]; });
+  const txt = JSON.stringify({ text: TEXT, settings: diff, glyphs: G }, null, 1);
+  try { await navigator.clipboard.writeText(txt); flash("Settings copied"); } catch (e) { prompt("Settings", txt); }
+};
+const glyphTa = document.getElementById("glyphs");
+let glyphsDirty = true;
+function glyphJSON() {
+  return "{\n" + Object.entries(G).map(([ch, g]) => `  ${JSON.stringify(ch)}: ${JSON.stringify(g)}`).join(",\n") + "\n}";
+}
+document.getElementById("applyGlyphs").onclick = () => {
+  try { G = JSON.parse(glyphTa.value); glyphsDirty = true; changed(); flash("Letters applied"); }
+  catch (e) { flash("Letter JSON error: " + e.message); }
+};
+document.getElementById("resetGlyphs").onclick = () => { G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS)); glyphsDirty = true; changed(); };
+
+let raf = 0;
+function changed() {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(P));
+    localStorage.setItem(GKEY, JSON.stringify(G));
+    localStorage.setItem(TKEY, TEXT);
+  } catch (e) {}
+  stage.classList.toggle("editing", !!P.edit);
+  if (!raf) raf = requestAnimationFrame(() => { raf = 0; draw(); });
+}
+
+// ============ geometry ============
+function catmull(pts, sub) {
+  if (pts.length < 3) return pts.slice();
+  const out = [];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+    for (let s = 0; s < sub; s++) {
+      const t = s / sub, t2 = t * t, t3 = t2 * t;
+      out.push([
+        0.5 * (2 * p1[0] + (-p0[0] + p2[0]) * t + (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) * t2 + (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0]) * t3),
+        0.5 * (2 * p1[1] + (-p0[1] + p2[1]) * t + (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) * t2 + (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]) * t3),
+      ]);
+    }
+  }
+  out.push(pts[pts.length - 1]);
+  return out;
+}
+// Lay the text out: returns instances [{ch, ox, segs:[[a,b]…], rings:[[cx,cy,r]…], bbox}]
+function layout(p) {
+  const inst = []; let x = 0;
+  for (const ch of TEXT) {
+    const g = G[ch] || G[ch.toLowerCase()];
+    if (!g) { x += 3 + p.tracking; continue; }
+    const segs = [], rings = [], pts = [];
+    const tx = (q) => [q[0] + x + q[1] * p.slant, q[1]];
+    for (const st of g.strokes) {
+      if (st.ring) { const [cx, cy, r] = st.ring; rings.push([cx + x + cy * p.slant, cy, r, p.slant]); pts.push([cx + x + cy * p.slant - r, cy], [cx + x + cy * p.slant + r, cy], [cx + x + cy * p.slant, cy + r], [cx + x + cy * p.slant, cy - r]); continue; }
+      const poly = (st.smooth ? catmull(st.pts, 8) : st.pts).map(tx);
+      if (poly.length === 1) segs.push([poly[0], poly[0]]);
+      for (let i = 0; i < poly.length - 1; i++) segs.push([poly[i], poly[i + 1]]);
+      pts.push(...poly);
+    }
+    const xs = pts.map(q => q[0]), ys = pts.map(q => q[1]);
+    inst.push({ ch, g, ox: x, segs, rings, bbox: pts.length ? [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)] : null });
+    x += g.adv + p.tracking;
+  }
+  return inst;
+}
+function sdSeg(x, y, a, b) {
+  const px = x - a[0], py = y - a[1], bx = b[0] - a[0], by = b[1] - a[1];
+  const l2 = bx * bx + by * by;
+  const h = l2 ? Math.max(0, Math.min(1, (px * bx + py * by) / l2)) : 0;
+  return Math.hypot(px - bx * h, py - by * h);
+}
+function sdRing(x, y, r) {
+  // ring in un-slanted space: undo the shear so slanted rings stay ellipses of the skeleton
+  const ux = x - y * r[3] - (r[0] - r[1] * r[3]);
+  return Math.abs(Math.hypot(ux, y - r[1]) - r[2]);
+}
+function distInst(x, y, I) {
+  let d = Infinity;
+  for (const s of I.segs) { const v = sdSeg(x, y, s[0], s[1]); if (v < d) d = v; }
+  for (const r of I.rings) { const v = sdRing(x, y, r); if (v < d) d = v; }
+  return d;
+}
+function bounds(p, inst) {
+  const hw = p.stroke / 2 * (1 + p.bleed) + p.posJit * p.spacing;
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const I of inst) if (I.bbox) { x0 = Math.min(x0, I.bbox[0]); y0 = Math.min(y0, I.bbox[1]); x1 = Math.max(x1, I.bbox[2]); y1 = Math.max(y1, I.bbox[3]); }
+  if (x0 === Infinity) { x0 = 0; y0 = 0; x1 = 4; y1 = 4; }
+  return { x0: x0 - hw - p.pad, y0: y0 - hw - p.pad, x1: x1 + hw + p.pad, y1: y1 + hw + p.pad };
+}
+function hash(i, j, seed) { let h = (i * 374761393 + j * 668265263 + seed * 2246822519) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
+
+function dots(p) {
+  const inst = layout(p);
+  const hw = p.stroke / 2, reach = hw * (1 + p.bleed), B = bounds(p, inst);
+  const s = p.spacing, rMax = s * p.dotMax, rMin = s * p.minDot;
+  const depth = d => d >= reach ? 0 : Math.pow(1 - d / reach, p.gamma);
+  const order = inst.map((_, i) => i); if (p.stack === "earlier") order.reverse(); // order[0] is the topmost
+  const margin = reach + p.shadowW + hw + 1.5 * p.stroke;
+  const out = [];
+  const nx = Math.ceil((B.x1 - B.x0) / s), ny = Math.ceil((B.y1 - B.y0) / s);
+  const ox = B.x0 + ((B.x1 - B.x0) - nx * s) / 2, oy = B.y0 + ((B.y1 - B.y0) - ny * s) / 2;
+  for (let j = 0; j <= ny; j++) {
+    const shift = p.stagger && (j % 2) ? s / 2 : 0;
+    for (let i = 0; i <= nx; i++) {
+      const jx = (hash(i, j, p.seed) - 0.5) * 2 * p.posJit * s, jy = (hash(i, j, p.seed + 11) - 0.5) * 2 * p.posJit * s;
+      const x = ox + i * s + shift + jx, y = oy + j * s + jy;
+      // topmost letter covering this point
+      let win = -1, dw = 0;
+      for (let k = 0; k < order.length; k++) {
+        const I = inst[order[k]]; if (!I.bbox) continue;
+        if (x < I.bbox[0] - margin || x > I.bbox[2] + margin || y < I.bbox[1] - margin || y > I.bbox[3] + margin) continue;
+        const dp = depth(distInst(x, y, I));
+        if (dp > 0) { win = k; dw = dp; break; }
+      }
+      if (win < 0) continue;
+      // shadow from letters above the winner
+      let shade = 0;
+      if (p.shadowW > 0 && p.shadowStr > 0 && win > 0) {
+        const sx = x - p.shadowDx * p.stroke, sy = y - p.shadowDy * p.stroke;
+        let dOut = Infinity;
+        for (let k = 0; k < win; k++) {
+          const I = inst[order[k]]; if (!I.bbox) continue;
+          if (sx < I.bbox[0] - margin || sx > I.bbox[2] + margin || sy < I.bbox[1] - margin || sy > I.bbox[3] + margin) continue;
+          dOut = Math.min(dOut, distInst(sx, sy, I) - hw);
+        }
+        if (dOut < p.shadowW) { const t = Math.max(0, dOut) / p.shadowW; shade = p.shadowStr * Math.pow(1 - t, p.shadowSoft); }
+      }
+      const lift = win === 0 && order.length > 1 ? p.lift : 1;
+      const jit = 1 + (hash(i, j, p.seed + 23) - 0.5) * 2 * p.sizeJit;
+      let r = rMax * dw * lift * jit * (1 - shade);
+      if (r <= 0.0005) continue;
+      out.push({ x, y, r: Math.max(rMin, r) });
+    }
+  }
+  return { dots: out, bounds: B, inst };
+}
+
+// ============ drawing ============
+const stage = document.getElementById("stage"), canvas = document.getElementById("c"), ctx = canvas.getContext("2d");
+const stat = document.getElementById("stat");
+let peek = false, view = null;
+
+function render(ctx, w, h, p, guides) {
+  const { dots: D, bounds: B, inst } = dots(p);
+  const k = Math.min(w / (B.x1 - B.x0), h / (B.y1 - B.y0));
+  const cx = w / 2 - ((B.x0 + B.x1) / 2) * k, cy = h / 2 + ((B.y0 + B.y1) / 2) * k;
+  view = { k, cx, cy, inst };
+  ctx.fillStyle = p.bg; ctx.fillRect(0, 0, w, h);
+  const blobPx = p.spacing * p.dotMax * k;
+  const path = new Path2D();
+  for (const d of D) { path.moveTo(cx + d.x * k + d.r * k, cy - d.y * k); path.arc(cx + d.x * k, cy - d.y * k, d.r * k, 0, Math.PI * 2); }
+  ctx.fillStyle = p.fg;
+  if (p.glow > 0 && p.glowStr > 0) {
+    ctx.save(); ctx.globalAlpha = p.glowStr; ctx.filter = `blur(${(p.glow * blobPx).toFixed(2)}px)`; ctx.fill(path); ctx.restore();
+  }
+  ctx.save(); if (p.blur > 0) ctx.filter = `blur(${(p.blur * blobPx).toFixed(2)}px)`; ctx.fill(path); ctx.restore();
+  if (guides) drawGuides(ctx, p, inst, k, cx, cy);
+  return D.length;
+}
+function drawGuides(ctx, p, inst, k, cx, cy) {
+  const X = q => cx + q[0] * k, Y = q => cy - q[1] * k;
+  ctx.save();
+  ctx.lineWidth = p.stroke * k; ctx.strokeStyle = "rgba(255,80,80,.18)"; ctx.lineCap = "round";
+  for (const I of inst) {
+    for (const s of I.segs) { ctx.beginPath(); ctx.moveTo(X(s[0]), Y(s[0])); ctx.lineTo(X(s[1]), Y(s[1])); ctx.stroke(); }
+    for (const r of I.rings) { ctx.beginPath(); ctx.save(); ctx.transform(1, 0, -r[3], 1, r[3] * cy, 0); const ux = (r[0] - r[1] * r[3]); ctx.arc(cx + ux * k, cy - r[1] * k, r[2] * k, 0, Math.PI * 2); ctx.restore(); ctx.stroke(); }
+  }
+  ctx.lineWidth = 1; ctx.strokeStyle = "rgba(255,80,80,.9)"; ctx.setLineDash([4, 4]);
+  for (const I of inst) {
+    for (const s of I.segs) { ctx.beginPath(); ctx.moveTo(X(s[0]), Y(s[0])); ctx.lineTo(X(s[1]), Y(s[1])); ctx.stroke(); }
+    for (const r of I.rings) { ctx.beginPath(); ctx.save(); ctx.transform(1, 0, -r[3], 1, r[3] * cy, 0); const ux = (r[0] - r[1] * r[3]); ctx.arc(cx + ux * k, cy - r[1] * k, r[2] * k, 0, Math.PI * 2); ctx.restore(); ctx.stroke(); }
+  }
+  ctx.setLineDash([]);
+  // handles
+  for (const H of handles(p, inst)) {
+    ctx.beginPath(); ctx.arc(H.sx, H.sy, 5, 0, Math.PI * 2);
+    ctx.fillStyle = H.kind === "r" ? "#ffd166" : "#ff5050"; ctx.fill();
+  }
+  ctx.restore();
+}
+// Every draggable point in screen space, with a setter back into the glyph definition.
+function handles(p, inst) {
+  if (!view) return [];
+  const { k, cx, cy } = view, out = [];
+  inst.forEach(I => {
+    I.g.strokes.forEach((st, si) => {
+      if (st.ring) {
+        const [rx, ry, rr] = st.ring;
+        const c = [rx + I.ox + ry * p.slant, ry];
+        out.push({ sx: cx + c[0] * k, sy: cy - c[1] * k, kind: "c", set: (x, y) => { st.ring[0] = x - I.ox - y * p.slant; st.ring[1] = y; } });
+        out.push({ sx: cx + (c[0] + rr) * k, sy: cy - c[1] * k, kind: "r", set: (x, y) => { st.ring[2] = Math.max(0.2, Math.hypot(x - c[0], y - c[1])); } });
+      } else st.pts.forEach((q, qi) => {
+        out.push({ sx: cx + (q[0] + I.ox + q[1] * p.slant) * k, sy: cy - q[1] * k, kind: "p", set: (x, y) => { q[0] = x - I.ox - y * p.slant; q[1] = y; } });
+      });
+    });
+  });
+  return out;
+}
+function draw() {
+  const dpr = Math.min(window.devicePixelRatio || 1, 3);
+  const w = canvas.clientWidth, h = canvas.clientHeight;
+  if (canvas.width !== Math.round(w * dpr) || canvas.height !== Math.round(h * dpr)) { canvas.width = Math.round(w * dpr); canvas.height = Math.round(h * dpr); }
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const t0 = performance.now();
+  const n = render(ctx, w, h, P, P.edit || peek);
+  stat.textContent = `${n} blobs · ${(performance.now() - t0).toFixed(0)} ms` + (P.edit ? " · drag the red points, yellow sets a ring radius" : "");
+  if (glyphsDirty) { glyphTa.value = glyphJSON(); glyphsDirty = false; }
+}
+new ResizeObserver(draw).observe(canvas);
+window.addEventListener("keydown", e => { if (e.key.toLowerCase() === "g" && !peek && e.target === document.body) { peek = true; draw(); } });
+window.addEventListener("keyup", e => { if (e.key.toLowerCase() === "g") { peek = false; draw(); } });
+
+// dragging skeleton points
+let drag = null;
+canvas.addEventListener("pointerdown", e => {
+  if (!P.edit || !view) return;
+  const r = canvas.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
+  let best = null, bd = 12;
+  for (const H of handles(P, view.inst)) { const d = Math.hypot(H.sx - mx, H.sy - my); if (d < bd) { bd = d; best = H; } }
+  if (best) { drag = best; canvas.setPointerCapture(e.pointerId); }
+});
+canvas.addEventListener("pointermove", e => {
+  if (!drag || !view) return;
+  const r = canvas.getBoundingClientRect(), mx = e.clientX - r.left, my = e.clientY - r.top;
+  let x = (mx - view.cx) / view.k, y = (view.cy - my) / view.k;
+  if (!e.altKey) { x = Math.round(x * 20) / 20; y = Math.round(y * 20) / 20; }
+  drag.set(x, y); glyphsDirty = true; changed();
+});
+canvas.addEventListener("pointerup", () => { drag = null; });
+
+// ============ export ============
+function download(name, blob) {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+function slug() { return "lumen-" + (TEXT.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-") || "logo"); }
+document.getElementById("png").onclick = () => {
+  const size = +document.getElementById("pngSize").value;
+  const B = bounds(P, layout(P)), ar = (B.x1 - B.x0) / (B.y1 - B.y0);
+  const w = size, h = Math.round(size / ar);
+  const off = document.createElement("canvas"); off.width = w; off.height = h;
+  render(off.getContext("2d"), w, h, P, false);
+  off.toBlob(b => download(slug() + ".png", b), "image/png");
+  draw();
+};
+document.getElementById("svg").onclick = () => {
+  const { dots: D, bounds: B } = dots(P);
+  const k = 100, W = (B.x1 - B.x0) * k, H = (B.y1 - B.y0) * k, f = v => (+v.toFixed(2)).toString();
+  const blobU = P.spacing * P.dotMax * k;
+  const circles = D.map(d => `<circle cx="${f((d.x - B.x0) * k)}" cy="${f((B.y1 - d.y) * k)}" r="${f(d.r * k)}"/>`).join("\n");
+  const defs = `<defs>
+<filter id="blur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="${f(P.blur * blobU)}"/></filter>
+<filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${f(P.glow * blobU)}"/></filter>
+</defs>`;
+  const glow = P.glow > 0 && P.glowStr > 0 ? `<g fill="${P.fg}" opacity="${f(P.glowStr)}" filter="url(#glow)">\n${circles}\n</g>\n` : "";
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${f(W)} ${f(H)}" width="${f(W)}" height="${f(H)}">
+${defs}
+<rect width="100%" height="100%" fill="${P.bg}"/>
+${glow}<g fill="${P.fg}"${P.blur > 0 ? ' filter="url(#blur)"' : ""}>
+${circles}
+</g>
+</svg>`;
+  download(slug() + ".svg", new Blob([svg], { type: "image/svg+xml" }));
+};
+function flash(msg) { stat.textContent = msg; setTimeout(draw, 1500); }
+
+stage.classList.toggle("editing", !!P.edit);
+draw();
+</script>
+</body>
+</html>
