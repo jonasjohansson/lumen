@@ -992,8 +992,17 @@ document.getElementById("png").onclick = () => {
   draw(); exported();
 };
 document.getElementById("svg").onclick = () => inks().forEach(([P, sfx]) => svgOut(P, sfx));
-function svgOut(P, sfx) {
-  const { dots: D, bounds: B } = dots(P);
+function svgOut(P, sfx) { download(slug() + sfx + ".svg", new Blob([svgText(P)], { type: "image/svg+xml" })); exported(); }
+// the dots' own extent plus a blur margin: trim drops the layout padding, for a kit file that sits tight on its ink
+function inkBox(P, D, B, trim) {
+  if (!trim || !D.length) return B;
+  const m = 3 * (P.blur + (P.glow > 0 && P.glowStr > 0 ? P.glow : 0)) * P.spacing * P.dotMax;
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+  for (const d of D) { x0 = Math.min(x0, d.x - d.r); x1 = Math.max(x1, d.x + d.r); y0 = Math.min(y0, d.y - d.r); y1 = Math.max(y1, d.y + d.r); }
+  return { x0: x0 - m, x1: x1 + m, y0: y0 - m, y1: y1 + m };
+}
+function svgText(P, trim) {
+  const { dots: D, bounds: B0 } = dots(P), B = inkBox(P, D, B0, trim);
   const k = 100, W = (B.x1 - B.x0) * k, H = (B.y1 - B.y0) * k, f = v => (+v.toFixed(2)).toString();
   const blobU = P.spacing * P.dotMax * k;
   const circles = D.map(d => `<circle cx="${f((d.x - B.x0) * k)}" cy="${f((B.y1 - d.y) * k)}" r="${f(d.r * k)}"/>`).join("\n");
@@ -1002,18 +1011,36 @@ function svgOut(P, sfx) {
 <filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="${f(P.glow * blobU)}"/></filter>
 </defs>`;
   const glow = P.glow > 0 && P.glowStr > 0 ? `<g fill="${P.fg}" opacity="${f(P.glowStr)}" filter="url(#glow)">\n${circles}\n</g>\n` : "";
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${f(W)} ${f(H)}" width="${f(W)}" height="${f(H)}">
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${f(W)} ${f(H)}" width="${f(W)}" height="${f(H)}">
 ${defs}
 ${P.transparent ? "" : `<rect width="100%" height="100%" fill="${P.bg}"/>\n`}${glow}<g fill="${P.fg}"${P.blur > 0 ? ' filter="url(#blur)"' : ""}>
 ${circles}
 </g>
 </svg>`;
-  download(slug() + sfx + ".svg", new Blob([svg], { type: "image/svg+xml" })); exported();
+}
+// a PNG cropped to the ink, px wide
+function pngTight(P, px) {
+  const { dots: D, bounds: B0 } = dots(P), B = inkBox(P, D, B0, true);
+  const k = px / (B.x1 - B.x0), w = px, h = Math.round((B.y1 - B.y0) * k), blobPx = P.spacing * P.dotMax * k;
+  const c = document.createElement("canvas"); c.width = w; c.height = h; const x = c.getContext("2d");
+  const path = new Path2D();
+  for (const d of D) { const X = (d.x - B.x0) * k, Y = (B.y1 - d.y) * k; path.moveTo(X + d.r * k, Y); path.arc(X, Y, d.r * k, 0, Math.PI * 2); }
+  x.fillStyle = P.fg;
+  if (P.glow > 0 && P.glowStr > 0) { x.save(); x.globalAlpha = P.glowStr; x.filter = `blur(${(P.glow * blobPx).toFixed(2)}px)`; x.fill(path); x.restore(); }
+  x.save(); if (P.blur > 0) x.filter = `blur(${(P.blur * blobPx).toFixed(2)}px)`; x.fill(path); x.restore();
+  return c.toDataURL("image/png");
 }
 function flash(msg) { stat.textContent = msg; setTimeout(draw, 1500); }
 
 stage.classList.toggle("editing", !!P.edit);
 draw();
+// brand kit: ?render=1&v=<version>&out=svg|png&ink=light|dark&px=2048 puts the file, tight on its ink, in #out for headless --dump-dom (kit.sh)
+if (RENDER && QS.get("out")) {
+  const p = Object.assign({}, P, QS.get("ink") === "dark" ? { fg: PRESETS.Inverted.fg } : {}, { transparent: true });
+  const pre = document.createElement("pre"); pre.id = "out";
+  pre.textContent = QS.get("out") === "svg" ? svgText(p, true) : pngTight(p, +QS.get("px") || 2048);
+  document.body.appendChild(pre);
+}
 </script>
 </body>
 </html>

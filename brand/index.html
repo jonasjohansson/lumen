@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lumen Project Brand</title>
+<meta name="description" content="The Lumen Project logo family in halftone script: word marks, the lp symbol, circles and figures, with downloads, colours, type and examples in use.">
+<link rel="icon" href="icons/icon-192.png" type="image/png">
+<style>
+@font-face { font-family: "Barlow"; font-weight: 500; font-display: swap; src: url(../fonts/barlow-500-latin.woff2) format("woff2"); }
+@font-face { font-family: "Barlow"; font-weight: 600; font-display: swap; src: url(../fonts/barlow-600-latin.woff2) format("woff2"); }
+@font-face { font-family: "Barlow"; font-weight: 700; font-display: swap; src: url(../fonts/barlow-700-latin.woff2) format("woff2"); }
+
+:root {
+  --font: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  --night: #000; --lumen: #ece9df; --grey: #8c8c8c; --line: #262626; --tile: #0f0f0f;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body { font: 500 15px/1.5 var(--font); background: var(--night); color: var(--lumen); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+img { display: block; max-width: 100%; }
+a { color: inherit; }
+.wrap { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
+@media (max-width: 640px) { .wrap { padding: 0 16px; } }
+
+/* — type — */
+.label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--grey); margin: 0; }
+h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 6px; }
+h3 { font-size: 15px; font-weight: 600; margin: 0; }
+p { margin: 0; }
+.lede { color: var(--grey); max-width: 60ch; }
+
+header.top { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 24px 0; border-bottom: 1px solid var(--line); }
+header.top .brand { font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; font-size: 13px; }
+header.top .brand span { color: var(--grey); font-weight: 500; }
+header.top nav { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; }
+header.top nav a { text-decoration: none; color: var(--grey); }
+header.top nav a:hover { color: var(--lumen); }
+
+.hero { min-height: min(78vh, 760px); display: grid; place-items: center; padding: 64px 0; }
+.hero img { width: min(720px, 86vw); }
+
+section { padding: 72px 0; border-top: 1px solid var(--line); }
+section > .wrap > header { display: grid; gap: 6px; margin-bottom: 36px; }
+
+/* — logo cards — */
+.grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 360px), 1fr)); }
+.grid.wide { grid-template-columns: repeat(auto-fill, minmax(min(100%, 560px), 1fr)); }
+.card { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; display: flex; flex-direction: column; }
+.tiles { display: grid; grid-template-columns: 1fr 1fr; }
+.tile { aspect-ratio: 1; position: relative; }
+.wide .tile { aspect-ratio: 4 / 3; }
+.tile.night { background: var(--night); }
+.tile.paper { background: var(--lumen); }
+.tile img { position: absolute; inset: 14%; width: 72%; height: 72%; object-fit: contain; }
+.wide .tile img { inset: 10%; width: 80%; height: 80%; }
+.card .meta { padding: 16px; display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--line); flex: 1; }
+.card .meta p { color: var(--grey); font-size: 14px; }
+.dl { display: flex; flex-wrap: wrap; gap: 6px; margin-top: auto; padding-top: 6px; }
+.dl a { font-size: 12px; font-weight: 600; text-decoration: none; border: 1px solid var(--line); border-radius: 999px; height: 28px; padding: 0 11px; display: inline-flex; align-items: center; }
+.dl a:hover { border-color: var(--grey); }
+.tag { align-self: flex-start; font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--night); background: var(--lumen); border-radius: 3px; padding: 2px 6px; justify-self: start; }
+.tag.dim { background: var(--line); color: var(--grey); }
+
+/* — symbol sizes — */
+.sizes { display: flex; align-items: flex-end; gap: 28px; flex-wrap: wrap; }
+.sizes figure { margin: 0; display: grid; gap: 10px; justify-items: center; }
+.sizes figcaption { font-size: 12px; color: var(--grey); font-variant-numeric: tabular-nums; }
+.app { display: flex; gap: 28px; flex-wrap: wrap; align-items: center; margin-top: 44px; }
+.app .ios { width: 120px; height: 120px; border-radius: 27px; background: var(--night); border: 1px solid var(--line); display: grid; place-items: center; }
+.app .ios.paper { background: var(--lumen); border-color: var(--lumen); }
+.app .ios img { width: 68%; }
+.app .avatar { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 1px solid var(--line); }
+.app .tab { display: flex; align-items: center; gap: 8px; background: #1d1d1d; border-radius: 10px 10px 0 0; padding: 10px 16px; font-size: 13px; width: 240px; }
+.app .tab img { width: 16px; height: 16px; }
+
+/* — colours, type, rules — */
+.swatches { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); }
+.swatch { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+.swatch .chip { height: 140px; }
+.swatch .meta { padding: 14px 16px; display: grid; gap: 2px; font-size: 13px; }
+.swatch .meta span { color: var(--grey); font-variant-numeric: tabular-nums; }
+.typeset { display: grid; gap: 28px; }
+.typeset .big { font-size: clamp(36px, 7vw, 84px); font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1; }
+.typeset .row { display: grid; gap: 6px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
+.typeset .w500 { font-weight: 500; font-size: 22px; } .typeset .w600 { font-weight: 600; font-size: 22px; } .typeset .w700 { font-weight: 700; font-size: 22px; }
+.rules { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); counter-reset: r; }
+.rules li { list-style: none; border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 6px; counter-increment: r; }
+.rules li::before { content: counter(r, decimal-leading-zero); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; color: var(--grey); }
+.rules li p { color: var(--grey); font-size: 14px; }
+ol.rules { padding: 0; margin: 0; }
+
+/* — examples — */
+.mock-grid { display: grid; gap: 28px; grid-template-columns: repeat(12, 1fr); align-items: start; }
+.mock-grid > figure { margin: 0; display: grid; gap: 10px; }
+.mock-grid figcaption { font-size: 12px; color: var(--grey); }
+.c4 { grid-column: span 4; } .c3 { grid-column: span 3; } .c5 { grid-column: span 5; } .c6 { grid-column: span 6; } .c7 { grid-column: span 7; } .c8 { grid-column: span 8; } .c12 { grid-column: span 12; }
+@media (max-width: 860px) { .mock-grid > figure { grid-column: span 12; } .mock-grid > figure.half { grid-column: span 6; } }
+
+.post { aspect-ratio: 3 / 4; background: var(--night); border: 1px solid var(--line); position: relative; container-type: inline-size; overflow: hidden; }
+.post .t { position: absolute; left: 6cqw; top: 5cqw; font-size: 4.2cqw; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
+.post .b { position: absolute; left: 6cqw; bottom: 5cqw; font-size: 4.2cqw; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; line-height: 1.25; }
+.post .mark { position: absolute; inset: 22% 12%; display: grid; place-items: center; }
+.post .mark img { max-height: 100%; }
+.post .corner { position: absolute; right: 6cqw; top: 4cqw; width: 11cqw; }
+.post.photo { background: radial-gradient(120% 80% at 30% 20%, #3a3428, #0b0a08 60%), #000; }
+.story { aspect-ratio: 9 / 16; }
+.story .mark { inset: 26% 10% 34%; }
+
+.card-biz { aspect-ratio: 85 / 55; border-radius: 6px; position: relative; container-type: inline-size; overflow: hidden; }
+.card-biz.front { background: var(--night); border: 1px solid var(--line); display: grid; place-items: center; }
+.card-biz.front img { width: 26cqw; }
+.card-biz.back { background: var(--lumen); color: var(--night); }
+.card-biz.back img { position: absolute; left: 8cqw; top: 9cqw; width: 52cqw; }
+.card-biz.back .who { position: absolute; left: 8cqw; bottom: 8cqw; font-size: 3.6cqw; line-height: 1.35; font-weight: 500; }
+.card-biz.back .who b { font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+
+.poster { aspect-ratio: 1 / 1.414; background: var(--night); border: 1px solid var(--line); position: relative; container-type: inline-size; overflow: hidden; }
+.poster .mark { position: absolute; left: 10%; right: 10%; top: 9%; }
+.poster .head { position: absolute; left: 7cqw; right: 7cqw; bottom: 16cqw; font-size: 10.5cqw; line-height: 0.95; font-weight: 700; text-transform: uppercase; }
+.poster .foot { position: absolute; left: 7cqw; right: 7cqw; bottom: 6cqw; display: flex; justify-content: space-between; font-size: 3cqw; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
+
+.tote { aspect-ratio: 1; display: grid; place-items: end center; background: #141414; border-radius: 6px; overflow: hidden; }
+.tote .bag { width: 62%; aspect-ratio: 1 / 1.08; background: var(--lumen); position: relative; border-radius: 2px 2px 6px 6px; display: grid; place-items: center; margin-bottom: 9%; }
+.tote .bag::before, .tote .bag::after { content: ""; position: absolute; top: -30%; width: 16%; height: 40%; border: 5px solid var(--lumen); border-bottom: none; border-radius: 40px 40px 0 0; }
+.tote .bag::before { left: 22%; } .tote .bag::after { right: 22%; }
+.tote .bag img { width: 66%; }
+
+.browser { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--night); }
+.browser .bar { height: 34px; background: #161616; display: flex; align-items: center; gap: 6px; padding: 0 14px; }
+.browser .bar i { width: 10px; height: 10px; border-radius: 50%; background: #333; }
+.browser .bar span { margin-left: 14px; font-size: 12px; color: var(--grey); }
+.browser nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 1px solid var(--line); gap: 16px; }
+.browser nav img { height: 34px; width: auto; }
+.browser nav div { display: flex; gap: 20px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
+.browser .page { display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; padding: 44px 28px 52px; align-items: center; }
+.browser .page h4 { font-size: clamp(24px, 3.6vw, 44px); line-height: 1; margin: 0 0 14px; font-weight: 700; text-transform: uppercase; }
+.browser .page p { color: var(--grey); font-size: 14px; max-width: 42ch; }
+@media (max-width: 640px) { .browser nav div { display: none; } .browser .page { grid-template-columns: 1fr; } }
+
+.sig { background: #fff; color: #222; border-radius: 10px; padding: 24px; font: 14px/1.5 Arial, sans-serif; }
+.sig hr { border: 0; border-top: 1px solid #ddd; margin: 16px 0; }
+.sig .row { display: flex; align-items: center; gap: 14px; }
+.sig img { width: 150px; }
+.sig small { color: #777; }
+
+.files { display: grid; gap: 10px; }
+.files a { display: flex; justify-content: space-between; gap: 16px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; text-decoration: none; }
+.files a span:last-child { color: var(--grey); font-size: 13px; }
+.files a:hover { border-color: var(--grey); }
+footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--grey); font-size: 13px; }
+
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header class="top">
+    <div class="brand">Lumen Project <span>// Brand</span></div>
+    <nav><a href="#logos">Logos</a><a href="#symbol">Symbol</a><a href="#colour">Colour</a><a href="#type">Type</a><a href="#use">In use</a><a href="#downloads">Downloads</a><a href="../logo/">Logo lab</a></nav>
+  </header>
+</div>
+
+<div class="hero"><img src="logos/lumen-project-stacked-light.svg" alt="Lumen Project, stacked word mark"></div>
+
+<section id="logos">
+  <div class="wrap">
+    <header>
+      <p class="label">01 Logo family</p>
+      <h2>One hand, drawn in light</h2>
+      <p class="lede">Every mark is the same fluid script, set in a halftone of sharp dots. Softness only ever comes from the dots getting smaller. Each file is cropped to its ink on a transparent ground: <b>light</b> is Lumen white for dark grounds, <b>dark</b> is black for light ones.</p>
+    </header>
+    <div class="grid wide" id="primary"></div>
+    <div style="height:20px"></div>
+    <div class="grid" id="secondary"></div>
+  </div>
+</section>
+
+<section id="symbol">
+  <div class="wrap">
+    <header>
+      <p class="label">02 Symbol</p>
+      <h2>lp, the one-stroke monogram</h2>
+      <p class="lede">The L's foot runs under the p and into its bowl. From 64 px down, use the small cut: fewer, bigger dots that still read as a screen. Below about 48 px the dots stop holding.</p>
+    </header>
+    <div class="sizes">
+      <figure><img src="logos/lumen-symbol-light.svg" style="width:256px" alt=""><figcaption>256</figcaption></figure>
+      <figure><img src="logos/lumen-symbol-light.svg" style="width:128px" alt=""><figcaption>128</figcaption></figure>
+      <figure><img src="logos/lumen-symbol-small-light.svg" style="width:64px" alt=""><figcaption>64 small cut</figcaption></figure>
+      <figure><img src="logos/lumen-symbol-small-light.svg" style="width:48px" alt=""><figcaption>48 small cut</figcaption></figure>
+      <figure><img src="icons/icon-32.png" style="width:32px" alt=""><figcaption>32 favicon</figcaption></figure>
+    </div>
+    <div class="app">
+      <div class="ios"><img src="logos/lumen-symbol-light.svg" alt="App icon, night"></div>
+      <div class="ios paper"><img src="logos/lumen-symbol-dark.svg" alt="App icon, paper"></div>
+      <img class="avatar" src="social/avatar-symbol-night.png" alt="Profile picture, symbol">
+      <img class="avatar" src="social/avatar-circle-night.png" alt="Profile picture, Project circle">
+      <div class="tab"><img src="icons/icon-32.png" alt="">Lumen Project</div>
+    </div>
+  </div>
+</section>
+
+<section id="colour">
+  <div class="wrap">
+    <header>
+      <p class="label">03 Colour</p>
+      <h2>Night and Lumen</h2>
+      <p class="lede">Light on black is the home ground. On paper, flip it: black dots on Lumen white, never grey on grey.</p>
+    </header>
+    <div class="swatches">
+      <div class="swatch"><div class="chip" style="background:#000;border-bottom:1px solid var(--line)"></div><div class="meta"><b>Night</b><span>#000000 · RGB 0 0 0</span><span>CMYK 60 40 40 100 (rich black)</span></div></div>
+      <div class="swatch"><div class="chip" style="background:#ece9df"></div><div class="meta"><b>Lumen</b><span>#ECE9DF · RGB 236 233 223</span><span>CMYK about 6 5 11 0, proof first</span></div></div>
+      <div class="swatch"><div class="chip" style="background:#8c8c8c"></div><div class="meta"><b>Grey</b><span>#8C8C8C · RGB 140 140 140</span><span>Secondary text only</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="type">
+  <div class="wrap">
+    <header>
+      <p class="label">04 Type</p>
+      <h2>Barlow</h2>
+      <p class="lede">The script is for the marks only. Everything set in type is Barlow, the lumenproject.se typeface: uppercase with open tracking for headers, sentence case for running text.</p>
+    </header>
+    <div class="typeset">
+      <div class="row"><p class="label">Header · 700 uppercase</p><div class="big">Lumen Project //</div></div>
+      <div class="row"><p class="label">Weights</p><div class="w500">Barlow Medium 500: Lumen Project 0123456789</div><div class="w600">Barlow SemiBold 600: Lumen Project 0123456789</div><div class="w700">Barlow Bold 700: Lumen Project 0123456789</div></div>
+    </div>
+  </div>
+</section>
+
+<section id="rules">
+  <div class="wrap">
+    <header>
+      <p class="label">05 Use</p>
+      <h2>Keeping it right</h2>
+    </header>
+    <ol class="rules">
+      <li><h3>Use the files</h3><p>Never retype the name in a script font or redraw the dots. Export from the logo lab or take a file from below.</p></li>
+      <li><h3>Leave room</h3><p>Keep clear space of at least half the symbol's height on every side of any mark.</p></li>
+      <li><h3>Mind the size</h3><p>Word marks from 240 px wide on screen (40 mm in print). The symbol from 64 px, the small cut down to 48 px.</p></li>
+      <li><h3>Two colours only</h3><p>Lumen on Night, or Night on Lumen and white. No gradients, tints or outlines on the mark.</p></li>
+      <li><h3>Don't stretch or blur</h3><p>Scale in proportion. The dots stay sharp; never add a glow or a drop shadow.</p></li>
+      <li><h3>Over photos</h3><p>Place light marks on the darkest, calmest part of the image, or use the symbol in a corner.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section id="use">
+  <div class="wrap">
+    <header>
+      <p class="label">06 In use</p>
+      <h2>Examples</h2>
+      <p class="lede">Mock-ups with placeholder copy, to show scale and placement.</p>
+    </header>
+    <div class="mock-grid">
+      <figure class="c4 half"><div class="post"><span class="t">Lumen Project //</span><div class="mark"><img src="logos/lumen-project-stacked-light.svg" alt=""></div><span class="b">Artist name<br>Venue, City<br>Date</span></div><figcaption>Instagram post 3:4</figcaption></figure>
+      <figure class="c4 half"><div class="post photo"><span class="t">Lumen Project //</span><img class="corner" src="logos/lumen-symbol-light.svg" alt=""><span class="b">Artist name<br>Venue, City<br>Date</span></div><figcaption>Over a photo: symbol in the corner</figcaption></figure>
+      <figure class="c4 half"><div class="post story" style="aspect-ratio:9/16"><div class="mark" style="inset:26% 10% 34%"><img src="logos/lumen-project-circle-light.svg" alt=""></div><span class="b">Artist name<br>Venue, City<br>Date</span></div><figcaption>Story 9:16</figcaption></figure>
+
+      <figure class="c6"><div class="card-biz front"><img src="logos/lumen-symbol-light.svg" alt=""></div><figcaption>Business card, front (85 × 55 mm)</figcaption></figure>
+      <figure class="c6"><div class="card-biz back"><img src="logos/lumen-project-wordmark-dark.svg" alt=""><div class="who"><b>Name Surname</b><br>Role<br>lumenproject.se</div></div><figcaption>Business card, back</figcaption></figure>
+
+      <figure class="c5"><div class="poster"><div class="mark"><img src="logos/lumen-project-circle-light.svg" alt=""></div><div class="head">Artist name<br>Venue · Date</div><div class="foot"><span>Lumen Project //</span><span>lumenproject.se</span></div></div><figcaption>Poster, A-series</figcaption></figure>
+      <figure class="c7"><div class="tote"><div class="bag"><img src="logos/lumen-project-stacked-dark.svg" alt=""></div></div><figcaption>Tote bag, dark ink on natural cotton</figcaption></figure>
+
+      <figure class="c12"><div class="browser"><div class="bar"><i></i><i></i><i></i><span>lumenproject.se</span></div><nav><img src="logos/lumen-wordmark-light.svg" alt="Lumen"><div><span>Projects</span><span>Artists</span><span>About</span></div></nav><div class="page"><div><h4>Lumen<br>Project</h4><p>Placeholder text for a website header, with the Lumen word mark in the navigation and the symbol as the hero.</p></div><img src="logos/lumen-symbol-light.svg" style="max-width:260px;justify-self:center" alt=""></div></div><figcaption>Website header</figcaption></figure>
+
+      <figure class="c6"><div class="sig"><div>Best,<br>Name</div><hr><div class="row"><img src="logos/lumen-project-wordmark-dark.svg" alt="Lumen Project"></div><small>Role · lumenproject.se</small></div><figcaption>Email signature (dark ink on white)</figcaption></figure>
+      <figure class="c6"><img src="social/banner-1500x500.png" alt="" style="border:1px solid var(--line);border-radius:6px"><figcaption>Banner 1500 × 500</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<section id="downloads">
+  <div class="wrap">
+    <header>
+      <p class="label">07 Downloads</p>
+      <h2>Files</h2>
+      <p class="lede">The whole kit as one zip, or the ready-made sizes one by one. Every logo also has its own links in the family above.</p>
+    </header>
+    <div class="files">
+      <a href="lumen-brand-kit.zip" download><span>Brand kit: every logo (SVG and PNG, light and dark), social sizes, icons</span><span>ZIP</span></a>
+      <a href="lumen-brand.pdf" download><span>This sheet as a PDF</span><span>PDF</span></a>
+      <a href="social/avatar-symbol-night.png" download><span>Profile picture, symbol, night</span><span>1080 × 1080</span></a>
+      <a href="social/avatar-symbol-paper.png" download><span>Profile picture, symbol, paper</span><span>1080 × 1080</span></a>
+      <a href="social/avatar-circle-night.png" download><span>Profile picture, Project circle</span><span>1080 × 1080</span></a>
+      <a href="social/post-1080x1350.png" download><span>Feed post, stacked word mark</span><span>1080 × 1350</span></a>
+      <a href="social/story-1080x1920.png" download><span>Story, Project circle</span><span>1080 × 1920</span></a>
+      <a href="social/banner-1500x500.png" download><span>Banner</span><span>1500 × 500</span></a>
+      <a href="social/facebook-cover-1640x624.png" download><span>Facebook cover</span><span>1640 × 624</span></a>
+      <a href="social/link-preview-1200x630.png" download><span>Link preview</span><span>1200 × 630</span></a>
+      <a href="icons/icon-512.png" download><span>App icon, night</span><span>512 · 192 · 180 · 32 in icons/</span></a>
+      <a href="icons/icon-512-paper.png" download><span>App icon, paper</span><span>512 × 512</span></a>
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">Lumen Project // Logos are drawn and exported in the <a href="../logo/">logo lab</a>; regenerate this kit with <code>logo/kit.sh</code> and <code>brand/build.sh</code>.</div></footer>
+
+<script>
+// the tiles show the SVGs (dots stay sharp at any size; a scaled-down PNG greys out). the logo family: file slug, name, note, and whether it is primary, secondary or still in progress
+const LOGOS = [
+  ["lumen-project-wordmark", "Lumen Project", "The full name on one line. Website headers, signatures, wide formats.", "primary", "wide"],
+  ["lumen-project-stacked", "Lumen / Project", "The main lockup: two rows, the most balanced shape. Posts, posters, covers.", "primary", "wide"],
+  ["lumen-wordmark", "Lumen", "The short name, for where Project is already said.", "primary", "wide"],
+  ["lumen-project-circle", "Project circle", "The name round a ring, the n joining the P and the t closing into the L. Stickers, stamps, stories.", "primary", "wide"],
+  ["lumen-symbol", "Symbol", "The cursive lp. Avatars, app icons, a corner mark over photos.", "primary"],
+  ["lumen-symbol-small", "Symbol small", "A coarser screen for 48 to 64 px: favicons, tabs, small avatars.", "small"],
+  ["lumen-wordmark-small", "Lumen small", "A coarser screen of the word mark for small use.", "small"],
+  ["lumen-lp", "Lp monogram", "The upright Lp, with the shadow where the foot passes under.", "secondary"],
+  ["lumen-lu-star", "Lu-star", "A hand-drawn star for accents, merch and stickers.", "secondary"],
+  ["lumen-lu-man", "Lu-man", "A figure with a ring head, for playful use.", "secondary"],
+  ["lumen-circle", "Circle", "Lumen alone round a ring. Still in progress: hard to read.", "progress"],
+  ["lumen-project-stacked-swash", "Lumen / Project swash", "Stacked with a line from the n into the P. Still in progress.", "progress"],
+];
+const TAG = { primary: ["Primary", ""], secondary: ["Secondary", "dim"], small: ["Small cut", "dim"], progress: ["In progress", "dim"] };
+const card = ([s, name, note, kind]) => `<article class="card">
+  <div class="tiles"><div class="tile night"><img src="logos/${s}-light.svg" alt="${name}, light"></div><div class="tile paper"><img src="logos/${s}-dark.svg" alt="${name}, dark"></div></div>
+  <div class="meta"><span class="tag ${TAG[kind][1]}">${TAG[kind][0]}</span><h3>${name}</h3><p>${note}</p>
+  <div class="dl"><a href="logos/${s}-light.svg" download>SVG light</a><a href="logos/${s}-dark.svg" download>SVG dark</a><a href="logos/${s}-light.png" download>PNG light</a><a href="logos/${s}-dark.png" download>PNG dark</a></div></div>
+</article>`;
+document.getElementById("primary").innerHTML = LOGOS.filter(l => l[4] === "wide").map(card).join("");
+document.getElementById("secondary").innerHTML = LOGOS.filter(l => l[4] !== "wide").map(card).join("");
+// ?rects: build.sh reads each section's place on the page from #rects to cut the PDF into one page per section
+if (new URLSearchParams(location.search).has("rects")) addEventListener("load", () => {
+  const r = [...document.querySelectorAll(".hero, section, footer")].map(e => { const b = e.getBoundingClientRect(); return [Math.round(b.top + scrollY), Math.round(b.height)]; });
+  document.body.insertAdjacentHTML("beforeend", `<pre id="rects" hidden>${JSON.stringify({ h: document.documentElement.scrollHeight, r })}</pre>`);
+});
+</script>
+</body>
+</html>
