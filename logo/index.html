@@ -108,6 +108,7 @@ textarea {
     <button data-t="Lumen" data-preset="Word mark">Lumen</button>
     <button data-t="Lumen Project" data-preset="Word mark">Lumen Project</button>
     <button data-t="Lumen" data-preset="Snake circle">Circle</button>
+    <button data-t="LumenLumen" data-preset="Snake circle">Circle ×2</button>
     <button data-t="*" data-preset="Lu-man">Lu-man</button>
   </div>
   <div class="presets" id="presets"></div>
@@ -160,12 +161,11 @@ const DEFAULT_GLYPHS = {
   "s": { adv: 4.0, strokes: [ { pts: [[2.9,3.8],[1.8,4.4],[0.6,3.8],[0.9,2.6],[2.2,2.0],[3.0,1.0],[2.2,0],[0.4,0.3]], smooth: true } ] },
   " ": { adv: 3.0, strokes: [] },
   "*": { adv: 11, exit: false, strokes: [
-    { pts: [[0,3.4],[-2.4,4.6],[-5.0,6.4]], smooth: true, width: [3.0, 0.35] },
-    { pts: [[0,3.4],[2.4,4.6],[5.0,6.4]], smooth: true, width: [3.0, 0.35] },
-    { pts: [[0,3.0],[-1.5,0.4],[-3.1,-3.0]], smooth: true, width: [3.0, 0.4] },
-    { pts: [[0,3.0],[1.5,0.4],[3.1,-3.0]], smooth: true, width: [3.0, 0.4] },
-    { pts: [[0,2.6],[0,5.0]], width: [3.2, 1.6] },
-    { pts: [[0,7.1]], width: [2.6, 2.6] } ] },
+    { pts: [[0,3.3],[-1.9,3.9],[-3.5,5.0],[-4.7,6.5]], smooth: true, width: [1.7, 0.25] },
+    { pts: [[0,3.3],[1.9,3.9],[3.5,5.0],[4.7,6.5]], smooth: true, width: [1.7, 0.25] },
+    { pts: [[0,3.3],[-0.9,1.0],[-1.8,-1.2],[-2.5,-3.3]], smooth: true, width: [1.7, 0.3] },
+    { pts: [[0,3.3],[0.9,1.0],[1.8,-1.2],[2.5,-3.3]], smooth: true, width: [1.7, 0.3] },
+    { ring: [0, 7.0, 1.55] } ] },
 };
 
 // ============ parameter spec ============
@@ -226,8 +226,8 @@ const PRESETS = {
   "Hard edges": { soft: 0.1, gamma: 1 },
   "Blurred": { blur: 0.5, glow: 3, glowStr: 0.35 },
   "Scattered": { sizeJit: 0.35, posJit: 0.2 },
-  "Snake circle": { circle: true, connect: true, stroke: 0.8, spacing: 0.2, soft: 0.3, tracking: 0.4, slant: 0.12, wobble: 0.3, joinFade: 0.35 },
-  "Lu-man": { connect: false, stroke: 1.0, spacing: 0.3, soft: 0.6, gamma: 0.9, minDot: 0.05, wobble: 0, slant: 0 },
+  "Snake circle": { circle: true, connect: true, circleCover: 1, circleH: 0.65, circleBend: 1, stroke: 0.7, spacing: 0.18, soft: 0.26, tracking: 0.9, slant: 0, wobble: 0, joinFade: 0.2 },
+  "Lu-man": { connect: false, stroke: 0.75, spacing: 0.22, soft: 0.3, gamma: 0.8, minDot: 0.05, wobble: 0, slant: 0 },
   "Word mark": { connect: true, stroke: 0.8, spacing: 0.22, soft: 0.3, tracking: 0.3, slant: 0.15, wobble: 0.3 },
   "Geometric": { wobble: 0, connect: false },
   "Deep shadow": { shadowW: 1.4, shadowStr: 1, shadowSoft: 0.9, shadowDy: 0.35, lift: 1.08 },
@@ -235,7 +235,7 @@ const PRESETS = {
   "Inverted": { fg: "#000000", bg: "#ffffff" },
 };
 const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d));
-const KEY = "lumen-logo-lab-v15", GKEY = "lumen-logo-lab-glyphs-v20", TKEY = "lumen-logo-lab-text-v2";
+const KEY = "lumen-logo-lab-v17", GKEY = "lumen-logo-lab-glyphs-v22", TKEY = "lumen-logo-lab-text-v2";
 let P = Object.assign({}, DEFAULTS);
 let G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS));
 let TEXT = "Lp";
