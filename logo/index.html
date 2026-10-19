@@ -421,7 +421,7 @@ function dots(p) {
   const s = p.spacing, rMax = s * p.dotMax, rMin = s * p.minDot;
   // coverage of the stroke after a gaussian blur of sigma = soft: flat inside, fading over the edge
   const depth = d => d >= reach ? 0 : Math.pow(0.5 * (1 + erf((hw - d) / (p.soft * Math.SQRT2))), p.gamma);
-  const order = inst.map((_, i) => i); if (p.stack === "earlier") order.reverse(); // order[0] is the topmost
+  const order = inst.map((_, i) => i); if (p.stack !== "earlier") order.reverse(); // order[0] is the topmost: the last letter by default
   const margin = reach + p.shadowW + hw + 1.5 * p.stroke;
   const out = [];
   const nx = Math.ceil((B.x1 - B.x0) / s), ny = Math.ceil((B.y1 - B.y0) / s);
