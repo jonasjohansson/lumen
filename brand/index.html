@@ -100,52 +100,11 @@ ol.rules { padding: 0; margin: 0; }
 .c4 { grid-column: span 4; } .c3 { grid-column: span 3; } .c5 { grid-column: span 5; } .c6 { grid-column: span 6; } .c7 { grid-column: span 7; } .c8 { grid-column: span 8; } .c12 { grid-column: span 12; }
 @media (max-width: 860px) { .mock-grid > figure { grid-column: span 12; } .mock-grid > figure.half { grid-column: span 6; } }
 
-.post { aspect-ratio: 3 / 4; background: var(--night); border: 1px solid var(--line); position: relative; container-type: inline-size; overflow: hidden; }
-.post .t { position: absolute; left: 6cqw; top: 5cqw; font-size: 4.2cqw; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; }
-.post .b { position: absolute; left: 6cqw; bottom: 5cqw; font-size: 4.2cqw; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; line-height: 1.25; }
-.post .mark { position: absolute; inset: 22% 12%; display: grid; place-items: center; }
-.post .mark img { max-height: 100%; }
-.post .corner { position: absolute; right: 6cqw; top: 4cqw; width: 11cqw; }
-.post.photo { background: radial-gradient(120% 80% at 30% 20%, #3a3428, #0b0a08 60%), #000; }
-.story { aspect-ratio: 9 / 16; }
-.story .mark { inset: 26% 10% 34%; }
 
-.card-biz { aspect-ratio: 85 / 55; border-radius: 6px; position: relative; container-type: inline-size; overflow: hidden; }
-.card-biz.front { background: var(--night); border: 1px solid var(--line); display: grid; place-items: center; }
-.card-biz.front img { width: 26cqw; }
-.card-biz.back { background: var(--lumen); color: var(--night); }
-.card-biz.back img { position: absolute; left: 8cqw; top: 9cqw; width: 52cqw; }
-.card-biz.back .who { position: absolute; left: 8cqw; bottom: 8cqw; font-size: 3.6cqw; line-height: 1.35; font-weight: 500; }
-.card-biz.back .who b { font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
 
-.poster { aspect-ratio: 1 / 1.414; background: var(--night); border: 1px solid var(--line); position: relative; container-type: inline-size; overflow: hidden; }
-.poster .mark { position: absolute; left: 10%; right: 10%; top: 9%; }
-.poster .head { position: absolute; left: 7cqw; right: 7cqw; bottom: 16cqw; font-size: 10.5cqw; line-height: 0.95; font-weight: 700; text-transform: uppercase; }
-.poster .foot { position: absolute; left: 7cqw; right: 7cqw; bottom: 6cqw; display: flex; justify-content: space-between; font-size: 3cqw; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; }
 
-.tote { aspect-ratio: 1; display: grid; place-items: end center; background: #141414; border-radius: 6px; overflow: hidden; }
-.tote .bag { width: 62%; aspect-ratio: 1 / 1.08; background: var(--lumen); position: relative; border-radius: 2px 2px 6px 6px; display: grid; place-items: center; margin-bottom: 9%; }
-.tote .bag::before, .tote .bag::after { content: ""; position: absolute; top: -30%; width: 16%; height: 40%; border: 5px solid var(--lumen); border-bottom: none; border-radius: 40px 40px 0 0; }
-.tote .bag::before { left: 22%; } .tote .bag::after { right: 22%; }
-.tote .bag img { width: 66%; }
 
-.browser { border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--night); }
-.browser .bar { height: 34px; background: #161616; display: flex; align-items: center; gap: 6px; padding: 0 14px; }
-.browser .bar i { width: 10px; height: 10px; border-radius: 50%; background: #333; }
-.browser .bar span { margin-left: 14px; font-size: 12px; color: var(--grey); }
-.browser nav { display: flex; align-items: center; justify-content: space-between; padding: 18px 28px; border-bottom: 1px solid var(--line); gap: 16px; }
-.browser nav img { height: 34px; width: auto; }
-.browser nav div { display: flex; gap: 20px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; }
-.browser .page { display: grid; grid-template-columns: 1.2fr 1fr; gap: 28px; padding: 44px 28px 52px; align-items: center; }
-.browser .page h4 { font-size: clamp(24px, 3.6vw, 44px); line-height: 1; margin: 0 0 14px; font-weight: 700; text-transform: uppercase; }
-.browser .page p { color: var(--grey); font-size: 14px; max-width: 42ch; }
-@media (max-width: 640px) { .browser nav div { display: none; } .browser .page { grid-template-columns: 1fr; } }
 
-.sig { background: #fff; color: #222; border-radius: 10px; padding: 24px; font: 14px/1.5 Arial, sans-serif; }
-.sig hr { border: 0; border-top: 1px solid #ddd; margin: 16px 0; }
-.sig .row { display: flex; align-items: center; gap: 14px; }
-.sig img { width: 150px; }
-.sig small { color: #777; }
 
 /* — on photos — */
 .ph { position: relative; overflow: hidden; container-type: inline-size; background: #000; border-radius: 4px; }
@@ -169,7 +128,7 @@ footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--g
   <header class="top">
     <div class="brand">Lumen Project <span>// Brand</span></div>
     <a class="get" href="lumen-brand-kit.zip" download>Download all</a>
-    <nav><a href="#logos">Logos</a><a href="#symbol">Symbol</a><a href="#colour">Colour</a><a href="#type">Type</a><a href="#use">In use</a><a href="#photos">On photos</a><a href="#downloads">Downloads</a><a href="../logo/">Logo lab</a></nav>
+    <nav><a href="#logos">Logos</a><a href="#symbol">Symbol</a><a href="#colour">Colour</a><a href="#type">Type</a><a href="#photos">In use</a><a href="#downloads">Downloads</a><a href="../logo/">Logo lab</a></nav>
   </header>
 </div>
 
@@ -258,37 +217,11 @@ footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--g
   </div>
 </section>
 
-<section id="use">
-  <div class="wrap">
-    <header>
-      <p class="label">06 In use</p>
-      <h2>Examples</h2>
-      <p class="lede">Mock-ups with placeholder copy, to show scale and placement.</p>
-    </header>
-    <div class="mock-grid">
-      <figure class="c4 half"><div class="post"><span class="t">Lumen Project //</span><div class="mark"><img src="logos/lumen-project-stacked-step-light.svg" alt=""></div><span class="b">Artist name<br>Venue, City<br>Date</span></div><figcaption>Instagram post 3:4</figcaption></figure>
-      <figure class="c4 half"><div class="post photo"><img src="photos/lumenproject-012.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:72% 50%"><span class="t">Lumen Project //</span><img class="corner" src="logos/lumen-symbol-light.svg" alt=""><span class="b">Artist name<br>Venue, City<br>Date</span></div><figcaption>Over a photo: symbol in the corner</figcaption></figure>
-      <figure class="c4 half"><div class="post story" style="aspect-ratio:9/16"><div class="mark" style="inset:26% 10% 34%"><img src="logos/lumen-project-circle-light.svg" alt=""></div><span class="b">Artist name<br>Venue, City<br>Date</span></div><figcaption>Story 9:16</figcaption></figure>
-
-      <figure class="c6"><div class="card-biz front"><img src="logos/lumen-symbol-light.svg" alt=""></div><figcaption>Business card, front (85 × 55 mm)</figcaption></figure>
-      <figure class="c6"><div class="card-biz back"><img src="logos/lumen-project-wordmark-dark.svg" alt=""><div class="who"><b>Name Surname</b><br>Role<br>lumenproject.se</div></div><figcaption>Business card, back</figcaption></figure>
-
-      <figure class="c5"><div class="poster"><div class="mark"><img src="logos/lumen-project-circle-light.svg" alt=""></div><div class="head">Artist name<br>Venue · Date</div><div class="foot"><span>Lumen Project //</span><span>lumenproject.se</span></div></div><figcaption>Poster, A-series</figcaption></figure>
-      <figure class="c7"><div class="tote"><div class="bag"><img src="logos/lumen-lp-ring-dark.svg" alt=""></div></div><figcaption>Tote bag: the lp ring, dark ink on natural cotton</figcaption></figure>
-
-      <figure class="c12"><div class="browser"><div class="bar"><i></i><i></i><i></i><span>lumenproject.se</span></div><nav><img src="logos/lumen-wordmark-light.svg" alt="Lumen"><div><span>Projects</span><span>Artists</span><span>About</span></div></nav><div class="page"><div><h4>Lumen<br>Project</h4><p>Placeholder text for a website header, with the Lumen word mark in the navigation and the symbol as the hero.</p></div><img src="logos/lumen-symbol-light.svg" style="max-width:260px;justify-self:center" alt=""></div></div><figcaption>Website header</figcaption></figure>
-
-      <figure class="c6"><div class="sig"><div>Best,<br>Name</div><hr><div class="row"><img src="logos/lumen-project-wordmark-dark.svg" alt="Lumen Project"></div><small>Role · lumenproject.se</small></div><figcaption>Email signature (dark ink on white)</figcaption></figure>
-      <figure class="c6"><img src="social/banner-1500x500.png" alt="" style="border:1px solid var(--line);border-radius:6px"><figcaption>Banner 1500 × 500</figcaption></figure>
-    </div>
-  </div>
-</section>
-
 <section id="photos">
   <div class="wrap">
     <header>
-      <p class="label">07 On photos</p>
-      <h2>With Lumen's own images</h2>
+      <p class="label">06 In use</p>
+      <h2>On Lumen's own images</h2>
       <p class="lede">Minimal layouts on photos from the lumenproject.se gallery (several by Olga Androsova). The mark sits in the darkest, calmest part of the picture; where the picture has none, a soft shade is added under it, never a box.</p>
     </header>
     <div class="mock-grid">
@@ -305,7 +238,7 @@ footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--g
 <section id="downloads">
   <div class="wrap">
     <header>
-      <p class="label">08 Downloads</p>
+      <p class="label">07 Downloads</p>
       <h2>Files</h2>
       <p class="lede">The whole kit as one zip, or the ready-made sizes one by one. Every logo also has its own links in the family above.</p>
     </header>
