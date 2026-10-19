@@ -10,7 +10,7 @@ if (( ! $#versions )); then
 fi
 mkdir -p $out
 for v in $versions; do
-  f=$out/${${v:l}// /-}.png
+  f=$out/${${v:l}//[ \/]/-}.png   # "Lumen / Project" -> lumen---project.png
   "$chrome" --headless=new --disable-gpu --hide-scrollbars --window-size=1200,1200 --virtual-time-budget=4000 \
     --user-data-dir=$(mktemp -d) --screenshot=$f "$url?render=1&v=${v// /%20}" >/dev/null 2>&1
   echo $f
