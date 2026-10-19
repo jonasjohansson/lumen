@@ -109,7 +109,7 @@ textarea {
     <button data-t="Lp" data-preset="Monogram">Lp</button>
     <button data-t="Lumen" data-preset="Word mark">Lumen</button>
     <button data-t="Lumen" data-preset="Word mark small">Lumen small</button>
-    <button data-t="Lumen Project" data-preset="Word mark">Lumen Project</button>
+    <button data-t="Lumen Project" data-preset="Word mark long">Lumen Project</button>
     <button data-t="Lumen&#10;Project" data-preset="Stacked">Lumen / Project</button>
     <button data-t="Lumen&#10;Project" data-preset="Stacked clean">Lumen / Project clean</button>
     <button data-t="Lumen" data-preset="Snake circle">Circle</button>
@@ -156,7 +156,7 @@ const DEFAULT_GLYPHS = {
   "L": { adv: 3.3, kern: { "u": -1.1 }, entry: [0.3,0.3], joins: { "p": [[2.4,-0.32],[3.3,-0.1]] }, strokes: [ { pts: [[0.2,6.9],[0.05,3.4],[0,1.2],[0.3,0.35],[1.2,0],[7.6,0]], smooth: true, tail: true } ] },
   // p: the bowl starts right of the stem so the L foot shows coming out from under it; thin rising bowl, thick stem,
   // the bowl domes right of centre (a script arch, not a box), a straight hanging descender along the slant, no stem above the bowl
-  "p": { adv: 4.6, entry: [1.25,-0.1], exit: [0.04,-2.2], joins: { "*": [[1.1,-1.3],[3.1,-1.9]] }, strokes: [ { pts: [[1.25,-0.1],[2.5,0.05],[3.7,0.8],[4.25,2.2],[3.95,3.6],[2.85,4.5],[1.45,4.15],[0.4,3.25],[0.02,2.0],[0,-0.7],[0.04,-2.2]], smooth: true, width: [0.8,0.74,0.76,0.86,0.98,1.04,1.06,1.12,1.12,1.02,0.76] } ] },
+  "p": { adv: 4.6, entry: [1.95,0.06], exit: [0.0,-2.25], joins: { "*": [[1.1,-1.3],[3.1,-1.9]] }, strokes: [ { pts: [[1.95,0.06],[3.5,0.75],[4.1,1.55],[4.3,2.6],[3.95,3.7],[2.85,4.5],[1.6,4.3],[0.5,3.4],[0.02,2.0],[0,-0.7],[0.0,-2.25]], smooth: true, width: [0.72,0.8,0.9,0.98,1.02,1.04,0.96,0.98,1.12,1.02,0.68] } ] },
   // P (word marks): the join peels off the bowl foot along the baseline, the descender just hangs
   "P": { adv: 4.6, entry: [1.0,0.1], exit: [2.5,0.2], joins: { "*": [[3.7,0.05]] }, strokes: [ { pts: [[0.25,0.05],[1.2,0.05],[2.3,0.2],[3.7,0.9],[4.2,2.3],[3.6,3.8],[2.1,4.4],[0.6,3.8],[0,2.3],[0,0],[0,-2.4]], smooth: true } ] },
   "u": { adv: 4.6, entry: [0.9,0], strokes: [ { pts: [[0,4.4],[0,1.3],[0.9,0],[2.2,0],[3.1,1.3],[3.1,4.4]], smooth: true }, { pts: [[3.1,4.4],[3.1,0]] } ] },
@@ -178,30 +178,32 @@ const DEFAULT_GLYPHS = {
   "s": { adv: 4.0, strokes: [ { pts: [[2.9,3.8],[1.8,4.4],[0.6,3.8],[0.9,2.6],[2.2,2.0],[3.0,1.0],[2.2,0],[0.4,0.3]], smooth: true } ] },
   " ": { adv: 2.5, strokes: [] },
   "*": { adv: 11, exit: false, strokes: [
-    // a figure with a real torso: shoulders above the hips, a neck gap under the ring head, one arm raised to lift the light.
-    // Points are pre-compensated for the family slant 0.16 (x = visual x - 0.16 y), so the sheared figure stands as a calm,
-    // symmetric A-frame with the torso carrying the lean; a slant change means recomputing them
-    { pts: [[0,1.2],[0.05,2.8],[0,4.3]], smooth: true, width: [2.4,3.0,2.5] },
-    { pts: [[-0.2,3.9],[-2.03,4.55],[-3.68,5.5],[-4.83,6.75]], smooth: true, width: [1.9,1.15,0.9] },
-    { pts: [[0.2,3.9],[1.95,4.75],[3.05,6.15],[3.5,7.85]], smooth: true, width: [1.9,1.15,0.9] },
-    { pts: [[-0.1,1.6],[-0.57,-0.2],[-1.06,-1.8],[-1.51,-3.35]], smooth: true, width: [2.7,1.7,1.25] },
-    { pts: [[0.1,1.6],[1.28,-0.2],[2.34,-1.8],[3.29,-3.35]], smooth: true, width: [2.7,1.7,1.25] },
-    { ring: [-0.55, 8.35, 1.75], w: 1.4 } ] },
+    // a figure with a real torso: shoulders above the hips, a neck gap under the ring head, arms raised in a V to lift the light.
+    // Drawn on the family slant (no pre-compensation), so the shear leans the whole figure forward like the script stems and the
+    // head sits on the spine line; shoulders slope, and arms and legs taper to a fine point like the Lu-star's
+    { pts: [[0,1.2],[0,2.8],[0,4.3]], smooth: true, width: [2.4,3.0,2.5] },
+    { pts: [[-0.18,3.95],[-2.25,5.0],[-3.98,6.45],[-5.2,8.1]], smooth: true, width: [1.6,1.1,0.75,0.5], fade: [1,1,1,0.9] },
+    { pts: [[0.22,3.95],[2.2,5.0],[3.83,6.35],[4.82,8.0]], smooth: true, width: [1.6,1.1,0.75,0.5], fade: [1,1,1,0.9] },
+    { pts: [[-0.11,1.3],[-0.81,-0.25],[-1.25,-1.9],[-1.45,-3.45]], smooth: true, width: [2.7,1.75,1.15,0.6], fade: [1,1,1,0.85] },
+    { pts: [[0.19,1.3],[1.39,-0.25],[2.45,-1.9],[3.40,-3.45]], smooth: true, width: [2.7,1.75,1.15,0.6], fade: [1,1,1,0.85] },
+    { ring: [0, 8.35, 1.75], w: 1.4 } ] },
   "★": { adv: 12, exit: false, strokes: [
-    // an even star with a slight stance: full triangular points that fade to a tip, legs 32° off vertical and 8% longer; a gentle clockwise sweep (a spinning glint)
-    { pts: [[0,2.6],[0.09,5.1],[0,7.6]], smooth: true, width: [4.0, 0.5], fade: [1, 1, 1, 0.75, 0.3] },
-    { pts: [[0,2.6],[2.45,3.3],[4.85,4.18]], smooth: true, width: [4.0, 0.5], fade: [1, 1, 1, 0.75, 0.3] },
-    { pts: [[0,2.6],[-2.43,3.42],[-4.85,4.18]], smooth: true, width: [4.0, 0.5], fade: [1, 1, 1, 0.75, 0.3] },
-    { pts: [[0,2.6],[1.36,0.26],[2.86,-1.98]], smooth: true, width: [4.0, 0.5], fade: [1, 1, 1, 0.75, 0.3] },
-    { pts: [[0,2.6],[-1.5,0.36],[-2.86,-1.98]], smooth: true, width: [4.0, 0.5], fade: [1, 1, 1, 0.75, 0.3] } ] },
+    // a brush-drawn star: five strokes pulled out of a thick core, each thinning to a fine flicked point; they all bow one way (a spinning glint, one hand).
+    // A slight stance: arms raised 30° (the left one higher, as the sweep lifts it), legs 33° off vertical, a little longer and heavier, the top point lighter; no head.
+    // Drawn on the family slant (0.12, on a slanted grid), so the top leans like the script's stems; roots 5% fuller and tips held firm to the end (fade 0.95), so each point ends in a run of dots, not dust
+    { pts: [[0,2.6],[0.19,4.46],[0.28,6.32],[0.31,7.87],[0.35,8.8]], smooth: true, width: [3.55, 2.22, 1.55, 1.13, 0.64, 0.22], fade: [1, 1, 1, 1, 0.95] },
+    { pts: [[0,2.6],[1.82,3.41],[3.59,4.31],[5.02,5.12],[5.89,5.6]], smooth: true, width: [3.78, 2.36, 1.65, 1.2, 0.68, 0.22], fade: [1, 1, 1, 1, 0.95] },
+    { pts: [[0,2.6],[-1.59,3.81],[-3.24,4.91],[-4.65,5.76],[-5.49,6.29]], smooth: true, width: [3.78, 2.36, 1.65, 1.2, 0.68, 0.22], fade: [1, 1, 1, 1, 0.95] },
+    { pts: [[0,2.6],[0.93,0.7],[1.97,-1.13],[2.89,-2.61],[3.44,-3.52]], smooth: true, width: [3.97, 2.48, 1.73, 1.26, 0.71, 0.22], fade: [1, 1, 1, 1, 0.95] },
+    { pts: [[0,2.6],[-1.36,0.98],[-2.61,-0.71],[-3.59,-2.17],[-4.19,-3.03]], smooth: true, width: [3.97, 2.48, 1.73, 1.26, 0.71, 0.22], fade: [1, 1, 1, 1, 0.95] } ] },
   "➰": { adv: 11, exit: false, strokes: [
-    // one endless line of light: a tall looped L foot (an open loop, so the heavy small size keeps its counter) and a P's bowl
-    // (its floor rises from the crossing the whole way round, like the Lp p: no dip, no corner); the stem lies over the foot
-    // crossing, the foot carrying one tangent through it, and the loop arms keep full weight (no thin arm);
-    // the bowl comes back on top and its roof runs down into the stem head (no seam)
-    { pts: [[2.2,8.0],[1.95,6.6],[1.85,4.6],[1.85,2.6],[2.0,0.4],[1.75,-1.9],[0.75,-3.4],[-0.95,-3.65],[-2.45,-2.65],[-2.4,-0.7],[-1.0,0.95],[0.6,1.65],[2.6,2.0],[4.6,2.25],[6.5,2.8],[7.95,4.0],[8.45,5.8],[7.8,7.7],[6.1,8.9],[4.1,9.25],[3.0,8.9],[2.4,8.3],[2.2,7.6],[2.1,6.8]],
+    // one endless line of light: a wide, low looped L foot (counter about 0.6x the bowl's, its arm leaving near-flat like a foot)
+    // and a P's bowl (its floor rises from the crossing the whole way round, like the Lp p: no dip, no corner); the stem lies over
+    // the foot crossing, the foot carrying one tangent through it; the family's pen contrast: heavy stem and bowl flank, light
+    // rising loop and under-arm (Symbol small keeps an even weight); the bowl comes back on top into the stem head (no seam)
+    { pts: [[2.2,8.0],[1.95,6.6],[1.85,4.6],[1.85,2.6],[2.0,0.4],[1.65,-1.55],[0.35,-3.3],[-1.6,-3.7],[-3.45,-2.65],[-3.6,-0.6],[-1.75,0.95],[0.45,1.6],[2.6,1.95],[4.6,2.25],[6.5,2.8],[7.95,4.0],[8.45,5.8],[7.8,7.7],[6.1,8.9],[4.1,9.25],[3.0,8.9],[2.4,8.3],[2.2,7.6],[2.1,6.8]],
       smooth: true, under: [7, 15],
-      width: [1.2,1.25,1.25,1.2,1.1,1.05,1.02,1.0,1.02,1.05,1.08,1.08,1.08,1.1,1.12,1.16,1.16,1.14,1.1,1.05,1.05,1.1] } ] },
+      width: [1.2,1.28,1.3,1.25,1.15,1.04,0.97,0.92,0.88,0.86,0.86,0.88,0.93,1.0,1.1,1.18,1.2,1.12,1.0,0.95,1.02,1.12] } ] },
 };
 
 // ============ parameter spec ============
@@ -230,6 +232,9 @@ const SPEC = [
     { k: "circleH",     l: "Letter height",   min: 0.4, max: 1.3, step: 0.01, d: 0.85 },
     { k: "wordGap",   l: "Gap between words", min: 0, max: 8, step: 0.1, d: 0 },
     { k: "circleBridge", l: "Join across the word gap", type: "check", d: false },
+    { k: "circleW",   l: "Widen letters along the ring", min: 0.6, max: 2, step: 0.01, d: 1 },
+    { k: "circleFan", l: "Stems follow the radii (else upright to the letter)", min: 0, max: 1, step: 0.01, d: 1 },
+    { k: "circleIn",  l: "Letters inside the ring (baseline outside)", type: "check", d: false },
     { k: "circleRot", l: "Rotate",           min: -180, max: 180, step: 1, d: 0 },
     { k: "circleCentre", l: "Centre on the ring (else on the ink)", type: "check", d: true },
   ]},
@@ -275,86 +280,137 @@ const SPEC = [
 const FAM = { grid: 0.36, soft: 0.34, dotMax: 0.47, gamma: 0.8, minDot: 0.08, slant: 0.16, wobble: 0.3, joinFade: 0.55 };
 const fam = (stroke, o, ref = 1, step = 1) => Object.assign({ stroke, spacing: +(stroke * ref * FAM.grid * step).toFixed(3), soft: +(stroke * ref * FAM.soft).toFixed(3),
   dotMax: FAM.dotMax, gamma: FAM.gamma, minDot: FAM.minDot, slant: FAM.slant, wobble: FAM.wobble, joinFade: FAM.joinFade }, o);
-// the word marks' hand (circles and Lp keep the default letters): one pen with the Lp's contrast, heavy downstrokes, thin
-// upturns and arch starts; stems bow slightly, alternating, as a hand draws them. Each join leaves a stem with a hook, dips,
-// and meets the next stem 1.1 above the baseline, so a dark notch opens under it and its fade travels through open space.
-// Spacing: about 1.4 of white between letters against counters of 2.1 to 2.3. The L lands with a tapered top (no hook: "1umen")
+// the word marks' hand, and Project circle's (Circle and Lp keep the default letters): a connected school cursive, refined. One pen with the Lp's
+// contrast: thin upstrokes, heavy downstrokes. Every letter is entered at its top (a cusp, or an overcurve on m and n), so each
+// join is a thin rising upstroke that fades on its way and the next letter starts again at full strength; round letters (o, c)
+// are entered over the top, the join climbing just outside their backs. Looped l, looped j, a true script e (a rising eye
+// stroke, never a bar), an r whose shoulder runs on at x-height into the o, a written t (upstroke to a peak, retraced down, a lifted bar)
 const HAND = {
-  "L": { kern: { "u": -1.3 }, joins: { "p": [[2.4,-0.32],[3.3,-0.1]], "u": [[1.9,0.05],[2.35,0.5]] },
-    strokes: [ { pts: [[0.25,6.9],[0.1,5.2],[0.05,3.4],[0,1.2],[0.3,0.35],[1.2,0],[7.6,0]], smooth: true, tail: true, width: [0.55,0.95,1.1,1.1,1.0,0.85,0.85] } ] },
-  "u": { adv: 5.0, entry: [0,1.1], joins: { "*": [[4.55,0.35]] }, strokes: [
-    { pts: [[0.1,4.4],[0,1.3],[0.9,0],[2.2,0],[3.1,1.3],[3.1,4.4]], smooth: true, width: [0.85,1.1,0.95,0.8,0.75,0.8] },
-    { pts: [[3.1,4.4],[3.04,2.6],[3.1,1.0],[3.4,0.25],[4.05,0.1]], smooth: true, tail: true, width: [0.85,1.05,1.1,0.85,0.65] } ] },
-  "m": { adv: 7.5, entry: [0,1.1], joins: { "e": [[6.5,0.15],[7.55,0.8]] }, strokes: [
-    { pts: [[0.1,4.4],[-0.06,2.2],[0,0]], smooth: true, width: [0.85,1.1,1.1] },
-    { pts: [[0,1.9],[0.35,3.5],[1.4,4.45],[2.45,4.1],[2.9,2.9],[2.9,0]], smooth: true, width: [0.7,0.8,0.95,1.05,1.1,1.1] },
-    { pts: [[2.9,1.9],[3.25,3.5],[4.3,4.45],[5.35,4.1],[5.8,2.9],[5.8,1.0],[6.05,0.25],[6.5,0.1]], smooth: true, tail: true, width: [0.7,0.8,0.95,1.05,1.1,1.1,0.85,0.6] } ] },
+  // l: a lead-in from the baseline, a teardrop loop leaning with the slant, the downstroke landing in an upturn
+  "L": { adv: 2.8, kern: { "u": 0 }, joins: {}, entry: null, strokes: [ { pts: [[-1.1,0.3],[-0.3,0.9],[0.8,2.3],[1.75,4.2],[2.2,5.9],[2.05,6.95],[1.45,7.35],[0.8,7.05],[0.4,6.0],[0.25,4.2],[0.25,2.2],[0.4,0.8],[0.85,0.1],[1.6,0.0],[2.3,0.3],[2.9,0.8]], smooth: true, tail: true,
+    width: [0.5,0.6,0.68,0.72,0.75,0.8,0.85,0.95,1.05,1.1,1.1,1.05,0.95,0.8,0.7,0.6] } ] },
+  "u": { adv: 5.0, entry: [0,4.4], joins: {}, strokes: [
+    { pts: [[0,4.4],[-0.05,2.6],[0.1,1.0],[0.6,0.1],[1.4,-0.02],[2.2,0.45],[2.65,1.6],[2.8,3.2],[2.85,4.45]], smooth: true, width: [1.0,1.1,1.1,1.0,0.85,0.75,0.7,0.7,0.75] },
+    { pts: [[2.85,4.45],[2.78,2.6],[2.75,1.0],[3.0,0.2],[3.6,0.05],[4.2,0.5]], smooth: true, tail: true, width: [0.85,1.05,1.1,0.95,0.75,0.6] } ] },
+  // m, n: an overcurve entry, arches springing from the stem
+  "m": { adv: 7.3, entry: [-0.45,3.5], joins: {}, strokes: [
+    { pts: [[-0.45,3.5],[-0.05,4.35],[0.2,4.0],[0.2,2.0],[0.15,0]], smooth: true, width: [0.6,0.8,1.0,1.1,1.1] },
+    { pts: [[0.2,2.2],[0.55,3.6],[1.35,4.45],[2.25,4.2],[2.7,3.0],[2.75,0]], smooth: true, width: [0.6,0.7,0.85,1.0,1.1,1.1] },
+    { pts: [[2.75,2.2],[3.1,3.6],[3.9,4.45],[4.8,4.2],[5.25,3.0],[5.3,1.0],[5.55,0.2],[6.15,0.05],[6.75,0.5]], smooth: true, tail: true, width: [0.6,0.7,0.85,1.0,1.1,1.1,0.9,0.7,0.6] } ] },
   // n: at the end of a word the tail is a tapering exit flick, mid-word it becomes the join
-  "n": { entry: [0,1.1], strokes: [ { pts: [[-0.06,4.4],[0.1,2.2],[0,0]], smooth: true, width: [0.85,1.1,1.1] },
-    { pts: [[0,1.9],[0.35,3.5],[1.4,4.45],[2.45,4.1],[2.9,2.9],[2.9,1.0],[3.2,0.25],[3.8,0.1],[4.4,0.5]], smooth: true, tail: true, width: [0.75,0.85,0.95,1.05,1.1,1.1,1.0,0.75,0.4] } ] },
-  // e: a script e, its eye entered by a thin rising diagonal (no flat bar), a heavy back, a tapering terminal into the next letter
-  "e": { adv: 5.35, entry: [0.25,1.6], exit: [3.3,0.6], strokes: [ { pts: [[0.25,1.6],[1.9,2.05],[3.4,2.6],[3.5,3.65],[2.4,4.45],[0.9,4.05],[0,2.45],[0.35,0.7],[1.75,0],[3.3,0.5]], smooth: true,
-    width: [0.7,0.7,0.8,0.95,1.05,1.1,1.1,0.95,0.8,0.6] } ] },
-  // project: the r rises from the P foot clear of its bowl; a drawn oval o (not a compass ring) entered and left through a top tie;
-  // a looped j whose return stroke climbs into the e; the c's top terminal lifts into a rising, thinning t crossbar
-  "P": { kern: { r: 1.0 }, strokes: [ { pts: [[0.25,0.05],[1.2,0.05],[2.3,0.2],[3.7,0.9],[4.2,2.3],[3.6,3.8],[2.1,4.4],[0.6,3.8],[0,2.3],[0,0],[0,-2.4]], smooth: true,
-    width: [0.7,0.72,0.78,0.88,1.0,1.05,0.95,0.9,1.05,1.1,0.95] } ] },
+  "n": { adv: 4.4, entry: [-0.45,3.5], joins: {}, strokes: [
+    { pts: [[-0.45,3.5],[-0.05,4.35],[0.2,4.0],[0.2,2.0],[0.15,0]], smooth: true, width: [0.6,0.8,1.0,1.1,1.1] },
+    { pts: [[0.2,2.2],[0.55,3.6],[1.4,4.45],[2.35,4.2],[2.8,3.0],[2.85,1.0],[3.15,0.2],[3.8,0.05],[4.4,0.45],[4.8,1.05]], smooth: true, tail: true,
+      width: [0.6,0.7,0.85,1.0,1.1,1.1,0.95,0.75,0.55,0.4], fade: [1,1,1,1,1,1,1,0.9,0.65] } ] },
+  // e: the eye is a rising stroke from the back, round over the top, a heavy back, a tapering upturn into the next letter
+  "e": { adv: 4.3, exit: null, entry: [0.25,1.5], joins: {}, strokes: [ { pts: [[0.25,1.5],[1.3,2.0],[2.45,2.75],[2.85,3.65],[2.45,4.4],[1.5,4.45],[0.55,3.7],[0.12,2.3],[0.3,0.75],[1.1,0.05],[2.2,0.05],[3.0,0.55],[3.6,1.1]], smooth: true, tail: true,
+    width: [0.6,0.65,0.75,0.85,0.9,1.0,1.1,1.1,1.05,0.9,0.75,0.65,0.55] } ] },
+  // p: a lead-in upstroke to a cusp, a straight stem hanging below, the bowl drawn from the stem and closed at its foot,
+  // where the pen turns and runs on along the bowl's floor into the join
+  "P": { adv: 4.3, kern: { r: 0.3 }, entry: [-1.2,0.3], exit: null, joins: { "*": [[1.8,-0.1],[3.3,0.4]] }, strokes: [
+    { pts: [[-1.2,0.3],[-0.5,1.3],[0.05,2.9],[0.35,4.6]], smooth: true, width: [0.5,0.6,0.7,0.8] },
+    { pts: [[0.35,4.6],[0.25,2.0],[0.15,-1.0],[0.1,-2.8]], smooth: true, width: [0.9,1.1,1.05,0.7] },
+    { pts: [[0.2,2.6],[0.8,3.95],[2.0,4.45],[3.1,4.0],[3.55,2.4],[3.0,0.8],[1.8,0.05],[0.6,0.25],[1.6,0.1]], smooth: true, tail: true, width: [0.6,0.7,0.8,0.95,1.1,1.05,0.9,0.8,0.8] } ] },
   " ": { adv: 2.2 },
-  "r": { joins: { "o": [[3.25,3.8]] }, strokes: [ { pts: [[0,0],[0,2.9],[0.45,3.95],[1.5,4.4],[2.5,4.0]], smooth: true, width: [1.05,0.95,0.8,0.75,0.75] } ] },
-  "o": { adv: 5.2, entry: [2.6,4.45], exit: [4.3,4.1], joins: { "j": [[5.05,3.85]] }, strokes: [ { pts: [[2.6,4.45],[1.2,4.15],[0.2,2.9],[0.15,1.2],[1.1,0.1],[2.6,0.05],[3.75,1.1],[3.95,2.8],[3.2,4.2],[2.3,4.4],[3.2,4.5],[4.3,4.1]], smooth: true,
+  // r: a stem entered at its top, the shoulder springing from it and running on at x-height into the o
+  "r": { adv: 3.3, exit: null, entry: [0.1,4.3], joins: { "o": [[3.6,4.0],[4.8,4.5]] }, strokes: [ { pts: [[0.1,4.3],[0.05,2.0],[0,0]], smooth: true, width: [0.9,1.1,1.1] },
+    { pts: [[0.05,2.4],[0.45,3.75],[1.3,4.45],[2.2,4.35],[2.9,4.0]], smooth: true, tail: true, width: [0.6,0.75,0.85,0.8,0.7] } ] },
+  // o: entered at the top, drawn round, a small tie at the top running on into the j
+  "o": { adv: 4.6, kern: { "j": 0.7 }, entry: [2.6,4.45], exit: [4.3,4.1], joins: {}, strokes: [ { pts: [[2.6,4.45],[1.2,4.15],[0.2,2.9],[0.15,1.2],[1.1,0.1],[2.6,0.05],[3.75,1.1],[3.95,2.8],[3.2,4.2],[2.3,4.4],[3.2,4.5],[4.3,4.1]], smooth: true,
     width: [0.75,0.85,1.05,1.1,0.95,0.8,0.8,0.95,0.95,0.8,0.75,0.7] } ] },
-  "j": { adv: 2.4, entry: [0,4.4], exit: [1.8,1.0], joins: {}, strokes: [ { pts: [[0,6.1]] }, { pts: [[0,4.4],[0,-0.4],[-0.2,-2.2],[-1.0,-3.0],[-1.95,-2.75],[-2.15,-1.8],[-1.4,-0.9],[-0.2,-0.3],[0.9,0.2],[1.8,1.0]], smooth: true, tail: true,
+  // j: a looped descender; the return stroke climbs through the stem at the baseline into the e; the dot is a slanted pen tick (a round one read as a period)
+  "j": { adv: 2.4, entry: [0,4.4], exit: [1.8,1.0], joins: {}, strokes: [ { pts: [[-0.05,5.85],[0.55,6.3]], smooth: true, width: [1.0,0.7] }, { pts: [[0,4.4],[0,-0.4],[-0.2,-2.2],[-1.0,-3.0],[-1.95,-2.75],[-2.15,-1.8],[-1.4,-0.9],[-0.2,-0.3],[0.9,0.2],[1.8,1.0]], smooth: true, tail: true,
     width: [0.85,1.1,1.05,0.9,0.8,0.75,0.7,0.7,0.7,0.65] } ] },
-  "c": { joins: { "t": [[3.55,4.05],[4.1,4.35]] }, strokes: [ { pts: [[3.2,0.7],[1.6,0],[0.4,0.8],[0.1,2.4],[0.9,4.0],[2.1,4.4],[2.9,3.9]], smooth: true, width: [0.7,0.8,1.0,1.1,0.95,0.8,0.75] } ] },
-  "t": { entry: [-0.4,4.45], strokes: [ { pts: [[0.9,6.0],[0.9,1.0],[1.25,0.2],[2.0,-0.02],[2.9,0.25],[3.6,0.85]], smooth: true, width: [1,1,1,0.85,0.6,0.3], fade: [1,1,1,1,0.75,0.35] },
-    { pts: [[-0.4,4.45],[1.0,4.6],[2.3,4.85]], smooth: true, width: [0.8,0.6] } ] } };
+  // c: entered over the top like the o, a round back, the foot rising into the t
+  "c": { adv: 4.0, exit: null, entry: [2.7,4.15], entryVia: [[-0.9,2.2],[-0.35,3.75],[0.9,4.5]], joins: {}, strokes: [ { pts: [[2.7,4.15],[2.0,4.45],[0.9,4.1],[0.15,2.7],[0.2,1.1],[1.0,0.1],[2.2,0.0],[3.0,0.5],[3.6,1.1]], smooth: true, tail: true,
+    width: [0.7,0.8,0.95,1.1,1.1,0.95,0.8,0.65,0.55] } ] },
+  // t: an upstroke to the peak, retraced down, a flick out; the bar written last as a rising flourish that tapers away
+  "t": { adv: 3.6, entry: [0.6,6.0], strokes: [ { pts: [[0.6,6.0],[0.5,3.0],[0.45,1.0],[0.8,0.15],[1.5,0.0],[2.3,0.35],[3.0,1.0]], smooth: true, tail: true, width: [0.85,1.1,1.1,0.95,0.75,0.55,0.4], fade: [1,1,1,1,0.9,0.6] },
+    { pts: [[-0.45,3.95],[0.8,4.2],[2.25,4.6],[3.4,5.05]], smooth: true, width: [0.5,0.95,0.8,0.3] } ] } };
 // two rows joined: the row bridge is the n's exit, so its arch ends on the baseline (no flick)
-const HAND_N_ROW = { entry: [0,1.1], strokes: [ HAND.n.strokes[0], { pts: [[0,1.9],[0.35,3.5],[1.4,4.45],[2.45,4.1],[2.9,2.9],[2.9,0]], smooth: true, width: [0.75,0.85,0.95,1.05,1.1,1.1] } ] };
+const HAND_N_ROW = { entry: [-0.45,3.5], strokes: [ HAND.n.strokes[0], { pts: [[0.2,2.2],[0.6,3.6],[1.5,4.45],[2.5,4.2],[3.0,3.0],[3.05,0]], smooth: true, width: [0.6,0.7,0.85,1.0,1.1,1.1] } ] };
 const PRESETS = {
   "Reference": {},
   "Softer edges": { soft: 0.7, gamma: 0.8 },
   "Hard edges": { soft: 0.1, gamma: 1 },
   "Blurred": { blur: 0.5, glow: 3, glowStr: 0.35 },
   "Scattered": { sizeJit: 0.35, posJit: 0.2 },
-  // Lumen centred over 12 o'clock, Project under 6 (a seal); the baselines form one true circle: the n leaves on a foot and its
-  // bridge runs along it under the P stem into the bowl (the Lp gesture), the t (short ascender, uphill bar) leaves from its foot
-  // and closes the ring into the L; both bridges fade mid-span and swell back in. Kerns clear P-r and o-j.
+  // Lumen centred over 12 o'clock, Project under 6, in the family hand (HAND, so its p has a lead-in and a hanging descender,
+  // never a D); the baselines form one true circle: the n's exit lands flat (no flick) and its bridge rides the ring into the
+  // p's lead-in, the t's bar (not its stem) sweeps down into the l's lead-in (entryVia in the l's own frame, so it holds at
+  // any gap), the stem foot a short flick so bar, stem and join never close into a box; both bridges fade mid-span and swell back in.
+  // The n-p bridge sags a touch inside the ring (as the Lp foot passes under); o-j opened so the squeezed j loop clears the o
   // glyphOver: this version's own letters, so the word marks keep theirs
-  "Project circle": fam(0.85, { circle: true, connect: true, circleCover: 0.955, wordGap: 1.8, circleBridge: true, circleH: 0.95, circleBend: 0.7, circleRot: -100, tracking: 0.5, joinFade: 0.45, wobble: 0,
-    glyphOver: {
-      "n": { strokes: [ { pts: [[0,4.4],[0,0]] }, { pts: [[0,1.9],[0.35,3.5],[1.4,4.45],[2.45,4.1],[2.9,2.9],[2.9,0.9],[3.05,0.2],[3.6,-0.05],[4.3,0]], smooth: true, tail: true } ] },
-      "P": { kern: { "r": 0.9 }, exit: [3.7,0.9], joins: { "*": [[4.5,0.35]] }, entryVia: [[-1.6,0.2],[-0.4,0.35]], strokes: [ { pts: [[1.0,0.1],[2.3,0.2],[3.7,0.9],[4.2,2.3],[3.6,3.8],[2.1,4.4],[0.6,3.8],[0,2.3],[0,0],[0,-2.9]], smooth: true } ] },
-      "j": { exit: [1.6,0.5], joins: {}, strokes: [ { pts: [[0,4.4],[0,-0.6],[-0.25,-2.3],[-1.0,-3.0],[-1.75,-2.6],[-1.55,-1.7],[-0.45,-1.15],[0.9,-0.5],[1.6,0.5]], smooth: true, tail: true }, { pts: [[0,5.8]] } ] },
-      "t": { strokes: [ { pts: [[0.0,4.3],[2.8,4.5]] }, { pts: [[0.9,5.5],[0.9,1.1],[1.3,0.2],[2.2,0],[3.6,0.1]], smooth: true, tail: true } ] },
-      "o": { kern: { "j": 1.0 } } } }),
-  // lumen alone: the five letters, bent with the ring, go all the way round it; the n joins straight back into the l, no bare ring.
-  // Circles keep their stems unbent (wobble 0): the ring swings a bent stem out into a ray
-  // Its own l (a short looped cursive l: the monogram L would swing out as a ray) and the Project circle's n, whose tail peels off along the ring;
-  // word-mark proportions (x-height about 5 strokes, as the Project circle; a wide tracking so the taller letters do not fan out) and the family join fade
-  "Snake circle": fam(0.8, { circle: true, connect: true, circleCover: 1, circleH: 0.9, circleBend: 0.8, tracking: 2.5, circleRot: -4, wobble: 0,
-    glyphOver: {
-      "L": { adv: 2.6, kern: {}, joins: {}, entry: null, strokes: [ { pts: [[-0.6,0.25],[0.4,1.6],[1.2,3.4],[1.45,5.0],[1.15,6.0],[0.6,6.0],[0.25,4.9],[0.15,3.0],[0.3,1.0],[0.9,0.1],[1.8,0.1]], smooth: true } ] },
-      "n": { strokes: [ { pts: [[0,4.4],[0,0]] }, { pts: [[0,1.9],[0.35,3.5],[1.4,4.45],[2.45,4.1],[2.9,2.9],[2.9,0.9],[3.35,0.12],[4.3,0]], smooth: true, tail: true } ] } } }),
-  "Lu-man": fam(0.8, { connect: false }, 1.45),
-  "Lu-star": fam(0.75, { connect: false, slant: 0, fit: 1.25 }, 1.3),   // a star is not handwriting: no shear, so the five points stay even; the hand lives in the arm sweep
+  "Project circle": fam(0.85, { circle: true, connect: true, circleCover: 0.935, wordGap: 1.0, circleBridge: true, circleH: 0.95, circleBend: 0.7, circleRot: -100, tracking: 0.5, joinFade: 0.45, joinThin: 0.2, wobble: 0,
+    glyphOver: Object.assign({}, HAND, {
+      "L": Object.assign({}, HAND.L, { entryVia: [[-3.4,2.4],[-2.2,0.9]] }),
+      "o": Object.assign({}, HAND.o, { kern: { j: 1.4 } }),
+      "j": Object.assign({}, HAND.j, { kern: { e: 0.3 } }),
+      "n": { entry: [-0.45,3.5], joins: { "P": [[5.6,-0.35]] }, strokes: [ HAND.n.strokes[0], { pts: [[0.2,2.2],[0.55,3.6],[1.4,4.45],[2.35,4.2],[2.8,3.0],[2.85,1.0],[3.15,0.2],[3.8,0.0],[4.4,0.0]], smooth: true, tail: true, width: [0.6,0.7,0.85,1.0,1.1,1.1,0.95,0.8,0.7] } ] },
+      "t": { joins: {}, strokes: [ { pts: [[0.6,6.0],[0.5,3.0],[0.45,1.0],[0.8,0.15],[1.5,0.0],[2.1,0.3]], smooth: true, width: [0.85,1.1,1.1,0.95,0.7,0.45], fade: [1,1,1,1,0.85,0.5] },
+        { pts: [[-0.45,3.95],[0.8,4.2],[2.25,4.55],[3.6,4.7],[4.6,4.5]], smooth: true, tail: true, width: [0.5,0.95,0.85,0.75,0.7] } ] } }) }),
+  // lumen alone: the five letters stand inside the ring (baseline outside, so the silhouette is the baselines' circle and
+  // the l reaches into the counter), reading anticlockwise with the m upright under 6 o'clock; the n joins back into the l, no bare ring.
+  // Bent but not fanned (circleFan 0.35): each letter turns with the ring like a hand writing round it, its stems near its own
+  // upright, so a wide m does not splay into spokes. Its own m, n, e (the word-mark hand as it stood for the circle, arches
+  // springing from the stem tops: no spur when rotated), a narrow u (a wide one reads as an E on its side), a plain l (a loop
+  // hung upside down read as a drop); kerns pull u and e in towards the upright m, and the joins thin a little so the letters,
+  // not a ring line, carry the circle
+  "Snake circle": fam(0.8, { circle: true, circleIn: true, connect: true, circleCover: 1, circleH: 0.85, circleW: 1.1, circleBend: 1, circleFan: 0.35, tracking: 4.7, circleRot: -4, joinThin: 0.25, wobble: 0,
+    glyphOver: Object.assign({}, HAND, {
+      "L": { adv: 2.4, kern: {}, joins: {}, entry: [0.06,1.1], strokes: [ { pts: [[0.25,6.2],[0.08,3.4],[0.08,1.0],[0.5,0.15],[1.4,0.05]], smooth: true, width: [0.5,0.95,1.1,1.0,0.85] } ] },
+      "m": { adv: 7.5, entry: [0,1.1], kern: { "e": -1.0 }, joins: { "e": [[6.5,0.15],[7.55,0.8]] }, strokes: [ { pts: [[0.1,4.4],[-0.06,2.2],[0,0]], smooth: true, width: [0.85,1.1,1.1] },
+        { pts: [[0,3.0],[0.4,4.05],[1.4,4.45],[2.45,4.1],[2.9,2.9],[2.9,0]], smooth: true, width: [0.7,0.8,0.95,1.05,1.1,1.1] },
+        { pts: [[2.9,3.0],[3.3,4.05],[4.3,4.45],[5.35,4.1],[5.8,2.9],[5.8,1.0],[6.05,0.25],[6.5,0.1]], smooth: true, tail: true, width: [0.7,0.8,0.95,1.05,1.1,1.1,0.85,0.6] } ] },
+      "u": { adv: 4.3, kern: { "m": -1.4 }, entry: [0,1.1], joins: { "*": [[3.9,0.35]] }, strokes: [
+        { pts: [[0.1,4.4],[0,1.4],[0.65,0.05],[1.85,0.05],[2.5,1.4],[2.5,4.4]], smooth: true, width: [0.85,1.1,0.95,0.8,0.75,0.8] },
+        { pts: [[2.5,4.4],[2.45,2.6],[2.5,1.0],[2.8,0.25],[3.4,0.1]], smooth: true, tail: true, width: [0.85,1.05,1.1,0.85,0.65] } ] },
+      "e": { adv: 5.35, kern: { "n": -1.6 }, entry: [0.25,1.6], exit: [3.3,0.6], strokes: [ { pts: [[0.25,1.6],[1.9,2.05],[3.4,2.6],[3.5,3.65],[2.4,4.45],[0.9,4.05],[0,2.45],[0.35,0.7],[1.75,0],[3.3,0.5]], smooth: true,
+        width: [0.7,0.7,0.8,0.95,1.05,1.1,1.1,0.95,0.8,0.6] } ] },
+      "n": { entry: [0,1.1], strokes: [ { pts: [[-0.06,4.4],[0.1,2.2],[0,0]], smooth: true, width: [0.85,1.1,1.1] },
+        { pts: [[0,3.0],[0.4,4.05],[1.4,4.45],[2.45,4.1],[2.9,2.9],[2.9,0.9],[3.35,0.12],[4.3,0]], smooth: true, tail: true, width: [0.75,0.85,0.95,1.05,1.1,1.1,0.9,0.75] } ] } }) }),
+  "Lu-man": fam(0.8, { connect: false, minDot: 0.11, gridSlant: true }, 1.2),
+  "Lu-star": fam(0.75, { connect: false, minDot: 0.11, slant: 0.12, gridSlant: true, fit: 1.25 }, 1.3),   // minDot a step up drops the stray specks past the tips; a star drawn by the family hand: a lighter shear than the script so the five points stay even, the grid slanted with it (as Symbol)
   // the Lp monogram (favicon / avatar): the family's slant and contrast, a soft one-sided cast shadow at the under-pass.
-  // Its L sits a little wider (an open channel, a longer foot before the crossing) with the p's pen contrast (stem 1.12, foot thinning to 0.86 into the bowl); the word marks keep a monoline l
-  "Monogram": fam(1.1, { connect: true, shadowW: 0.55, shadowStr: 0.65, shadowSoft: 1.35, shadowDx: 0.22, shadowDy: 0.3, lift: 1.05, pad: 1.1,
-    glyphOver: { "L": { adv: 3.55, joins: { "p": [[2.6,-0.28],[3.55,-0.1]] }, strokes: [ { pts: [[0.2,6.9],[0.05,3.4],[0,1.2],[0.3,0.35],[1.2,0],[7.6,0]], smooth: true, tail: true, width: [1.0,1.1,1.12,1.04,0.86,0.86] } ] } } }),
+  // Its L sits a little wider (an open channel, a longer foot before the crossing) with the p's pen contrast (stem 1.12, foot thinning to 0.86 into the bowl); the word marks keep a monoline l.
+  // Slanted grid as Symbol (gridX 0.2 and adv 3.95 put both stems on one dot column); a pen entry at the L top; the foot sags into the
+  // crossing and fades only lightly (joinFade 0.3), the shadow cast to the bowl side, and the bowl starts past it, so the dip is one-sided (over/under, not a plus)
+  "Monogram": fam(1.1, { connect: true, gridSlant: true, gridX: 0.2, joinFade: 0.3, shadowW: 0.65, shadowStr: 0.85, shadowSoft: 1.35, shadowDx: 0.35, shadowDy: 0.3, lift: 1.05, pad: 1.1,
+    glyphOver: { "L": { adv: 3.95, joins: { "p": [[2.6,-0.38],[3.95,-0.22]] }, strokes: [ { pts: [[0.3,7.05],[0.14,6.6],[0.04,3.4],[0,1.2],[0.3,0.35],[1.2,0],[7.6,0]], smooth: true, tail: true, width: [0.7,0.95,1.08,1.12,1.04,0.86,0.78] } ] } } }),
   // the Monogram's under-pass in stroke units (width 0.5 stroke, one-sided soft cast, top lift), so the family has one depth language
-  "Symbol": fam(1.3, { connect: false, gridSlant: true, shadowW: 0.65, shadowStr: 0.65, shadowSoft: 1.35, shadowDx: 0.22, shadowDy: 0.3, lift: 1.05, pad: 1 }, 1.1),
+  // minDot a step up (as Lu-star) and rows offset a quarter pitch (gridY) so no ruled speck row clips the round top or the loop foot;
+  // the cast falls nearly straight down (shadowDx 0.12) so the under-arm dents on both sides of the stem
+  "Symbol": fam(1.3, { connect: false, gridSlant: true, minDot: 0.11, gridY: 0.25, shadowW: 0.75, shadowStr: 0.75, shadowSoft: 1.35, shadowDx: 0.12, shadowDy: 0.3, lift: 1.05, pad: 1 }, 1.1),
   // the symbol for favicons and app icons: an optical size of Symbol, same silhouette on a coarser screen (about 17 dots across, 2 px
-  // pitch at 48 px), a heavier stroke in two deliberate dot sizes so it stays bright at 32-64 px, the stem on one slanted dot column
-  // (gridX centres it), and a light shadow so the loop dents rather than breaks where it passes under the stem; pad 0.45 for icon exports
-  "Symbol small": fam(1.85, { connect: false, gridSlant: true, levels: 3, minDot: 0.28, gridX: 0.45, shadowW: 0.8, shadowStr: 0.45, shadowSoft: 1.4, shadowDy: 0.1, pad: 0.45 }, 1.1),
+  // pitch at 48 px), a pen a step heavier than Symbol (light enough that both counters stay open), two deliberate dot sizes (a core
+  // and one rim ring, levelCut/levelLo) so it stays bright at 32-64 px, the stem on one slanted dot column (gridX centres it), and
+  // Symbol's under-pass shadow, so the loop dents (a seam of rim dots) where it passes under the stem; pad 0.45 for icon exports
+  "Symbol small": fam(1.55, { connect: false, gridSlant: true, levels: 2, levelLo: 0.6, levelCut: 0.75, minDot: 0.2, gridX: 0.45, shadowW: 0.75, shadowStr: 0.7, shadowSoft: 1.2, shadowDx: 0.22, shadowDy: 0.3, lift: 1.05, pad: 0.45, fit: 1.06,
+    // an even weight: on this screen the pen-contrast loop thins to one dot row
+    glyphOver: { "➰": Object.assign({}, DEFAULT_GLYPHS["➰"], { strokes: [Object.assign({}, DEFAULT_GLYPHS["➰"].strokes[0], { width: [1.2,1.25,1.25,1.2,1.1,1.05,1.02,1.0,1.02,1.05,1.08,1.08,1.08,1.1,1.12,1.16,1.16,1.14,1.1,1.05,1.05,1.1] })] }) } }, 1.1),
   // the one-line lockup holds its dots down to about 240 px wide; below that use Lumen / Project clean or the Lp monogram (a coarser screen would break the family pitch)
-  "Word mark": fam(0.8, { connect: true, tracking: 0.55, joinFade: 0.72, joinThin: 0.45, glyphOver: HAND }),
-  // Lumen for 128 px and under, a sibling like Symbol small: a heavier pen on a coarser screen (about 2.2 dots across the
-  // stroke, a 3 px pitch at 128 px), with lighter join fades so the joins survive the smallest-dot cut
-  "Word mark small": fam(1.15, { connect: true, tracking: 0.6, joinFade: 0.3, joinThin: 0.2, minDot: 0.2, glyphOver: HAND }, 1, 1.35),
-  "Stacked": fam(0.8, { connect: true, tracking: 0.55, joinFade: 0.72, joinThin: 0.45, rowGap: 10.0, rowAlign: "left", rowIndent: 0.8, rowBridge: true, glyphOver: Object.assign({}, HAND, { "n": HAND_N_ROW, "P": { kern: { r: 0.85 } } }) }),   // the row bridge is the n's exit: no flick
+  "Word mark": fam(0.8, { connect: true, tracking: 0.55, joinFade: 0.5, joinThin: 0.3, glyphOver: HAND }),
+  // the one-line Lumen Project: a long line sits small in a square frame, so its pen is a step heavier (the screen follows the
+  // pen, so the dot pitch stays the family's) and the letters set a touch tighter; a wider word space keeps the n's exit and the p's lead-in apart.
+  // fitW: in render mode the line runs nearer the frame edge (thirteen letters are width-bound in a square)
+  "Word mark long": fam(0.98, { connect: true, tracking: 0.4, fitW: 0.95, joinFade: 0.5, joinThin: 0.3, glyphOver: Object.assign({}, HAND, { " ": { adv: 2.8 } }) }),
+  // Lumen for 128 px and under, a sibling like Symbol small: a heavier pen on a coarser screen (about 2.3 dots across the
+  // stroke), with lighter join fades so the joins survive the smallest-dot cut; the grid slanted (as Symbol small) and centred
+  // on the stems (gridX) so no stem stair-steps, rows offset (gridY) so the baseline lands on one dot row, minDot a step up so
+  // no fringe row hangs under the bowls, and a touch more tracking so the joins rise instead of running as a rail
+  "Word mark small": fam(1.15, { connect: true, tracking: 0.8, joinFade: 0.3, joinThin: 0.2, minDot: 0.26, gridSlant: true, gridX: 0.5, gridY: 0.4, glyphOver: Object.assign({}, HAND, {
+    // at this pen the l's loop would fill in: an unlooped l, a lead-in climbing into a tall stem with a solid tapered top
+    "L": { adv: 2.6, kern: { "u": 0 }, joins: {}, entry: null, strokes: [ { pts: [[0.8,7.2],[0.5,4.6],[0.35,2.2],[0.45,0.7],[0.95,0.05],[1.7,0.05],[2.4,0.5],[3.0,1.0]], smooth: true, tail: true, width: [0.9,1.05,1.1,1.05,0.9,0.75,0.65,0.55] },
+      { pts: [[-1.0,0.3],[-0.25,0.95],[0.42,2.3]], smooth: true, width: [0.5,0.65,0.85] } ] },
+    // a flatter, lower eye stroke and a wider eye, so the counter opens on this screen (it read as a z or a 2)
+    "e": { adv: 4.75, exit: null, entry: [0.2,1.5], joins: {}, strokes: [ { pts: [[0.2,1.5],[1.5,1.65],[2.8,2.0],[3.5,2.9],[3.25,4.0],[2.05,4.55],[0.85,4.15],[0.15,2.8],[0.2,1.0],[0.95,0.08],[2.15,0.0],[3.1,0.45],[3.8,1.1]], smooth: true, tail: true,
+      width: [0.6,0.68,0.8,0.95,1.0,1.0,1.1,1.1,1.05,0.9,0.75,0.65,0.55] } ] },
+    // a shorter exit flick that stays above the smallest-dot cut, so it ends in a solid taper
+    "n": Object.assign({}, HAND.n, { strokes: [ HAND.n.strokes[0], Object.assign({}, HAND.n.strokes[1], { pts: [[0.2,2.2],[0.55,3.6],[1.4,4.45],[2.35,4.2],[2.8,3.0],[2.85,1.0],[3.15,0.2],[3.8,0.05],[4.5,0.6]],
+      width: [0.6,0.7,0.85,1.0,1.1,1.1,0.95,0.8,0.65], fade: [1,1,1,1,1,1,1,1] }) ] }) }) }, 1, 1.2),
+  "Stacked": fam(0.8, { connect: true, tracking: 0.55, joinFade: 0.5, joinThin: 0.3, rowGap: 10.5, rowAlign: "left", rowIndent: 7.5, rowBridge: true, glyphOver: Object.assign({}, HAND, { "n": HAND_N_ROW, "P": Object.assign({}, HAND.P, { strokes: HAND.P.strokes.slice(1) }) }) }),   // the row bridge is the n's exit (no flick) and the p's lead-in (none of its own)
   // the rows set tight with no row join: the most legible stack at small sizes
-  "Stacked clean": fam(0.8, { connect: true, tracking: 0.55, joinFade: 0.72, joinThin: 0.45, rowGap: 9.5, rowAlign: "left", rowIndent: 0, rowBridge: false, glyphOver: HAND }),
+  "Stacked clean": fam(0.8, { connect: true, tracking: 0.55, joinFade: 0.5, joinThin: 0.3, rowGap: 9.5, rowAlign: "left", rowIndent: 0, rowBridge: false, glyphOver: HAND }),
   "Geometric": { wobble: 0, connect: false },
   "Deep shadow": { shadowW: 1.4, shadowStr: 1, shadowSoft: 0.9, shadowDy: 0.35, lift: 1.08 },
   "Flat": { shadowW: 0, shadowStr: 0, lift: 1 },
@@ -362,7 +418,7 @@ const PRESETS = {
 };
 const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d));
 const presetOf = n => JSON.parse(JSON.stringify(PRESETS[n] || {}));   // a copy: a version's glyphOver can be edited on the canvas
-const KEY = "lumen-logo-lab-v46", GKEY = "lumen-logo-lab-glyphs-v37", TKEY = "lumen-logo-lab-text-v2";
+const KEY = "lumen-logo-lab-v55", GKEY = "lumen-logo-lab-glyphs-v41", TKEY = "lumen-logo-lab-text-v2";
 let P = Object.assign({}, DEFAULTS);
 let G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS));
 let TEXT = "Lp";
@@ -510,7 +566,8 @@ function wob(pts, amp, key) {
   });
 }
 // the slant leans the drawn letter: around a circle the letters are squashed to circleH, so the shear is too (same angle)
-const slantOf = p => p.slant * (p.circle ? (p.circleH || 1) : 1);
+// widened along the ring (circleW) the shear is narrowed by the same factor, so the slant reads the same as in the word marks
+const slantOf = p => p.slant * (p.circle ? (p.circleH || 1) / (p.circleW || 1) : 1);
 function glyphOf(ch) { return G[ch] || G[ch.toLowerCase()]; }
 function entryOf(g) { if (g.entry) return g.entry; const st = g.strokes.find(s => s.pts); return st ? st.pts[0] : null; }
 function exitOf(g) { if (g.exit === false) return null; if (g.exit) return g.exit; const st = [...g.strokes].reverse().find(s => s.pts); return st ? st.pts[st.pts.length - 1] : null; }
@@ -521,10 +578,11 @@ function joinPts(a, b) { // the pen travels on to the next letter: flat along th
 }
 // around a circle: the join rides the baseline (a constant radius, so the ring stays round) and climbs only at its ends
 function joinPtsC(a, b) { const dx = b[0] - a[0], k = Math.min(1.8, dx * 0.3); return [a, [a[0] + k * 0.7, a[1] * 0.25], [a[0] + k * 1.4, 0], [b[0] - k * 1.4, 0], [b[0] - k * 0.8, b[1] * 0.35], b]; }
-// the row join: one swash, no rightward hook (that read as "lumen,"): the n's leg runs on below the baseline, turns left
-// in a soft round curl at yb, bows slightly up under the row (clear of the j dot), then drops into b (the next row's first
-// letter's roof) heading left like that roof. It stays about two dot pitches wide (w) and fades only partly (bridge: 0.55 of joinFade)
-const BRIDGE = { drop: 1.6, w: [1, 0.92, 0.82, 0.74, 0.68, 0.66, 0.66, 0.7, 0.8], via: (a, b, yb) => [[a[0] - 0.08, a[1] - 0.55], [a[0] - 0.5, yb + 0.35], [a[0] - 1.4, yb + 0.02], [a[0] - 3.2, yb + 0.12], [a[0] + (b[0] - a[0]) * 0.42, yb - 0.05], [b[0] + 5.2, b[1] + 2.0], [b[0] + 1.8, b[1] + 0.55]] };
+// the row join: one drawn stroke, no hook and no underline: the next row is set in (rowIndent) so the pen travels down-left on a
+// single diagonal. The n's leg runs on below the baseline, bends into the diagonal and lands on b, the top of the next row's first
+// stroke (the p stem), straightening into it. The pen thins as it travels (w) and fades only partly (0.55 of joinFade)
+const BRIDGE = { drop: 1.3, w: [1, 0.9, 0.75, 0.62, 0.55, 0.58, 0.7], via: (a, b, yb) => { const p = [a[0] - 1.15, yb], q = [b[0] + 1.5, b[1] + 1.3];
+  return [[a[0] - 0.12, a[1] - 0.6], p, [p[0] + (q[0] - p[0]) * 0.5, p[1] + (q[1] - p[1]) * 0.5 - 0.45], q]; } };
 // a new row: a newline, "|" or " / " typed in the text
 const ROWBREAK = /\s*(?:\n|\||\s\/\s)\s*/;
 function layout(p) {
@@ -552,14 +610,22 @@ function layout(p) {
   x = rowX[0];
   let total = 0; chars.forEach((ch, k) => total += advOf(ch, chars[k + 1]) + p.tracking);
   const W = total / (p.circleCover || 1);
-  const R = W / (2 * Math.PI), H = p.circleH || 1, rot = (p.circleRot || 0) * Math.PI / 180, bend = p.circleBend || 0;
-  const ang = u => Math.PI / 2 + rot - (u - total / 2 + p.tracking / 2) / R;
-  const warp = q => { const th = ang(q[0]), r = R + q[1] * H; return [r * Math.cos(th), r * Math.sin(th)]; };
+  // sx: letters widened along the ring; io: -1 stands them inside it (baseline outside, the word centred under 6 o'clock,
+  // reading anticlockwise so it is not mirrored), the ring's counter framed by the letters
+  const sx = circ ? (p.circleW || 1) : 1, io = circ && p.circleIn ? -1 : 1;
+  const R = W * sx / (2 * Math.PI), H = p.circleH || 1, rot = (p.circleRot || 0) * Math.PI / 180, bend = p.circleBend || 0;
+  const ang = u => io * Math.PI / 2 + rot - io * (u - total / 2 + p.tracking / 2) * sx / R;
+  const warp = q => { const th = ang(q[0]), r = R + io * q[1] * H; return [r * Math.cos(th), r * Math.sin(th)]; };
   // rigid frame of a letter centred at u: the letter is rotated onto the ring, not bent
   const rigid = u => { const th = ang(u), c = Math.cos(th), sn = Math.sin(th);
-    return { f: q => { const d = q[0] - u, h = q[1] * H; return [(R + h) * c + d * sn, (R + h) * sn - d * c]; },
-             inv: (x, y) => { const h = x * c + y * sn - R, d = x * sn - y * c; return [u + d, h / H]; } }; };
-  const frame = u => { const r = rigid(u); return { f: q => { const a = r.f(q); if (!bend) return a; const b = warp(q); return [a[0] + (b[0] - a[0]) * bend, a[1] + (b[1] - a[1]) * bend]; }, inv: r.inv }; };
+    return { f: q => { const d = io * (q[0] - u) * sx, h = R + io * q[1] * H; return [h * c + d * sn, h * sn - d * c]; },
+             inv: (x, y) => { const h = io * (x * c + y * sn - R), d = io * (x * sn - y * c); return [u + d / sx, h / H]; } }; };
+  // bent: the baseline follows the ring; fan < 1 keeps the stems nearer the letter's own upright (a hand writing round a
+  // circle turns the letter, not each stem), so a wide letter does not splay into spokes
+  const fan = p.circleFan ?? 1;
+  const warpU = (q, u) => { if (fan >= 1) return warp(q); const t = ang(q[0]), tu = ang(u), dx = Math.cos(t) * fan + Math.cos(tu) * (1 - fan), dy = Math.sin(t) * fan + Math.sin(tu) * (1 - fan), l = Math.hypot(dx, dy), h = io * q[1] * H;
+    return [R * Math.cos(t) + h * dx / l, R * Math.sin(t) + h * dy / l]; };
+  const frame = u => { const r = rigid(u); return { f: q => { const a = r.f(q); if (!bend) return a; const b = warpU(q, u); return [a[0] + (b[0] - a[0]) * bend, a[1] + (b[1] - a[1]) * bend]; }, inv: r.inv }; };
   const resample = poly => { // returns points plus each point's fractional index in the source polyline
     const out = [poly[0]], idx = [0];
     for (let i = 1; i < poly.length; i++) {
@@ -757,7 +823,7 @@ function dots(p) {
       const jit = 1 + (hash(i, j, p.seed + 23) - 0.5) * 2 * p.sizeJit;
       let r = rMax * best * jit;
       if (r < rMin || r <= 0.0005) continue;
-      if (p.levels) r = rMax * Math.max(0.75, Math.ceil(best * p.levels) / p.levels);   // a few deliberate dot sizes (pixel-grid icons); the cut stays on the true size
+      if (p.levels) r = rMax * (p.levelCut ? (best >= p.levelCut ? 1 : p.levelLo) : Math.max(0.75, Math.ceil(best * p.levels) / p.levels));   // a few deliberate dot sizes (pixel-grid icons); levelCut: a two-band core and rim ring (levelLo); the cut stays on the true size
       out.push({ x, y, r });
     }
   }
@@ -773,7 +839,7 @@ function render(ctx, w, h, p, guides) {
   const { dots: D, bounds: B, inst } = dots(p);
   let k = Math.min(w / (B.x1 - B.x0), h / (B.y1 - B.y0));
   // render mode: every version at one optical size, its ink set by area and capped by the frame, not by its padding
-  if (RENDER) { const iw = B.x1 - B.x0 - 2 * p.pad, ih = B.y1 - B.y0 - 2 * p.pad; k = Math.min(0.88 * w / iw, 0.88 * h / ih, (p.circle ? 0.84 : 0.7) * (p.fit || 1) * Math.sqrt(w * h / (iw * ih))); }   // fit: a sparse mark (the star) sits a step larger to match the others' optical size
+  if (RENDER) { const iw = B.x1 - B.x0 - 2 * p.pad, ih = B.y1 - B.y0 - 2 * p.pad; k = Math.min((p.fitW || 0.88) * w / iw, 0.88 * h / ih, (p.circle ? 0.84 : 0.7) * (p.fit || 1) * Math.sqrt(w * h / (iw * ih))); }   // fit: a sparse mark (the star) sits a step larger to match the others' optical size
   const cx = w / 2 - ((B.x0 + B.x1) / 2) * k, cy = h / 2 + ((B.y0 + B.y1) / 2) * k;
   view = { k, cx, cy, inst };
   ctx.clearRect(0, 0, w, h);
