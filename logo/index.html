@@ -132,8 +132,8 @@ textarea {
 // the last stroke; exit:false = no join out of this letter). tail:true marks a stroke that is replaced by the join.
 const DEFAULT_GLYPHS = {
   "L": { adv: 3.3, strokes: [ { pts: [[0.2,6.9],[0.05,3.4],[0,1.2],[0.3,0.35],[1.2,0],[7.6,0]], smooth: true, tail: true } ] },
-  "p": { adv: 4.6, entry: [2.1,0.2], exit: [0,-2.4], strokes: [ { pts: [[0,2.3],[-0.05,0],[0,-2.4]], smooth: true }, { ring: [2.1, 2.3, 2.1] } ] },
-  "P": { adv: 4.6, entry: [2.1,3.0], exit: [0,0], strokes: [ { pts: [[0,7.2],[0,0]] }, { ring: [2.1, 5.1, 2.1] } ] },
+  "p": { adv: 4.6, entry: [1.0,0.1], exit: false, strokes: [ { pts: [[1.0,0.1],[2.3,0.2],[3.7,0.9],[4.2,2.3],[3.6,3.8],[2.1,4.4],[0.6,3.8],[0,2.3],[0,0],[0,-2.4]], smooth: true } ] },
+  "P": { adv: 4.6, entry: [1.0,0.1], exit: false, strokes: [ { pts: [[1.0,0.1],[2.3,0.2],[3.7,0.9],[4.2,2.3],[3.6,3.8],[2.1,4.4],[0.6,3.8],[0,2.3],[0,0],[0,-2.4]], smooth: true } ] },
   "u": { adv: 4.6, strokes: [ { pts: [[0,4.4],[0,1.3],[0.9,0],[2.2,0],[3.1,1.3],[3.1,4.4]], smooth: true }, { pts: [[3.1,4.4],[3.1,0]] } ] },
   "m": { adv: 7.3, strokes: [ { pts: [[0,4.4],[0,0]] },
                                { pts: [[0,2.5],[0.6,4.2],[1.7,4.4],[2.7,3.6],[2.9,2.4],[2.9,0]], smooth: true },
@@ -209,7 +209,7 @@ const PRESETS = {
   "Inverted": { fg: "#000000", bg: "#ffffff" },
 };
 const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d));
-const KEY = "lumen-logo-lab-v10", GKEY = "lumen-logo-lab-glyphs-v11", TKEY = "lumen-logo-lab-text-v2";
+const KEY = "lumen-logo-lab-v10", GKEY = "lumen-logo-lab-glyphs-v14", TKEY = "lumen-logo-lab-text-v2";
 let P = Object.assign({}, DEFAULTS);
 let G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS));
 let TEXT = "Lp";
