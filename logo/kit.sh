@@ -12,7 +12,8 @@ typeset -A names=(
   "Lp" lumen-lp  "Lumen" lumen-wordmark  "Lumen small" lumen-wordmark-small  "Lumen Project" lumen-project-wordmark
   "Lumen / Project" lumen-project-stacked-step  "Lumen / Project swash" lumen-project-stacked-swash  "Lumen / Project clean" lumen-project-stacked
   "Circle" lumen-circle  "Project circle" lumen-project-circle  "Lu-man" lumen-lu-man  "Lu-star" lumen-lu-star
-  "Symbol" lumen-symbol  "Symbol small" lumen-symbol-small  "Symbol fine" lumen-symbol-fine  "lp ring" lumen-lp-ring  "lp wreath" lumen-lp-wreath )
+  "Symbol" lumen-symbol  "Symbol small" lumen-symbol-small  "Symbol fine" lumen-symbol-fine  "lp ring" lumen-lp-ring  "lp wreath" lumen-lp-wreath
+  "Lumen Project caps" lumen-project-wordmark-caps  "Lumen / Project caps" lumen-project-stacked-caps  "LP caps" lumen-lp-caps )
 mkdir -p $out
 grab() {   # url -> contents of #out
   "$chrome" --headless=new --disable-gpu --virtual-time-budget=4000 --user-data-dir=$(mktemp -d) --dump-dom "$1" 2>/dev/null |

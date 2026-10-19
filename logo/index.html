@@ -112,6 +112,9 @@ textarea {
     <button data-t="Lumen Project" data-preset="Word mark long">Lumen Project</button>
     <button data-t="Lumen&#10;Project" data-preset="Stacked">Lumen / Project</button>
     <button data-t="Lumen&#10;Project" data-preset="Stacked swash">Lumen / Project swash</button>
+    <button data-t="Lumen Project" data-preset="Word mark long caps">Lumen Project caps</button>
+    <button data-t="Lumen&#10;Project" data-preset="Stacked caps">Lumen / Project caps</button>
+    <button data-t="LP" data-preset="Monogram caps">LP caps</button>
     <button data-t="Lumen&#10;Project" data-preset="Stacked clean">Lumen / Project clean</button>
     <button data-t="Lumen" data-preset="Snake circle">Circle</button>
     <button data-t="Lumen Project" data-preset="Project circle">Project circle</button>
@@ -366,7 +369,15 @@ const HAND_N_ROW = { entry: [-0.45,3.5], strokes: [ HAND.n.strokes[0], { pts: [[
 // climbing diagonally to the r's top (it ran along the baseline, a flat floor under the bowl), the r set a step further off
 const HAND_P_LONG = Object.assign({}, HAND.P, { kern: { r: 0.5 }, entry: [-0.8,2.0], joins: { "*": [[2.4,0.15],[3.5,1.7]] },
   strokes: [ { pts: [[-0.8,2.0],[-0.3,3.3],[0.35,4.6]], smooth: true, width: [0.4,0.6,0.8] }, HAND.P.strokes[1], HAND.P.strokes[2] ] });
-const PRESETS = {
+
+// capitals in the same hand, for the alternatives that set Lumen Project and LP with a capital L and P. L: an upstroke from the
+// middle into a small loop at the top, a heavy slanted stem, a little loop on the baseline and the foot running on into the next letter.
+// P: a heavy stem with a small turned foot, then the pen back at the top for the bowl, which closes at the x-height and runs on into the r
+const HAND_CAP_L = { adv: 3.9, kern: {}, joins: {}, entry: null, strokes: [ { pts: [[2.5,5.3],[3.2,6.6],[3.55,7.8],[3.25,8.65],[2.45,8.85],[1.75,8.25],[1.3,6.8],[0.95,4.0],[0.7,2.0],[0.35,0.7],[-0.2,0.05],[-0.85,0.1],[-0.95,0.55],[-0.4,0.75],[0.5,0.45],[1.6,0.1],[2.7,0.05],[3.5,0.35]], smooth: true, tail: true,
+  width: [0.35,0.45,0.55,0.65,0.75,0.95,1.15,1.25,1.25,1.15,0.95,0.7,0.6,0.6,0.7,0.8,0.75,0.6] } ] };
+const HAND_CAP_P = { adv: 5.4, kern: {}, entry: [1.3,7.8], exit: null, joins: {}, strokes: [
+  { pts: [[1.3,7.8],[1.15,5.5],[0.9,3.0],[0.6,1.0],[0.3,0.0],[-0.3,-0.2],[-0.7,0.15]], smooth: true, width: [0.75,1.2,1.25,1.2,1.0,0.7,0.5] },
+  { pts: [[1.3,7.8],[2.4,8.3],[3.8,8.2],[4.7,7.4],[4.7,6.2],[3.9,5.1],[2.6,4.55],[1.4,4.5],[0.9,4.6]], smooth: true, tail: true, width: [0.45,0.55,0.7,0.9,1.1,1.05,0.9,0.75,0.6] } ] };const PRESETS = {
   "Reference": {},
   "Softer edges": { soft: 0.7, gamma: 0.8 },
   "Hard edges": { soft: 0.1, gamma: 1 },
@@ -468,6 +479,10 @@ const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d)
 // (a wreath shrinks every copy in the frame). Odd counts only: four copies turned 90 degrees make a pinwheel that reads as a swastika
 // two rows, not joined: project starts a step in from lumen (a stem's width), so the stack reads as written rather than ruled flush
 PRESETS["Stacked"] = Object.assign({}, PRESETS["Stacked clean"], { rowIndent: 1.3 });
+// capital L and P alternatives: the one-line and stacked word marks and an LP monogram, in the hand's capitals
+PRESETS["Word mark long caps"] = Object.assign({}, PRESETS["Word mark long"], { glyphOver: Object.assign({}, PRESETS["Word mark long"].glyphOver, { "L": HAND_CAP_L, "P": HAND_CAP_P }) });
+PRESETS["Stacked caps"] = Object.assign({}, PRESETS.Stacked, { glyphOver: Object.assign({}, PRESETS.Stacked.glyphOver, { "L": HAND_CAP_L, "P": HAND_CAP_P }) });
+PRESETS["Monogram caps"] = Object.assign({}, PRESETS["Word mark"], { pad: 1.1, glyphOver: Object.assign({}, HAND, { "L": HAND_CAP_L, "P": HAND_CAP_P }) });
 PRESETS["Symbol fine"] = Object.assign({}, PRESETS.Symbol, { spacing: 0.36, soft: 0.4 });
 PRESETS["Symbol ring"] = Object.assign({}, PRESETS.Symbol, { spacing: 0.36, soft: 0.4, repeat: 5, repeatR: 11.5, fit: 1.1 });
 PRESETS["Symbol wreath"] = Object.assign({}, PRESETS.Symbol, { spacing: 0.34, soft: 0.4, repeat: 7, repeatR: 15.5, fit: 1.1 });
@@ -1076,7 +1091,8 @@ function pngTight(P, px) {
 const KIT_NAMES = { "Lp": "lumen-lp", "Lumen": "lumen-wordmark", "Lumen small": "lumen-wordmark-small", "Lumen Project": "lumen-project-wordmark",
   "Lumen / Project": "lumen-project-stacked-step", "Lumen / Project swash": "lumen-project-stacked-swash", "Lumen / Project clean": "lumen-project-stacked",
   "Circle": "lumen-circle", "Project circle": "lumen-project-circle", "Lu-man": "lumen-lu-man", "Lu-star": "lumen-lu-star", "Symbol": "lumen-symbol",
-  "Symbol small": "lumen-symbol-small", "Symbol fine": "lumen-symbol-fine", "lp ring": "lumen-lp-ring", "lp wreath": "lumen-lp-wreath" };
+  "Symbol small": "lumen-symbol-small", "Symbol fine": "lumen-symbol-fine", "lp ring": "lumen-lp-ring", "lp wreath": "lumen-lp-wreath",
+  "Lumen Project caps": "lumen-project-wordmark-caps", "Lumen / Project caps": "lumen-project-stacked-caps", "LP caps": "lumen-lp-caps" };
 document.getElementById("zipAll").onclick = async () => {
   if (!window.JSZip) { flash("Zip library did not load"); return; }
   const zip = new JSZip(), px = +document.getElementById("pngSize").value, keep = [TEXT, P];

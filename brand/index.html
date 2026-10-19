@@ -272,6 +272,9 @@ const LOGOS = [
   ["lumen-project-circle", "Project circle", "The name round a ring, the n joining the P and the t closing into the L. Stickers, stamps, stories.", "primary", "wide"],
   ["lumen-symbol", "Symbol", "The cursive lp. Avatars, app icons, a corner mark over photos.", "primary"],
   ["lumen-symbol-fine", "Symbol fine", "The symbol on a finer screen: more, smaller dots, the thin lead-in into the l reads as a hairline. Large sizes and print.", "primary"],
+  ["lumen-project-stacked-caps", "Lumen / Project, capitals", "Alternative: the stack with a script capital L and P.", "alt"],
+  ["lumen-project-wordmark-caps", "Lumen Project, capitals", "Alternative: the one-line name with capitals.", "alt"],
+  ["lumen-lp-caps", "LP, capitals", "Alternative monogram: a capital L whose foot runs into a capital P.", "alt"],
   ["lumen-lp-ring", "lp ring", "Five lp marks turned round a centre, feet inward. Stickers, stamps, patterns, merch.", "secondary"],
   ["lumen-lp-wreath", "lp wreath", "Seven lp marks in a wider wreath. Large formats, backgrounds, merch.", "secondary"],
   ["lumen-symbol-small", "Symbol small", "A coarser screen for 48 to 64 px: favicons, tabs, small avatars.", "small"],
@@ -282,7 +285,7 @@ const LOGOS = [
   ["lumen-circle", "Circle", "Lumen alone round a ring. Still in progress: hard to read.", "progress"],
   ["lumen-project-stacked-swash", "Lumen / Project swash", "Stacked with a line from the n into the P. Still in progress.", "progress"],
 ];
-const TAG = { primary: ["Primary", ""], secondary: ["Secondary", "dim"], small: ["Small cut", "dim"], progress: ["In progress", "dim"] };
+const TAG = { alt: ["Alternative", "dim"], primary: ["Primary", ""], secondary: ["Secondary", "dim"], small: ["Small cut", "dim"], progress: ["In progress", "dim"] };
 const card = ([s, name, note, kind]) => `<article class="card">
   <div class="tiles"><div class="tile night"><img src="logos/${s}-light.svg" alt="${name}, light"></div><div class="tile paper"><img src="logos/${s}-dark.svg" alt="${name}, dark"></div></div>
   <div class="meta"><span class="tag ${TAG[kind][1]}">${TAG[kind][0]}</span><h3>${name}</h3><p>${note}</p>
