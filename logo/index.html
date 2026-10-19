@@ -99,7 +99,7 @@ textarea {
 </div>
 
 <aside>
-  <h1>Blurred blobs</h1>
+  <h1>Lp halftone</h1>
   <div class="text">
     <input id="text" value="Lp" spellcheck="false" aria-label="Text">
     <button data-t="Lp">Lp</button>
@@ -128,10 +128,12 @@ textarea {
 // Logo units, baseline y = 0, y up. x-height ≈ 4.4, ascender 7.2, descender 2.6, drawn with a stroke ≈ 1.1.
 // A glyph = { adv, strokes[] }, stroke = { pts:[[x,y],…], smooth?:true } or { ring:[cx, cy, r] }.
 // A single point stroke { pts:[[x,y]] } is a round dot of stroke width.
+// entry / exit: where a cursive join arrives / leaves (defaults: first point of the first line stroke, last point of
+// the last stroke; exit:false = no join out of this letter). tail:true marks a stroke that is replaced by the join.
 const DEFAULT_GLYPHS = {
-  "L": { adv: 3.3, strokes: [ { pts: [[0,0],[0,7.2]] }, { pts: [[0,0],[4.6,0]] } ] },
-  "p": { adv: 4.6, strokes: [ { pts: [[0,4.6],[0,-2.6]] }, { ring: [1.85, 2.5, 1.85] } ] },
-  "P": { adv: 4.6, strokes: [ { pts: [[0,0],[0,7.2]] }, { ring: [1.85, 5.35, 1.85] } ] },
+  "L": { adv: 3.3, strokes: [ { pts: [[0,7.2],[0,0]] }, { pts: [[0,0],[4.6,0]], tail: true } ] },
+  "p": { adv: 4.6, entry: [0,0], exit: [0,-2.6], strokes: [ { pts: [[0,4.6],[0,-2.6]] }, { ring: [1.85, 2.5, 1.85] } ] },
+  "P": { adv: 4.6, entry: [0,0], exit: [0,0], strokes: [ { pts: [[0,7.2],[0,0]] }, { ring: [1.85, 5.35, 1.85] } ] },
   "u": { adv: 4.6, strokes: [ { pts: [[0,4.4],[0,1.3],[0.9,0],[2.2,0],[3.1,1.3],[3.1,4.4]], smooth: true }, { pts: [[3.1,4.4],[3.1,0]] } ] },
   "m": { adv: 7.3, strokes: [ { pts: [[0,4.4],[0,0]] },
                                { pts: [[0,2.5],[0.6,4.2],[1.7,4.4],[2.7,3.6],[2.9,2.4],[2.9,0]], smooth: true },
@@ -139,13 +141,13 @@ const DEFAULT_GLYPHS = {
   "n": { adv: 4.4, strokes: [ { pts: [[0,4.4],[0,0]] }, { pts: [[0,2.5],[0.6,4.2],[1.7,4.4],[2.7,3.6],[2.9,2.4],[2.9,0]], smooth: true } ] },
   "e": { adv: 4.8, strokes: [ { pts: [[0.3,2.3],[3.3,2.3],[3.3,3.4],[2.2,4.4],[0.9,4.0],[0,2.5],[0.4,0.7],[1.8,0],[3.3,0.5]], smooth: true } ] },
   "r": { adv: 3.4, strokes: [ { pts: [[0,4.4],[0,0]] }, { pts: [[0,2.6],[0.5,4.0],[1.5,4.4],[2.5,4.0]], smooth: true } ] },
-  "o": { adv: 5.4, strokes: [ { ring: [2.2, 2.2, 2.2] } ] },
-  "j": { adv: 1.9, strokes: [ { pts: [[0,4.4],[0,-1.2],[-0.5,-2.4],[-1.6,-2.6],[-2.3,-1.9]], smooth: true }, { pts: [[0,6.3]] } ] },
+  "o": { adv: 5.4, entry: [0,2.2], exit: [2.2,4.4], strokes: [ { ring: [2.2, 2.2, 2.2] } ] },
+  "j": { adv: 1.9, exit: false, strokes: [ { pts: [[0,4.4],[0,-1.2],[-0.5,-2.4],[-1.6,-2.6],[-2.3,-1.9]], smooth: true }, { pts: [[0,6.3]] } ] },
   "c": { adv: 4.4, strokes: [ { pts: [[3.2,3.6],[2.2,4.4],[0.9,4.0],[0,2.2],[0.9,0.4],[2.2,0],[3.2,0.8]], smooth: true } ] },
-  "t": { adv: 3.6, strokes: [ { pts: [[0.9,6.0],[0.9,0.9],[1.6,0],[2.6,0.5]], smooth: true }, { pts: [[-0.3,4.4],[2.4,4.4]] } ] },
+  "t": { adv: 3.6, entry: [0.9,0.9], strokes: [ { pts: [[0.9,6.0],[0.9,0.9],[1.6,0],[2.6,0.5]], smooth: true }, { pts: [[-0.3,4.4],[2.4,4.4]] } ] },
   "i": { adv: 2.2, strokes: [ { pts: [[0,4.4],[0,0]] }, { pts: [[0,6.3]] } ] },
   "l": { adv: 2.2, strokes: [ { pts: [[0,7.2],[0,0]] } ] },
-  "a": { adv: 4.8, strokes: [ { ring: [1.9, 2.2, 1.9] }, { pts: [[3.8,4.4],[3.8,0]] } ] },
+  "a": { adv: 4.8, entry: [0,2.2], strokes: [ { ring: [1.9, 2.2, 1.9] }, { pts: [[3.8,4.4],[3.8,0]] } ] },
   "s": { adv: 4.0, strokes: [ { pts: [[2.9,3.8],[1.8,4.4],[0.6,3.8],[0.9,2.6],[2.2,2.0],[3.0,1.0],[2.2,0],[0.4,0.3]], smooth: true } ] },
   " ": { adv: 3.0, strokes: [] },
 };
@@ -156,24 +158,28 @@ const SPEC = [
     { k: "stroke",   l: "Stroke width",     min: 0.4, max: 2.4, step: 0.01, d: 1.1 },
     { k: "tracking", l: "Letter spacing",   min: -2,  max: 3,   step: 0.05, d: 0 },
     { k: "slant",    l: "Slant",            min: -0.4, max: 0.6, step: 0.01, d: 0 },
+    { k: "connect",  l: "Connect letters (cursive)", type: "check", d: false },
+    { k: "wobble",   l: "Hand (bend strokes)", min: 0, max: 1, step: 0.01, d: 0.25 },
     { k: "stack",    l: "On top",           type: "select", opts: { later: "Later letter", earlier: "Earlier letter" }, d: "later" },
     { k: "edit",     l: "Edit letters",     type: "check", d: false },
   ]},
   { group: "Blobs", open: true, items: [
-    { k: "spacing", l: "Grid spacing",      min: 0.14, max: 0.8, step: 0.005, d: 0.32 },
-    { k: "dotMax",  l: "Max blob (× spacing)", min: 0.2, max: 0.9, step: 0.005, d: 0.5 },
-    { k: "gamma",   l: "Edge falloff",      min: 0.3, max: 3,   step: 0.01, d: 1.1 },
-    { k: "bleed",   l: "Edge bleed",        min: 0,   max: 1,   step: 0.01, d: 0.35 },
-    { k: "minDot",  l: "Smallest blob",     min: 0,   max: 0.3, step: 0.005, d: 0.03 },
-    { k: "sizeJit", l: "Size variation",    min: 0,   max: 1,   step: 0.01, d: 0.25 },
-    { k: "posJit",  l: "Position scatter",  min: 0,   max: 1,   step: 0.01, d: 0.1 },
+    { k: "spacing", l: "Grid spacing",      min: 0.1, max: 0.8, step: 0.005, d: 0.24 },
+    { k: "dotMax",  l: "Max blob (× spacing)", min: 0.2, max: 0.9, step: 0.005, d: 0.47 },
+    { k: "soft",    l: "Edge softness",     min: 0.02, max: 1.5, step: 0.01, d: 0.4 },
+    { k: "gamma",   l: "Size curve",        min: 0.2, max: 3,   step: 0.01, d: 0.6 },
+    { k: "minDot",  l: "Smallest blob",     min: 0,   max: 0.4, step: 0.005, d: 0.06 },
+    { k: "gridX",   l: "Grid offset X",     min: 0,   max: 1,   step: 0.01, d: 0 },
+    { k: "gridY",   l: "Grid offset Y",     min: 0,   max: 1,   step: 0.01, d: 0 },
+    { k: "sizeJit", l: "Size variation",    min: 0,   max: 1,   step: 0.01, d: 0 },
+    { k: "posJit",  l: "Position scatter",  min: 0,   max: 1,   step: 0.01, d: 0 },
     { k: "seed",    l: "Seed",              min: 1,   max: 99,  step: 1,    d: 7 },
     { k: "stagger", l: "Stagger rows",      type: "check", d: false },
   ]},
-  { group: "Blur", open: true, items: [
-    { k: "blur",     l: "Blur (× blob)",    min: 0,   max: 2,   step: 0.01, d: 0.45 },
+  { group: "Blur (optional)", open: false, items: [
+    { k: "blur",     l: "Blur (× blob)",    min: 0,   max: 2,   step: 0.01, d: 0 },
     { k: "glow",     l: "Glow spread",      min: 0,   max: 6,   step: 0.05, d: 2.0 },
-    { k: "glowStr",  l: "Glow strength",    min: 0,   max: 1,   step: 0.01, d: 0.35 },
+    { k: "glowStr",  l: "Glow strength",    min: 0,   max: 1,   step: 0.01, d: 0 },
   ]},
   { group: "Depth (under / over)", open: true, items: [
     { k: "shadowW",   l: "Shadow width",    min: 0,   max: 2.5, step: 0.01, d: 0.9 },
@@ -184,22 +190,25 @@ const SPEC = [
     { k: "lift",      l: "Top letter lift", min: 0.8, max: 1.3, step: 0.005, d: 1.0 },
   ]},
   { group: "Colour", open: false, items: [
-    { k: "fg", l: "Blobs",      type: "color", d: "#ffffff" },
+    { k: "fg", l: "Blobs",      type: "color", d: "#ece9df" },
     { k: "bg", l: "Background", type: "color", d: "#000000" },
     { k: "pad", l: "Padding",   min: 0, max: 3, step: 0.05, d: 1.2 },
   ]},
 ];
 const PRESETS = {
-  "Reference": { blur: 0, glow: 0, sizeJit: 0, posJit: 0 },
-  "Soft": {},
-  "Very blurred": { blur: 1.2, glow: 3, glowStr: 0.5, sizeJit: 0.4, posJit: 0.25 },
-  "Cursive": { slant: 0.22, tracking: -0.6, blur: 0.6, sizeJit: 0.35, posJit: 0.2, spacing: 0.28 },
+  "Reference": {},
+  "Softer edges": { soft: 0.7, gamma: 0.8 },
+  "Hard edges": { soft: 0.1, gamma: 1 },
+  "Blurred": { blur: 0.5, glow: 3, glowStr: 0.35 },
+  "Scattered": { sizeJit: 0.35, posJit: 0.2 },
+  "Word mark": { connect: true, stroke: 0.8, spacing: 0.22, soft: 0.3, tracking: 0.3, slant: 0.15, wobble: 0.3 },
+  "Geometric": { wobble: 0, connect: false },
   "Deep shadow": { shadowW: 1.4, shadowStr: 1, shadowSoft: 0.9, shadowDy: 0.35, lift: 1.08 },
   "Flat": { shadowW: 0, shadowStr: 0, lift: 1 },
   "Inverted": { fg: "#000000", bg: "#ffffff" },
 };
 const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d));
-const KEY = "lumen-logo-lab-v2", GKEY = "lumen-logo-lab-glyphs-v2", TKEY = "lumen-logo-lab-text-v2";
+const KEY = "lumen-logo-lab-v3", GKEY = "lumen-logo-lab-glyphs-v2", TKEY = "lumen-logo-lab-text-v2";
 let P = Object.assign({}, DEFAULTS);
 let G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS));
 let TEXT = "Lp";
@@ -312,20 +321,63 @@ function catmull(pts, sub) {
   return out;
 }
 // Lay the text out: returns instances [{ch, ox, segs:[[a,b]…], rings:[[cx,cy,r]…], bbox}]
+// Bend a polyline a little, like a hand would: resample, then push the interior sideways with a slow wave.
+function wob(pts, amp, key) {
+  if (amp <= 0 || pts.length < 2) return pts;
+  const res = [];
+  for (let i = 0; i < pts.length - 1; i++) {
+    const a = pts[i], b = pts[i + 1], n = Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 0.9));
+    for (let k = 0; k < n; k++) res.push([a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n]);
+  }
+  res.push(pts[pts.length - 1]);
+  const cum = [0]; for (let i = 1; i < res.length; i++) cum.push(cum[i - 1] + Math.hypot(res[i][0] - res[i - 1][0], res[i][1] - res[i - 1][1]));
+  const total = cum[cum.length - 1] || 1;
+  const dir = hash(key, 1, 0) > 0.5 ? 1 : -1, ph = hash(key, 2, 0) * Math.PI * 2;
+  return res.map((q, i) => {
+    if (i === 0 || i === res.length - 1) return q;
+    const u = cum[i] / total, a = res[Math.min(res.length - 1, i + 1)], b = res[Math.max(0, i - 1)];
+    const tx = a[0] - b[0], ty = a[1] - b[1], tl = Math.hypot(tx, ty) || 1;
+    const off = amp * 0.45 * (Math.sin(Math.PI * u) * dir + 0.35 * Math.sin(2 * Math.PI * u + ph));
+    return [q[0] - ty / tl * off, q[1] + tx / tl * off];
+  });
+}
+function glyphOf(ch) { return G[ch] || G[ch.toLowerCase()]; }
+function entryOf(g) { if (g.entry) return g.entry; const st = g.strokes.find(s => s.pts); return st ? st.pts[0] : null; }
+function exitOf(g) { if (g.exit === false) return null; if (g.exit) return g.exit; const st = [...g.strokes].reverse().find(s => s.pts); return st ? st.pts[st.pts.length - 1] : null; }
+function joinPts(a, b) { // the pen travels on to the next letter: flat along the baseline first, then up into the entry
+  const dx = b[0] - a[0], dy = b[1] - a[1];
+  if (Math.abs(dy) < 0.6) return [a, [a[0] + dx * 0.5, a[1] + dy * 0.5 - Math.abs(dx) * 0.06], b];
+  return [a, [a[0] + dx * 0.45, a[1] + dy * 0.08], [a[0] + dx * 0.8, a[1] + dy * 0.45], b];
+}
 function layout(p) {
   const inst = []; let x = 0;
-  for (const ch of TEXT) {
-    const g = G[ch] || G[ch.toLowerCase()];
+  const chars = [...TEXT];
+  for (let ci = 0; ci < chars.length; ci++) {
+    const ch = chars[ci], g = glyphOf(ch);
     if (!g) { x += 3 + p.tracking; continue; }
     const segs = [], rings = [], pts = [];
     const tx = (q) => [q[0] + x + q[1] * p.slant, q[1]];
+    // cursive join to the next letter (in local coordinates of this letter)
+    let join = null;
+    if (p.connect) {
+      const ng = chars[ci + 1] ? glyphOf(chars[ci + 1]) : null, ex = exitOf(g), en = ng ? entryOf(ng) : null;
+      if (ng && ng.strokes.length && ex && en) join = [g.adv + p.tracking + en[0], en[1]];
+    }
+    const strokes = [];
+    let tailed = false;
     for (const st of g.strokes) {
-      if (st.ring) { const [cx, cy, r] = st.ring; rings.push([cx + x + cy * p.slant, cy, r, p.slant]); pts.push([cx + x + cy * p.slant - r, cy], [cx + x + cy * p.slant + r, cy], [cx + x + cy * p.slant, cy + r], [cx + x + cy * p.slant, cy - r]); continue; }
-      const poly = (st.smooth ? catmull(st.pts, 8) : st.pts).map(tx);
+      if (st.tail && join) { strokes.push({ pts: joinPts(st.pts[0], join), smooth: true }); tailed = true; }
+      else strokes.push(st);
+    }
+    if (join && !tailed) strokes.push({ pts: joinPts(exitOf(g), join), smooth: true });
+    strokes.forEach((st, si) => {
+      if (st.ring) { const [cx, cy, r] = st.ring; rings.push([cx + x + cy * p.slant, cy, r, p.slant]); pts.push([cx + x + cy * p.slant - r, cy], [cx + x + cy * p.slant + r, cy], [cx + x + cy * p.slant, cy + r], [cx + x + cy * p.slant, cy - r]); return; }
+      const bent = st.smooth ? st.pts : wob(st.pts, p.wobble, ci * 31 + si);
+      const poly = ((st.smooth || bent !== st.pts) ? catmull(bent, 8) : bent).map(tx);
       if (poly.length === 1) segs.push([poly[0], poly[0]]);
       for (let i = 0; i < poly.length - 1; i++) segs.push([poly[i], poly[i + 1]]);
       pts.push(...poly);
-    }
+    });
     const xs = pts.map(q => q[0]), ys = pts.map(q => q[1]);
     inst.push({ ch, g, ox: x, segs, rings, bbox: pts.length ? [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)] : null });
     x += g.adv + p.tracking;
@@ -350,27 +402,34 @@ function distInst(x, y, I) {
   return d;
 }
 function bounds(p, inst) {
-  const hw = p.stroke / 2 * (1 + p.bleed) + p.posJit * p.spacing;
+  const hw = p.stroke / 2 + 2.5 * p.soft + p.posJit * p.spacing;
   let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
   for (const I of inst) if (I.bbox) { x0 = Math.min(x0, I.bbox[0]); y0 = Math.min(y0, I.bbox[1]); x1 = Math.max(x1, I.bbox[2]); y1 = Math.max(y1, I.bbox[3]); }
   if (x0 === Infinity) { x0 = 0; y0 = 0; x1 = 4; y1 = 4; }
   return { x0: x0 - hw - p.pad, y0: y0 - hw - p.pad, x1: x1 + hw + p.pad, y1: y1 + hw + p.pad };
 }
+function erf(x) { // Abramowitz-Stegun 7.1.26
+  const t = 1 / (1 + 0.3275911 * Math.abs(x));
+  const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x);
+  return x < 0 ? -y : y;
+}
 function hash(i, j, seed) { let h = (i * 374761393 + j * 668265263 + seed * 2246822519) | 0; h = Math.imul(h ^ (h >>> 13), 1274126177); return ((h ^ (h >>> 16)) >>> 0) / 4294967296; }
 
 function dots(p) {
   const inst = layout(p);
-  const hw = p.stroke / 2, reach = hw * (1 + p.bleed), B = bounds(p, inst);
+  const hw = p.stroke / 2, reach = hw + 2.5 * p.soft, B = bounds(p, inst);
   const s = p.spacing, rMax = s * p.dotMax, rMin = s * p.minDot;
-  const depth = d => d >= reach ? 0 : Math.pow(1 - d / reach, p.gamma);
+  // coverage of the stroke after a gaussian blur of sigma = soft: flat inside, fading over the edge
+  const depth = d => d >= reach ? 0 : Math.pow(0.5 * (1 + erf((hw - d) / (p.soft * Math.SQRT2))), p.gamma);
   const order = inst.map((_, i) => i); if (p.stack === "earlier") order.reverse(); // order[0] is the topmost
   const margin = reach + p.shadowW + hw + 1.5 * p.stroke;
   const out = [];
   const nx = Math.ceil((B.x1 - B.x0) / s), ny = Math.ceil((B.y1 - B.y0) / s);
-  const ox = B.x0 + ((B.x1 - B.x0) - nx * s) / 2, oy = B.y0 + ((B.y1 - B.y0) - ny * s) / 2;
-  for (let j = 0; j <= ny; j++) {
+  // grid lines pass through the origin (the L corner) plus the chosen offset, so stems sit on dot columns
+  const ox = Math.floor(B.x0 / s) * s + p.gridX * s, oy = Math.floor(B.y0 / s) * s + p.gridY * s;
+  for (let j = 0; j <= ny + 1; j++) {
     const shift = p.stagger && (j % 2) ? s / 2 : 0;
-    for (let i = 0; i <= nx; i++) {
+    for (let i = 0; i <= nx + 1; i++) {
       const jx = (hash(i, j, p.seed) - 0.5) * 2 * p.posJit * s, jy = (hash(i, j, p.seed + 11) - 0.5) * 2 * p.posJit * s;
       const x = ox + i * s + shift + jx, y = oy + j * s + jy;
       // topmost letter covering this point
@@ -397,8 +456,8 @@ function dots(p) {
       const lift = win === 0 && order.length > 1 ? p.lift : 1;
       const jit = 1 + (hash(i, j, p.seed + 23) - 0.5) * 2 * p.sizeJit;
       let r = rMax * dw * lift * jit * (1 - shade);
-      if (r <= 0.0005) continue;
-      out.push({ x, y, r: Math.max(rMin, r) });
+      if (r < rMin || r <= 0.0005) continue;
+      out.push({ x, y, r });
     }
   }
   return { dots: out, bounds: B, inst };
