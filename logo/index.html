@@ -108,6 +108,7 @@ textarea {
     <button data-t="Lumen" data-preset="Word mark">Lumen</button>
     <button data-t="Lumen Project" data-preset="Word mark">Lumen Project</button>
     <button data-t="Lumen" data-preset="Snake circle">Circle</button>
+    <button data-t="Lumen Project" data-preset="Project circle">Project circle</button>
     <button data-t="*" data-preset="Lu-man">Lu-man</button>
     <button data-t="★" data-preset="Lu-star">Lu-star</button>
   </div>
@@ -233,6 +234,7 @@ const PRESETS = {
   "Hard edges": { soft: 0.1, gamma: 1 },
   "Blurred": { blur: 0.5, glow: 3, glowStr: 0.35 },
   "Scattered": { sizeJit: 0.35, posJit: 0.2 },
+  "Project circle": { circle: true, connect: true, circleCover: 0.94, circleH: 0.8, circleBend: 1, stroke: 0.75, spacing: 0.2, soft: 0.28, tracking: 0.5, slant: 0, wobble: 0, joinFade: 0.2 },
   "Snake circle": { circle: true, connect: true, circleCover: 1, circleH: 0.42, circleBend: 1, stroke: 0.7, spacing: 0.18, soft: 0.26, tracking: 0.8, slant: 0, wobble: 0, joinFade: 0.15 },
   "Lu-man": { connect: false, stroke: 0.75, spacing: 0.22, soft: 0.3, gamma: 0.8, minDot: 0.05, wobble: 0, slant: 0 },
   "Lu-star": { connect: false, stroke: 0.8, spacing: 0.22, soft: 0.38, gamma: 0.8, minDot: 0.05, wobble: 0, slant: 0 },
@@ -243,7 +245,7 @@ const PRESETS = {
   "Inverted": { fg: "#000000", bg: "#ffffff" },
 };
 const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d));
-const KEY = "lumen-logo-lab-v20", GKEY = "lumen-logo-lab-glyphs-v25", TKEY = "lumen-logo-lab-text-v2";
+const KEY = "lumen-logo-lab-v21", GKEY = "lumen-logo-lab-glyphs-v25", TKEY = "lumen-logo-lab-text-v2";
 let P = Object.assign({}, DEFAULTS);
 let G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS));
 let TEXT = "Lp";
@@ -418,11 +420,15 @@ function layout(p) {
     const tx = (q) => [q[0] + x + q[1] * p.slant, q[1]];
     // cursive join to the next letter (in local coordinates of this letter)
     let join = null, via = [];
+    // next letter to join into; around a circle the pen carries on over word spaces so the ring stays one stroke
+    let ni = ci + 1, nxo = x + g.adv + p.tracking;
+    if (circ) while (ni < chars.length && glyphOf(chars[ni]) && !glyphOf(chars[ni]).strokes.length) { nxo += glyphOf(chars[ni]).adv + p.tracking; ni++; }
+    const wrap = circ && ni >= chars.length;
+    if (wrap) nxo = W;
     if (p.connect) {
-      const wrap = circ && ci === chars.length - 1;
-      const nch = wrap ? chars[0] : chars[ci + 1], ng = nch ? glyphOf(nch) : null, ex = exitOf(g), en = ng ? entryOf(ng) : null;
+      const nch = wrap ? chars[0] : chars[ni], ng = nch ? glyphOf(nch) : null, ex = exitOf(g), en = ng ? entryOf(ng) : null;
       if (ng && ng.strokes.length && ex && en) {
-        const nx = (wrap ? W : x + g.adv + p.tracking) - x;   // next letter's origin, in this letter's coordinates
+        const nx = nxo - x;   // next letter's origin, in this letter's coordinates
         join = [nx + en[0], en[1]];
         // hand-drawn join for this pair (points in this letter's coordinates), else the letter's default join
         const J = g.joins || {};
@@ -433,8 +439,8 @@ function layout(p) {
     const me = frame(x + g.adv / 2);
     let nextFrame = me;
     if (circ && join) {
-      const wrap = ci === chars.length - 1, ng = glyphOf(wrap ? chars[0] : chars[ci + 1]);
-      nextFrame = frame((wrap ? W : x + g.adv + p.tracking) + ng.adv / 2);
+      const ng = glyphOf(wrap ? chars[0] : chars[ni]);
+      nextFrame = frame(nxo + ng.adv / 2);
     }
     const strokes = [];
     let tailed = false;
