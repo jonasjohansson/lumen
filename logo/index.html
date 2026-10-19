@@ -168,12 +168,11 @@ const DEFAULT_GLYPHS = {
     { pts: [[0,2.4],[0,4.4]], width: [3.4, 2.4] },
     { ring: [0, 7.0, 1.55] } ] },
   "★": { adv: 12, exit: false, strokes: [
-    { pts: [[0,2.6],[0.0,4.75],[0.0,6.9]], smooth: true, width: [3.6, 1.9] },
-    { pts: [[0,2.6],[2.59,3.7],[5.33,4.33]], smooth: true, width: [3.6, 0.3] },
-    { pts: [[0,2.6],[-2.59,3.7],[-5.33,4.33]], smooth: true, width: [3.6, 0.3] },
-    { pts: [[0,2.6],[1.54,0.14],[3.41,-2.09]], smooth: true, width: [3.6, 0.35] },
-    { pts: [[0,2.6],[-1.54,0.14],[-3.41,-2.09]], smooth: true, width: [3.6, 0.35] },
-    { pts: [[0,7.2]], width: [2.4, 2.4] } ] },
+    { pts: [[0,2.6],[0.0,4.95],[0.0,7.3]], smooth: true, width: [3.4, 0.75] },
+    { pts: [[0,2.6],[2.41,3.57],[4.82,4.55]], smooth: true, width: [3.4, 0.3] },
+    { pts: [[0,2.6],[-2.41,3.57],[-4.82,4.55]], smooth: true, width: [3.4, 0.3] },
+    { pts: [[0,2.6],[1.36,-0.07],[2.72,-2.75]], smooth: true, width: [3.4, 0.35] },
+    { pts: [[0,2.6],[-1.36,-0.07],[-2.72,-2.75]], smooth: true, width: [3.4, 0.35] } ] },
 };
 
 // ============ parameter spec ============
@@ -234,7 +233,7 @@ const PRESETS = {
   "Hard edges": { soft: 0.1, gamma: 1 },
   "Blurred": { blur: 0.5, glow: 3, glowStr: 0.35 },
   "Scattered": { sizeJit: 0.35, posJit: 0.2 },
-  "Snake circle": { circle: true, connect: true, circleCover: 1, circleH: 0.7, circleBend: 0.5, stroke: 0.7, spacing: 0.18, soft: 0.26, tracking: 3.2, slant: 0, wobble: 0.15, joinFade: 0.2 },
+  "Snake circle": { circle: true, connect: true, circleCover: 1, circleH: 0.42, circleBend: 1, stroke: 0.7, spacing: 0.18, soft: 0.26, tracking: 0.8, slant: 0, wobble: 0, joinFade: 0.15 },
   "Lu-man": { connect: false, stroke: 0.75, spacing: 0.22, soft: 0.3, gamma: 0.8, minDot: 0.05, wobble: 0, slant: 0 },
   "Lu-star": { connect: false, stroke: 0.8, spacing: 0.22, soft: 0.38, gamma: 0.8, minDot: 0.05, wobble: 0, slant: 0 },
   "Word mark": { connect: true, stroke: 0.8, spacing: 0.22, soft: 0.3, tracking: 0.3, slant: 0.15, wobble: 0.3 },
@@ -244,7 +243,7 @@ const PRESETS = {
   "Inverted": { fg: "#000000", bg: "#ffffff" },
 };
 const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d));
-const KEY = "lumen-logo-lab-v18", GKEY = "lumen-logo-lab-glyphs-v23", TKEY = "lumen-logo-lab-text-v2";
+const KEY = "lumen-logo-lab-v20", GKEY = "lumen-logo-lab-glyphs-v25", TKEY = "lumen-logo-lab-text-v2";
 let P = Object.assign({}, DEFAULTS);
 let G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS));
 let TEXT = "Lp";
