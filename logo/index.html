@@ -236,7 +236,7 @@ const PRESETS = {
   "Hard edges": { soft: 0.1, gamma: 1 },
   "Blurred": { blur: 0.5, glow: 3, glowStr: 0.35 },
   "Scattered": { sizeJit: 0.35, posJit: 0.2 },
-  "Project circle": { circle: true, connect: true, circleCover: 0.88, wordGap: 2.5, circleBridge: false, circleH: 0.8, circleBend: 1, stroke: 0.75, spacing: 0.2, soft: 0.28, tracking: 0.5, slant: 0, wobble: 0, joinFade: 0.2 },
+  "Project circle": { circle: true, connect: true, circleCover: 0.88, wordGap: 2.5, circleBridge: true, circleH: 0.8, circleBend: 1, stroke: 0.75, spacing: 0.2, soft: 0.28, tracking: 0.5, slant: 0, wobble: 0, joinFade: 0.2 },
   "Snake circle": { circle: true, connect: true, circleCover: 1, circleH: 0.42, circleBend: 1, stroke: 0.7, spacing: 0.18, soft: 0.26, tracking: 0.8, slant: 0, wobble: 0, joinFade: 0.15 },
   "Lu-man": { connect: false, stroke: 0.75, spacing: 0.22, soft: 0.3, gamma: 0.8, minDot: 0.05, wobble: 0, slant: 0 },
   "Lu-star": { connect: false, stroke: 0.8, spacing: 0.22, soft: 0.38, gamma: 0.8, minDot: 0.05, wobble: 0, slant: 0 },
@@ -247,7 +247,7 @@ const PRESETS = {
   "Inverted": { fg: "#000000", bg: "#ffffff" },
 };
 const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d));
-const KEY = "lumen-logo-lab-v22", GKEY = "lumen-logo-lab-glyphs-v25", TKEY = "lumen-logo-lab-text-v2";
+const KEY = "lumen-logo-lab-v23", GKEY = "lumen-logo-lab-glyphs-v25", TKEY = "lumen-logo-lab-text-v2";
 let P = Object.assign({}, DEFAULTS);
 let G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS));
 let TEXT = "Lp";
