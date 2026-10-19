@@ -139,11 +139,11 @@ const DEFAULT_GLYPHS = {
                                { pts: [[0,2.5],[0.6,4.2],[1.7,4.4],[2.7,3.6],[2.9,2.4],[2.9,0]], smooth: true },
                                { pts: [[2.9,2.5],[3.5,4.2],[4.6,4.4],[5.6,3.6],[5.8,2.4],[5.8,0]], smooth: true } ] },
   "n": { adv: 4.4, strokes: [ { pts: [[0,4.4],[0,0]] }, { pts: [[0,2.5],[0.6,4.2],[1.7,4.4],[2.7,3.6],[2.9,2.4],[2.9,0]], smooth: true } ] },
-  "e": { adv: 4.8, strokes: [ { pts: [[0.3,2.3],[3.3,2.3],[3.3,3.4],[2.2,4.4],[0.9,4.0],[0,2.5],[0.4,0.7],[1.8,0],[3.3,0.5]], smooth: true } ] },
+  "e": { adv: 4.6, entry: [0.3,2.3], exit: [3.3,0.6], strokes: [ { pts: [[0.3,2.3],[3.3,2.3],[3.3,3.4],[2.2,4.4],[0.9,4.0],[0,2.5],[0.4,0.7],[1.8,0],[3.3,0.5]], smooth: true } ] },
   "r": { adv: 3.4, strokes: [ { pts: [[0,4.4],[0,0]] }, { pts: [[0,2.6],[0.5,4.0],[1.5,4.4],[2.5,4.0]], smooth: true } ] },
   "o": { adv: 5.4, entry: [0,2.2], exit: [2.2,4.4], strokes: [ { ring: [2.2, 2.2, 2.2] } ] },
-  "j": { adv: 1.9, exit: false, strokes: [ { pts: [[0,4.4],[0,-1.2],[-0.5,-2.4],[-1.6,-2.6],[-2.3,-1.9]], smooth: true }, { pts: [[0,6.3]] } ] },
-  "c": { adv: 4.4, strokes: [ { pts: [[3.2,3.6],[2.2,4.4],[0.9,4.0],[0,2.2],[0.9,0.4],[2.2,0],[3.2,0.8]], smooth: true } ] },
+  "j": { adv: 2.4, entry: [0,4.4], exit: [1.5,0.6], strokes: [ { pts: [[0,4.4],[0,-0.9],[-0.35,-2.2],[-1.2,-2.6],[-1.6,-2.0],[-0.9,-0.9],[0.4,-0.1],[1.5,0.6]], smooth: true, tail: true }, { pts: [[0,6.3]] } ] },
+  "c": { adv: 4.4, entry: [0.35,3.2], exit: [3.2,0.7], strokes: [ { pts: [[3.1,3.7],[2.1,4.4],[0.9,4.0],[0.1,2.4],[0.4,0.8],[1.6,0],[3.2,0.7]], smooth: true } ] },
   "t": { adv: 3.6, entry: [0.9,0.9], strokes: [ { pts: [[0.9,6.0],[0.9,0.9],[1.6,0],[2.6,0.5]], smooth: true }, { pts: [[-0.3,4.4],[2.4,4.4]] } ] },
   "i": { adv: 2.2, strokes: [ { pts: [[0,4.4],[0,0]] }, { pts: [[0,6.3]] } ] },
   "l": { adv: 2.2, strokes: [ { pts: [[0,7.2],[0,0]] } ] },
@@ -159,6 +159,7 @@ const SPEC = [
     { k: "tracking", l: "Letter spacing",   min: -2,  max: 3,   step: 0.05, d: 0 },
     { k: "slant",    l: "Slant",            min: -0.4, max: 0.6, step: 0.01, d: 0 },
     { k: "connect",  l: "Connect letters (one stroke)", type: "check", d: true },
+    { k: "joinFade", l: "Join fade-out",    min: 0,   max: 1,   step: 0.01, d: 0.6 },
     { k: "wobble",   l: "Hand (bend strokes)", min: 0, max: 1, step: 0.01, d: 0.25 },
     { k: "stack",    l: "On top",           type: "select", opts: { later: "Later letter", earlier: "Earlier letter" }, d: "later" },
     { k: "edit",     l: "Edit letters",     type: "check", d: false },
@@ -209,7 +210,7 @@ const PRESETS = {
   "Inverted": { fg: "#000000", bg: "#ffffff" },
 };
 const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d));
-const KEY = "lumen-logo-lab-v10", GKEY = "lumen-logo-lab-glyphs-v14", TKEY = "lumen-logo-lab-text-v2";
+const KEY = "lumen-logo-lab-v11", GKEY = "lumen-logo-lab-glyphs-v15", TKEY = "lumen-logo-lab-text-v2";
 let P = Object.assign({}, DEFAULTS);
 let G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS));
 let TEXT = "Lp";
@@ -369,17 +370,21 @@ function layout(p) {
     for (const st of g.strokes) {
       if (st.tail && join) { // keep the tail's own curve, swap its last point for the join to the next letter
         const base = st.pts.length > 1 ? st.pts.slice(0, -1) : st.pts;
-        strokes.push({ pts: base.concat(joinPts(base[base.length - 1], join).slice(1)), smooth: true }); tailed = true;
+        strokes.push({ pts: base.concat(joinPts(base[base.length - 1], join).slice(1)), smooth: true, fadeFrom: base.length - 1 }); tailed = true;
       }
       else strokes.push(st);
     }
-    if (join && !tailed) strokes.push({ pts: joinPts(exitOf(g), join), smooth: true });
+    if (join && !tailed) strokes.push({ pts: joinPts(exitOf(g), join), smooth: true, fadeFrom: 0 });
     strokes.forEach((st, si) => {
       if (st.ring) { const [cx, cy, r] = st.ring; rings.push([cx + x + cy * p.slant, cy, r, p.slant]); pts.push([cx + x + cy * p.slant - r, cy], [cx + x + cy * p.slant + r, cy], [cx + x + cy * p.slant, cy + r], [cx + x + cy * p.slant, cy - r]); return; }
       const bent = st.smooth ? st.pts : wob(st.pts, p.wobble, ci * 31 + si);
-      const poly = ((st.smooth || bent !== st.pts) ? catmull(bent, 8) : bent).map(tx);
-      if (poly.length === 1) segs.push([poly[0], poly[0]]);
-      for (let i = 0; i < poly.length - 1; i++) segs.push([poly[i], poly[i + 1]]);
+      const smooth = st.smooth || bent !== st.pts;
+      const poly = (smooth ? catmull(bent, 8) : bent).map(tx);
+      // weight along the stroke: 1, except a join, which fades towards the next letter
+      const n = poly.length - 1, fs = st.fadeFrom == null ? Infinity : st.fadeFrom * (smooth ? 8 : 1);
+      const w = idx => idx <= fs || n <= fs ? 1 : 1 - p.joinFade * (idx - fs) / (n - fs);
+      if (poly.length === 1) segs.push([poly[0], poly[0], 1, 1]);
+      for (let i = 0; i < poly.length - 1; i++) segs.push([poly[i], poly[i + 1], w(i), w(i + 1)]);
       pts.push(...poly);
     });
     const xs = pts.map(q => q[0]), ys = pts.map(q => q[1]);
@@ -399,10 +404,16 @@ function sdRing(x, y, r) {
   const ux = x - y * r[3] - (r[0] - r[1] * r[3]);
   return Math.abs(Math.hypot(ux, y - r[1]) - r[2]);
 }
+let lastW = 1; // weight of the segment nearest to the last distInst() point
 function distInst(x, y, I) {
-  let d = Infinity;
-  for (const s of I.segs) { const v = sdSeg(x, y, s[0], s[1]); if (v < d) d = v; }
-  for (const r of I.rings) { const v = sdRing(x, y, r); if (v < d) d = v; }
+  let d = Infinity; lastW = 1;
+  for (const s of I.segs) {
+    const a = s[0], b = s[1], px = x - a[0], py = y - a[1], bx = b[0] - a[0], by = b[1] - a[1], l2 = bx * bx + by * by;
+    const h = l2 ? Math.max(0, Math.min(1, (px * bx + py * by) / l2)) : 0;
+    const v = Math.hypot(px - bx * h, py - by * h);
+    if (v < d) { d = v; lastW = s[2] + (s[3] - s[2]) * h; }
+  }
+  for (const r of I.rings) { const v = sdRing(x, y, r); if (v < d) { d = v; lastW = 1; } }
   return d;
 }
 function bounds(p, inst) {
@@ -441,7 +452,7 @@ function dots(p) {
       const inside = (I, x, y) => I.bbox && x >= I.bbox[0] - margin && x <= I.bbox[2] + margin && y >= I.bbox[1] - margin && y <= I.bbox[3] + margin;
       for (let k = 0; k < order.length; k++) {
         const I = inst[order[k]]; if (!inside(I, x, y)) continue;
-        const cov = depth(distInst(x, y, I)); if (cov <= 0) continue;
+        const cov = depth(distInst(x, y, I)) * lastW; if (cov <= 0) continue;
         if (win < 0) win = k;
         let shade = 0;
         if (k > 0 && p.shadowW > 0 && p.shadowStr > 0) {
