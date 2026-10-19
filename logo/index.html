@@ -131,7 +131,7 @@ textarea {
 // entry / exit: where a cursive join arrives / leaves (defaults: first point of the first line stroke, last point of
 // the last stroke; exit:false = no join out of this letter). tail:true marks a stroke that is replaced by the join.
 const DEFAULT_GLYPHS = {
-  "L": { adv: 3.3, strokes: [ { pts: [[0.2,6.9],[0.05,3.4],[0,0]], smooth: true }, { pts: [[0,0],[3.8,-0.05],[7.6,0]], smooth: true, tail: true } ] },
+  "L": { adv: 3.3, strokes: [ { pts: [[0.2,6.9],[0.05,3.4],[0,1.2],[0.3,0.35],[1.2,0],[7.6,0]], smooth: true, tail: true } ] },
   "p": { adv: 4.6, entry: [2.1,0.2], exit: [0,-2.4], strokes: [ { pts: [[0,2.3],[-0.05,0],[0,-2.4]], smooth: true }, { ring: [2.1, 2.3, 2.1] } ] },
   "P": { adv: 4.6, entry: [2.1,3.0], exit: [0,0], strokes: [ { pts: [[0,7.2],[0,0]] }, { ring: [2.1, 5.1, 2.1] } ] },
   "u": { adv: 4.6, strokes: [ { pts: [[0,4.4],[0,1.3],[0.9,0],[2.2,0],[3.1,1.3],[3.1,4.4]], smooth: true }, { pts: [[3.1,4.4],[3.1,0]] } ] },
@@ -209,7 +209,7 @@ const PRESETS = {
   "Inverted": { fg: "#000000", bg: "#ffffff" },
 };
 const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d));
-const KEY = "lumen-logo-lab-v10", GKEY = "lumen-logo-lab-glyphs-v10", TKEY = "lumen-logo-lab-text-v2";
+const KEY = "lumen-logo-lab-v10", GKEY = "lumen-logo-lab-glyphs-v11", TKEY = "lumen-logo-lab-text-v2";
 let P = Object.assign({}, DEFAULTS);
 let G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS));
 let TEXT = "Lp";
@@ -367,7 +367,10 @@ function layout(p) {
     const strokes = [];
     let tailed = false;
     for (const st of g.strokes) {
-      if (st.tail && join) { strokes.push({ pts: joinPts(st.pts[0], join), smooth: true }); tailed = true; }
+      if (st.tail && join) { // keep the tail's own curve, swap its last point for the join to the next letter
+        const base = st.pts.length > 1 ? st.pts.slice(0, -1) : st.pts;
+        strokes.push({ pts: base.concat(joinPts(base[base.length - 1], join).slice(1)), smooth: true }); tailed = true;
+      }
       else strokes.push(st);
     }
     if (join && !tailed) strokes.push({ pts: joinPts(exitOf(g), join), smooth: true });
