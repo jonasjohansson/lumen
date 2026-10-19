@@ -135,12 +135,16 @@ textarea {
     </select>
   </div>
   <div class="actions">
+    <button id="zipAll" title="Every version as SVG and PNG (at the width above), light and dark ink, cropped to the ink">All versions (zip)</button>
+  </div>
+  <div class="actions">
     <button id="copy">Copy settings</button>
     <button id="reset">Reset all</button>
   </div>
   <p class="hint">Everything auto-saves in this browser. Turn on <b>Edit letters</b> to drag the skeleton points on the canvas (a change edits that letter everywhere), or edit the letter JSON below it. Later letters sit on top; the shadow is where an earlier letter passes under one. Type <b>&nbsp;/&nbsp;</b> or <b>|</b> in the text to start a new row.</p>
 </aside>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script>
 // ============ letter skeletons ============
 // Logo units, baseline y = 0, y up. x-height ≈ 4.4, ascender 7.2, descender 2.6, drawn with a stroke ≈ 1.1.
@@ -1068,6 +1072,30 @@ function pngTight(P, px) {
   x.save(); if (P.blur > 0) x.filter = `blur(${(P.blur * blobPx).toFixed(2)}px)`; x.fill(path); x.restore();
   return c.toDataURL("image/png");
 }
+// every version in one zip, as the brand kit names them (logo/kit.sh), drawn from the letters as they are in this lab now
+const KIT_NAMES = { "Lp": "lumen-lp", "Lumen": "lumen-wordmark", "Lumen small": "lumen-wordmark-small", "Lumen Project": "lumen-project-wordmark",
+  "Lumen / Project": "lumen-project-stacked-step", "Lumen / Project swash": "lumen-project-stacked-swash", "Lumen / Project clean": "lumen-project-stacked",
+  "Circle": "lumen-circle", "Project circle": "lumen-project-circle", "Lu-man": "lumen-lu-man", "Lu-star": "lumen-lu-star", "Symbol": "lumen-symbol",
+  "Symbol small": "lumen-symbol-small", "Symbol fine": "lumen-symbol-fine", "lp ring": "lumen-lp-ring", "lp wreath": "lumen-lp-wreath" };
+document.getElementById("zipAll").onclick = async () => {
+  if (!window.JSZip) { flash("Zip library did not load"); return; }
+  const zip = new JSZip(), px = +document.getElementById("pngSize").value, keep = [TEXT, P];
+  const vs = [...document.querySelectorAll(".text button")];
+  try {
+    for (const [n, b] of vs.entries()) {
+      const label = b.textContent.trim(), name = KIT_NAMES[label] || "lumen-" + label.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      stat.textContent = `Zipping ${n + 1} of ${vs.length}: ${label}`; await new Promise(r => setTimeout(r, 0));
+      TEXT = b.dataset.t; P = Object.assign({}, DEFAULTS, presetOf(b.dataset.preset));
+      for (const [ink, fg] of [["light", P.fg], ["dark", PRESETS.Inverted.fg]]) {
+        const p = Object.assign({}, P, { fg, transparent: true });
+        zip.file(`${name}-${ink}.svg`, svgText(p, true));
+        zip.file(`${name}-${ink}.png`, pngTight(p, px).split(",")[1], { base64: true });
+      }
+    }
+  } finally { [TEXT, P] = keep; draw(); }
+  download("lumen-logos.zip", await zip.generateAsync({ type: "blob" }));
+  flash(`${vs.length} versions zipped`);
+};
 function flash(msg) { stat.textContent = msg; setTimeout(draw, 1500); }
 
 stage.classList.toggle("editing", !!P.edit);
