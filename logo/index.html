@@ -111,6 +111,7 @@ textarea {
     <button data-t="Lumen" data-preset="Word mark small">Lumen small</button>
     <button data-t="Lumen Project" data-preset="Word mark long">Lumen Project</button>
     <button data-t="Lumen&#10;Project" data-preset="Stacked">Lumen / Project</button>
+    <button data-t="Lumen&#10;Project" data-preset="Stacked swash">Lumen / Project swash</button>
     <button data-t="Lumen&#10;Project" data-preset="Stacked clean">Lumen / Project clean</button>
     <button data-t="Lumen" data-preset="Snake circle">Circle</button>
     <button data-t="Lumen Project" data-preset="Project circle">Project circle</button>
@@ -118,6 +119,9 @@ textarea {
     <button data-t="★" data-preset="Lu-star">Lu-star</button>
     <button data-t="➰" data-preset="Symbol">Symbol</button>
     <button data-t="➰" data-preset="Symbol small">Symbol small</button>
+    <button data-t="➰" data-preset="Symbol fine">Symbol fine</button>
+    <button data-t="➰" data-preset="Symbol ring">lp ring</button>
+    <button data-t="➰" data-preset="Symbol wreath">lp wreath</button>
   </div>
   <div class="presets" id="presets"></div>
   <div id="controls"></div>
@@ -202,7 +206,7 @@ const DEFAULT_GLYPHS = {
     // read as an 8, and a loop beside the stem foot read as d); the family's pen contrast: thin upstrokes, heavy downstrokes
     { pts: [[-1.6,0.25],[-0.6,0.85],[0.6,2.0],[2.05,3.8],[3.3,5.9],[3.9,7.9],[3.75,9.4],[2.85,10.1],[1.7,9.9],[0.9,8.8],[0.5,6.9],[0.3,4.6],[0.3,2.4],[0.5,0.9],[1.1,0.1],[2.2,-0.1],[3.8,-0.15],[5.6,-0.18],[7.3,0.15],[9.0,0.85],[9.85,2.0],[10.0,3.3],[9.55,4.6],[8.3,5.4],[6.95,5.25],[6.0,4.25],[5.65,2.6],[5.6,0.0],[5.6,-1.5],[5.6,-2.7]],
       smooth: true, under: [15, 18],
-      width: [0.45,0.55,0.6,0.65,0.7,0.76,0.84,0.95,1.05,1.15,1.22,1.25,1.22,1.12,1.0,0.92,0.88,0.86,0.82,0.76,0.82,0.98,1.15,1.2,1.05,0.95,1.05,1.15,1.1,0.7] } ] },
+      width: [0.3,0.34,0.38,0.42,0.46,0.52,0.6,0.76,0.97,1.15,1.22,1.25,1.22,1.12,1.0,0.92,0.88,0.86,0.82,0.76,0.82,0.98,1.15,1.2,1.05,0.95,1.05,1.15,1.1,0.7] } ] },
 };
 
 // ============ parameter spec ============
@@ -238,6 +242,11 @@ const SPEC = [
     { k: "circleIn",  l: "Letters inside the ring (baseline outside)", type: "check", d: false },
     { k: "circleRot", l: "Rotate",           min: -180, max: 180, step: 1, d: 0 },
     { k: "circleCentre", l: "Centre on the ring (else on the ink)", type: "check", d: true },
+  ]},
+  { group: "Repeat", open: false, items: [
+    { k: "repeat",    l: "Copies round a centre (1 = off)", min: 1, max: 12, step: 1, d: 1 },
+    { k: "repeatR",   l: "Distance from the centre",        min: 0, max: 20, step: 0.05, d: 6 },
+    { k: "repeatRot", l: "Rotate",                          min: -180, max: 180, step: 1, d: 0 },
   ]},
   { group: "Blobs", open: true, items: [
     { k: "spacing", l: "Grid spacing",      min: 0.1, max: 0.8, step: 0.005, d: 0.4 },
@@ -409,7 +418,7 @@ const PRESETS = {
   "Symbol small": fam(1.55, { connect: false, gridX: 0.45, minDot: 0.15, gridY: 0.2, ink: "both", minPx: 48, shadowW: 0.9, shadowStr: 0.7, shadowSoft: 1.2, shadowDx: 0, shadowDy: 0.3, lift: 1.05, pad: 0.45, fit: 1.0,
     // a near-even weight (on this screen the pen-contrast loop thins to one dot row) and the l loop and p bowl drawn a step wider, so both counters hold at 128 px
     glyphOver: { "➰": Object.assign({}, DEFAULT_GLYPHS["➰"], { strokes: [Object.assign({}, DEFAULT_GLYPHS["➰"].strokes[0], { pts: [[-1.6,0.25],[-0.6,0.85],[0.6,2.0],[2.25,3.8],[3.7,5.9],[4.4,7.9],[4.25,9.4],[3.25,10.1],[1.9,9.9],[0.95,8.8],[0.5,6.9],[0.3,4.6],[0.3,2.4],[0.5,0.9],[1.1,0.1],[2.2,-0.1],[4.4,-0.15],[6.2,-0.18],[7.86,-0.05],[9.7,0.7],[10.61,1.94],[10.78,3.35],[10.29,4.75],[8.94,5.62],[7.48,5.45],[6.6,4.25],[6.25,2.6],[6.2,0.0],[6.2,-1.5],[6.2,-2.7]],
-      width: [0.5,0.58,0.62,0.66,0.7,0.76,0.84,0.95,1.02,1.08,1.12,1.12,1.1,1.05,0.98,0.92,0.9,0.88,0.86,0.82,0.86,0.98,1.08,1.1,1.0,0.95,1.02,1.08,1.05,0.75] })] }) } }, 1.1),
+      width: [0.38,0.42,0.46,0.5,0.54,0.6,0.68,0.82,0.98,1.08,1.12,1.12,1.1,1.05,0.98,0.92,0.9,0.88,0.86,0.82,0.86,0.98,1.08,1.1,1.0,0.95,1.02,1.08,1.05,0.75] })] }) } }, 1.1),
   // the one-line lockup holds its dots down to about 240 px wide; below that use Lumen / Project clean or the Lp monogram (a coarser screen would break the family pitch)
   "Word mark": fam(0.8, { connect: true, minPx: 240, tracking: 0.55, fitW: 0.92, glyphOver: HAND }),
   // the one-line Lumen Project: a long line sits small in a square frame, so its pen is a step heavier (the screen follows the
@@ -437,7 +446,7 @@ const PRESETS = {
     // an exit flick that climbs on a diagonal and ends above the smallest-dot cut (a flat stub read as a full stop)
     "n": Object.assign({}, HAND.n, { strokes: [ HAND.n.strokes[0], Object.assign({}, HAND.n.strokes[1], { pts: [[0.2,2.2],[0.55,3.6],[1.2,4.6],[2.35,4.2],[2.8,3.0],[2.85,1.0],[3.1,0.25],[3.7,0.05],[4.35,0.5],[4.85,1.35]],
       width: [0.6,0.7,0.85,1.0,1.1,1.1,0.95,0.8,0.62,0.48], fade: [1,1,1,1,1,1,1,1,0.9,0.8] }) ] }) }) }),
-  "Stacked": fam(0.8, { connect: true, tracking: 0.55, fitW: 0.92, rowGap: 10.0, rowAlign: "left", rowIndent: 8.75, rowBridge: true, glyphOver: Object.assign({}, HAND, { "n": HAND_N_ROW, "P": Object.assign({}, HAND.P, { kern: { r: 0.4 }, joins: HAND_P_LONG.joins, strokes: [
+  "Stacked swash": fam(0.8, { connect: true, tracking: 0.55, fitW: 0.92, rowGap: 10.0, rowAlign: "left", rowIndent: 8.75, rowBridge: true, glyphOver: Object.assign({}, HAND, { "n": HAND_N_ROW, "P": Object.assign({}, HAND.P, { kern: { r: 0.4 }, joins: HAND_P_LONG.joins, strokes: [
     { pts: [[0.45,4.95],[0.3,2.0],[0.15,-1.0],[0.1,-2.8]], smooth: true, width: [0.8,1.1,1.05,0.7] }, HAND.P.strokes[2] ] }) }) }),   // the row bridge is the n's exit (no flick) and the p's lead-in (none of its own); the p stem rises to a cusp above the bowl's roof, where the bridge lands; the p stem hangs on the m's first stem (rowIndent)
   // the rows set tight with no row join: the most legible stack at small sizes
   "Stacked clean": fam(0.8, { connect: true, tracking: 0.55, fitW: 0.92, rowGap: 9.5, rowAlign: "left", rowIndent: 0, rowBridge: false, glyphOver: Object.assign({}, HAND, {
@@ -450,8 +459,16 @@ const PRESETS = {
   "Inverted": { fg: "#000000", bg: "#ffffff" },
 };
 const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d));
+// the symbol on a finer screen (spacing 0.36 against 0.515): more, smaller dots, so the thin lead-in into the l reads as a hairline
+// beside the heavy downstroke; and the lp repeated round a centre, each copy turned rigidly with its foot inward on that finer screen
+// (a wreath shrinks every copy in the frame). Odd counts only: four copies turned 90 degrees make a pinwheel that reads as a swastika
+// two rows, not joined: project starts a step in from lumen (a stem's width), so the stack reads as written rather than ruled flush
+PRESETS["Stacked"] = Object.assign({}, PRESETS["Stacked clean"], { rowIndent: 1.3 });
+PRESETS["Symbol fine"] = Object.assign({}, PRESETS.Symbol, { spacing: 0.36, soft: 0.4 });
+PRESETS["Symbol ring"] = Object.assign({}, PRESETS.Symbol, { spacing: 0.36, soft: 0.4, repeat: 5, repeatR: 11.5, fit: 1.1 });
+PRESETS["Symbol wreath"] = Object.assign({}, PRESETS.Symbol, { spacing: 0.34, soft: 0.4, repeat: 7, repeatR: 15.5, fit: 1.1 });
 const presetOf = n => JSON.parse(JSON.stringify(PRESETS[n] || {}));   // a copy: a version's glyphOver can be edited on the canvas
-const KEY = "lumen-logo-lab-v67", GKEY = "lumen-logo-lab-glyphs-v45", TKEY = "lumen-logo-lab-text-v2";
+const KEY = "lumen-logo-lab-v68", GKEY = "lumen-logo-lab-glyphs-v46", TKEY = "lumen-logo-lab-text-v2";
 let P = Object.assign({}, DEFAULTS);
 let G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS));
 let TEXT = "Lp";
@@ -517,6 +534,7 @@ if (QS.get("v")) {
   const vb = [...document.querySelectorAll(".text button")].find(b => b.textContent.trim().toLowerCase() === QS.get("v").toLowerCase());
   if (vb) { TEXT = vb.dataset.t; P = Object.assign({}, DEFAULTS, presetOf(vb.dataset.preset)); G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS)); syncInputs(); }
   // &o={"k":v,…}: try settings on top of that version's preset (render-mode experiments, nothing saved; "glyphOver":"HAND" = the word-mark hand)
+  if (vb && QS.get("t")) TEXT = QS.get("t");   // &t=: another text in that version's settings
   if (vb && QS.get("o")) try { Object.assign(P, JSON.parse(QS.get("o"))); if (P.glyphOver === "HAND") P.glyphOver = HAND; syncInputs(); } catch (e) {}
 }
 textEl.value = shownText();
@@ -778,7 +796,27 @@ function layout(p) {
     inst.push({ ch, g, ox: x, oy: yo, frame: circ ? me : null, segs, rings, bbox });
     x += advOf(ch, chars[ci + 1]) + p.tracking;
   }
-  return inst;
+  return p.repeat > 1 ? repeated(p, inst) : inst;
+}
+// repeat: the whole mark n times round a centre, each copy turned rigidly with its foot to the centre (the screen stays
+// upright, so the dots never rotate with it); later copies lie on top and cast the under-pass shadow on the ones below
+function repeated(p, inst) {
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const I of inst) if (I.bbox) { x0 = Math.min(x0, I.bbox[0]); y0 = Math.min(y0, I.bbox[1]); x1 = Math.max(x1, I.bbox[2]); y1 = Math.max(y1, I.bbox[3]); }
+  if (x0 === Infinity) return inst;
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2, out = [];
+  for (let k = 0; k < p.repeat; k++) {
+    const a = (p.repeatRot || 0) * Math.PI / 180 - 2 * Math.PI * k / p.repeat, c = Math.cos(a), sn = Math.sin(a);
+    const T = q => { const x = q[0] - cx, y = q[1] - cy + p.repeatR; return [x * c - y * sn, x * sn + y * c]; };
+    for (const I of inst) {
+      if (!I.segs.length) continue;
+      const segs = I.segs.map(g => [T(g[0]), T(g[1]), g[2], g[3], g[4], g[5], g[6] + k * 1e5, g[7]]);
+      let b = [Infinity, Infinity, -Infinity, -Infinity];
+      for (const g of segs) { const e = (Math.max(g[4], g[5]) - 1) * p.stroke / 2; for (const q of [g[0], g[1]]) b = [Math.min(b[0], q[0] - e), Math.min(b[1], q[1] - e), Math.max(b[2], q[0] + e), Math.max(b[3], q[1] + e)]; }
+      out.push({ ch: I.ch, g: { strokes: [] }, ox: 0, oy: 0, frame: null, segs, rings: [], bbox: b });
+    }
+  }
+  return out;
 }
 function sdSeg(x, y, a, b) {
   const px = x - a[0], py = y - a[1], bx = b[0] - a[0], by = b[1] - a[1];

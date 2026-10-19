@@ -162,14 +162,14 @@ footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--g
   </header>
 </div>
 
-<div class="hero"><img src="logos/lumen-project-stacked-light.svg" alt="Lumen Project, stacked word mark"></div>
+<div class="hero"><img src="logos/lumen-project-stacked-step-light.svg" alt="Lumen Project, stacked word mark"></div>
 
 <section id="logos">
   <div class="wrap">
     <header>
       <p class="label">01 Logo family</p>
       <h2>One hand, drawn in light</h2>
-      <p class="lede">Every mark is the same fluid script, set in a halftone of sharp dots. Softness only ever comes from the dots getting smaller. Each file is cropped to its ink on a transparent ground: <b>light</b> is Lumen white for dark grounds, <b>dark</b> is black for light ones.</p>
+      <p class="lede">Every mark is the same fluid script, set in a halftone of sharp dots. Softness only ever comes from the dots getting smaller. Each SVG has every dot as a vector circle, so it scales to any size; the PNGs are 4096 px wide. Each file is cropped to its ink on a transparent ground: <b>light</b> is Lumen white for dark grounds, <b>dark</b> is black for light ones.</p>
     </header>
     <div class="grid wide" id="primary"></div>
     <div style="height:20px"></div>
@@ -255,7 +255,7 @@ footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--g
       <p class="lede">Mock-ups with placeholder copy, to show scale and placement.</p>
     </header>
     <div class="mock-grid">
-      <figure class="c4 half"><div class="post"><span class="t">Lumen Project //</span><div class="mark"><img src="logos/lumen-project-stacked-light.svg" alt=""></div><span class="b">Artist name<br>Venue, City<br>Date</span></div><figcaption>Instagram post 3:4</figcaption></figure>
+      <figure class="c4 half"><div class="post"><span class="t">Lumen Project //</span><div class="mark"><img src="logos/lumen-project-stacked-step-light.svg" alt=""></div><span class="b">Artist name<br>Venue, City<br>Date</span></div><figcaption>Instagram post 3:4</figcaption></figure>
       <figure class="c4 half"><div class="post photo"><span class="t">Lumen Project //</span><img class="corner" src="logos/lumen-symbol-light.svg" alt=""><span class="b">Artist name<br>Venue, City<br>Date</span></div><figcaption>Over a photo: symbol in the corner</figcaption></figure>
       <figure class="c4 half"><div class="post story" style="aspect-ratio:9/16"><div class="mark" style="inset:26% 10% 34%"><img src="logos/lumen-project-circle-light.svg" alt=""></div><span class="b">Artist name<br>Venue, City<br>Date</span></div><figcaption>Story 9:16</figcaption></figure>
 
@@ -263,7 +263,7 @@ footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--g
       <figure class="c6"><div class="card-biz back"><img src="logos/lumen-project-wordmark-dark.svg" alt=""><div class="who"><b>Name Surname</b><br>Role<br>lumenproject.se</div></div><figcaption>Business card, back</figcaption></figure>
 
       <figure class="c5"><div class="poster"><div class="mark"><img src="logos/lumen-project-circle-light.svg" alt=""></div><div class="head">Artist name<br>Venue · Date</div><div class="foot"><span>Lumen Project //</span><span>lumenproject.se</span></div></div><figcaption>Poster, A-series</figcaption></figure>
-      <figure class="c7"><div class="tote"><div class="bag"><img src="logos/lumen-project-stacked-dark.svg" alt=""></div></div><figcaption>Tote bag, dark ink on natural cotton</figcaption></figure>
+      <figure class="c7"><div class="tote"><div class="bag"><img src="logos/lumen-lp-ring-dark.svg" alt=""></div></div><figcaption>Tote bag: the lp ring, dark ink on natural cotton</figcaption></figure>
 
       <figure class="c12"><div class="browser"><div class="bar"><i></i><i></i><i></i><span>lumenproject.se</span></div><nav><img src="logos/lumen-wordmark-light.svg" alt="Lumen"><div><span>Projects</span><span>Artists</span><span>About</span></div></nav><div class="page"><div><h4>Lumen<br>Project</h4><p>Placeholder text for a website header, with the Lumen word mark in the navigation and the symbol as the hero.</p></div><img src="logos/lumen-symbol-light.svg" style="max-width:260px;justify-self:center" alt=""></div></div><figcaption>Website header</figcaption></figure>
 
@@ -286,7 +286,8 @@ footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--g
       <a href="social/avatar-symbol-night.png" download><span>Profile picture, symbol, night</span><span>1080 × 1080</span></a>
       <a href="social/avatar-symbol-paper.png" download><span>Profile picture, symbol, paper</span><span>1080 × 1080</span></a>
       <a href="social/avatar-circle-night.png" download><span>Profile picture, Project circle</span><span>1080 × 1080</span></a>
-      <a href="social/post-1080x1350.png" download><span>Feed post, stacked word mark</span><span>1080 × 1350</span></a>
+      <a href="social/avatar-lp-ring-night.png" download><span>Profile picture, lp ring</span><span>1080 × 1080</span></a>
+      <a href="social/post-1080x1350.png" download><span>Feed post, Lumen / Project</span><span>1080 × 1350</span></a>
       <a href="social/story-1080x1920.png" download><span>Story, Project circle</span><span>1080 × 1920</span></a>
       <a href="social/banner-1500x500.png" download><span>Banner</span><span>1500 × 500</span></a>
       <a href="social/facebook-cover-1640x624.png" download><span>Facebook cover</span><span>1640 × 624</span></a>
@@ -303,10 +304,14 @@ footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--g
 // the tiles show the SVGs (dots stay sharp at any size; a scaled-down PNG greys out). the logo family: file slug, name, note, and whether it is primary, secondary or still in progress
 const LOGOS = [
   ["lumen-project-wordmark", "Lumen Project", "The full name on one line. Website headers, signatures, wide formats.", "primary", "wide"],
-  ["lumen-project-stacked", "Lumen / Project", "The main lockup: two rows, the most balanced shape. Posts, posters, covers.", "primary", "wide"],
+  ["lumen-project-stacked-step", "Lumen / Project", "The main lockup: two rows, not joined, project starting a step in from lumen. Posts, posters, covers.", "primary", "wide"],
+  ["lumen-project-stacked", "Lumen / Project flush", "The same two rows set flush left, for tight columns.", "primary", "wide"],
   ["lumen-wordmark", "Lumen", "The short name, for where Project is already said.", "primary", "wide"],
   ["lumen-project-circle", "Project circle", "The name round a ring, the n joining the P and the t closing into the L. Stickers, stamps, stories.", "primary", "wide"],
   ["lumen-symbol", "Symbol", "The cursive lp. Avatars, app icons, a corner mark over photos.", "primary"],
+  ["lumen-symbol-fine", "Symbol fine", "The symbol on a finer screen: more, smaller dots, the thin lead-in into the l reads as a hairline. Large sizes and print.", "primary"],
+  ["lumen-lp-ring", "lp ring", "Five lp marks turned round a centre, feet inward. Stickers, stamps, patterns, merch.", "secondary"],
+  ["lumen-lp-wreath", "lp wreath", "Seven lp marks in a wider wreath. Large formats, backgrounds, merch.", "secondary"],
   ["lumen-symbol-small", "Symbol small", "A coarser screen for 48 to 64 px: favicons, tabs, small avatars.", "small"],
   ["lumen-wordmark-small", "Lumen small", "A coarser screen of the word mark for small use.", "small"],
   ["lumen-lp", "Lp monogram", "The upright Lp, with the shadow where the foot passes under.", "secondary"],

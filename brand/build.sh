@@ -9,10 +9,11 @@ mkdir -p social icons; L=logos
 place $L/lumen-symbol-light.png social/avatar-symbol-night.png 1080 1080 '#000' 62 62
 place $L/lumen-symbol-dark.png  social/avatar-symbol-paper.png 1080 1080 '#ece9df' 62 62
 place $L/lumen-project-circle-light.png social/avatar-circle-night.png 1080 1080 '#000' 80 80
+place $L/lumen-lp-ring-light.png social/avatar-lp-ring-night.png 1080 1080 '#000' 80 80
 place $L/lumen-project-wordmark-light.png social/banner-1500x500.png 1500 500 '#000' 70 40
 place $L/lumen-project-wordmark-light.png social/facebook-cover-1640x624.png 1640 624 '#000' 62 40
-place $L/lumen-project-stacked-light.png social/link-preview-1200x630.png 1200 630 '#000' 60 62
-place $L/lumen-project-stacked-light.png social/post-1080x1350.png 1080 1350 '#000' 72 50
+place $L/lumen-project-stacked-step-light.png social/link-preview-1200x630.png 1200 630 '#000' 60 62
+place $L/lumen-project-stacked-step-light.png social/post-1080x1350.png 1080 1350 '#000' 72 50
 place $L/lumen-project-circle-light.png social/story-1080x1920.png 1080 1920 '#000' 74 40
 for s in 512 192 180 32; do src=$L/lumen-symbol-small-light.png; (( s >= 180 )) && src=$L/lumen-symbol-light.png
   place $src icons/icon-$s.png $s $s '#000' 70 70; done
