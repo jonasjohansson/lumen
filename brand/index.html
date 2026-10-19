@@ -147,6 +147,14 @@ ol.rules { padding: 0; margin: 0; }
 .sig img { width: 150px; }
 .sig small { color: #777; }
 
+/* — on photos — */
+.ph { position: relative; overflow: hidden; container-type: inline-size; background: #000; border-radius: 4px; }
+.ph > img.bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ph .shade { position: absolute; inset: 0; }
+.ph .m { position: absolute; }
+.ph .m img { width: 100%; }
+.ph .tx { position: absolute; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; line-height: 1.25; color: var(--lumen); }
+.ph .tx.big { font-weight: 700; letter-spacing: 0.01em; line-height: 0.95; }
 .files { display: grid; gap: 10px; }
 .files a { display: flex; justify-content: space-between; gap: 16px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; text-decoration: none; }
 .files a span:last-child { color: var(--grey); font-size: 13px; }
@@ -161,7 +169,7 @@ footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--g
   <header class="top">
     <div class="brand">Lumen Project <span>// Brand</span></div>
     <a class="get" href="lumen-brand-kit.zip" download>Download all</a>
-    <nav><a href="#logos">Logos</a><a href="#symbol">Symbol</a><a href="#colour">Colour</a><a href="#type">Type</a><a href="#use">In use</a><a href="#downloads">Downloads</a><a href="../logo/">Logo lab</a></nav>
+    <nav><a href="#logos">Logos</a><a href="#symbol">Symbol</a><a href="#colour">Colour</a><a href="#type">Type</a><a href="#use">In use</a><a href="#photos">On photos</a><a href="#downloads">Downloads</a><a href="../logo/">Logo lab</a></nav>
   </header>
 </div>
 
@@ -259,7 +267,7 @@ footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--g
     </header>
     <div class="mock-grid">
       <figure class="c4 half"><div class="post"><span class="t">Lumen Project //</span><div class="mark"><img src="logos/lumen-project-stacked-step-light.svg" alt=""></div><span class="b">Artist name<br>Venue, City<br>Date</span></div><figcaption>Instagram post 3:4</figcaption></figure>
-      <figure class="c4 half"><div class="post photo"><span class="t">Lumen Project //</span><img class="corner" src="logos/lumen-symbol-light.svg" alt=""><span class="b">Artist name<br>Venue, City<br>Date</span></div><figcaption>Over a photo: symbol in the corner</figcaption></figure>
+      <figure class="c4 half"><div class="post photo"><img src="photos/lumenproject-012.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:72% 50%"><span class="t">Lumen Project //</span><img class="corner" src="logos/lumen-symbol-light.svg" alt=""><span class="b">Artist name<br>Venue, City<br>Date</span></div><figcaption>Over a photo: symbol in the corner</figcaption></figure>
       <figure class="c4 half"><div class="post story" style="aspect-ratio:9/16"><div class="mark" style="inset:26% 10% 34%"><img src="logos/lumen-project-circle-light.svg" alt=""></div><span class="b">Artist name<br>Venue, City<br>Date</span></div><figcaption>Story 9:16</figcaption></figure>
 
       <figure class="c6"><div class="card-biz front"><img src="logos/lumen-symbol-light.svg" alt=""></div><figcaption>Business card, front (85 × 55 mm)</figcaption></figure>
@@ -276,10 +284,28 @@ footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--g
   </div>
 </section>
 
+<section id="photos">
+  <div class="wrap">
+    <header>
+      <p class="label">07 On photos</p>
+      <h2>With Lumen's own images</h2>
+      <p class="lede">Minimal layouts on photos from the lumenproject.se gallery (several by Olga Androsova). The mark sits in the darkest, calmest part of the picture; where the picture has none, a soft shade is added under it, never a box.</p>
+    </header>
+    <div class="mock-grid">
+      <figure class="c4 half"><div class="ph" style="aspect-ratio:4/5"><img class="bg" src="photos/lumenproject-012.jpg" style="object-position:38% 50%" alt=""><div class="m" style="left:6cqw;bottom:21cqw;width:40cqw"><img src="logos/lumen-project-stacked-step-light.svg" alt=""></div><span class="tx" style="left:6cqw;bottom:5cqw;font-size:4.2cqw">Artist name<br>Venue · Date</span></div><figcaption>Feed post 4:5</figcaption></figure>
+      <figure class="c4 half"><div class="ph" style="aspect-ratio:9/16"><img class="bg" src="photos/lumenproject-005.jpg" style="object-position:50% 50%" alt=""><div class="shade" style="background:linear-gradient(to bottom, rgba(0,0,0,.35), transparent 22%, transparent 50%, rgba(0,0,0,.85) 72%)"></div><span class="tx" style="left:7cqw;top:8cqw;font-size:4.6cqw">Artist name<br>Venue · Date</span><div class="m" style="left:18cqw;right:18cqw;bottom:12cqw"><img src="logos/lumen-project-circle-light.svg" alt=""></div></div><figcaption>Story 9:16</figcaption></figure>
+      <figure class="c4 half"><div class="ph" style="aspect-ratio:1/1.414"><img class="bg" src="photos/lumenproject-040.jpg" style="object-position:62% 50%" alt=""><div class="shade" style="background:linear-gradient(to bottom, rgba(0,0,0,.8), transparent 35%, transparent 60%, rgba(0,0,0,.65))"></div><div class="m" style="left:7cqw;top:7cqw;width:80cqw"><img src="logos/lumen-project-wordmark-light.svg" alt=""></div><span class="tx big" style="left:7cqw;bottom:14cqw;font-size:9cqw">Artist name<br>Venue · Date</span><span class="tx" style="left:7cqw;bottom:6cqw;font-size:2.8cqw">lumenproject.se</span></div><figcaption>Poster, A-series</figcaption></figure>
+      <figure class="c12"><div class="ph" style="aspect-ratio:16/9"><img class="bg" src="photos/lumenproject-036.jpg" style="object-position:50% 70%" alt=""><div class="shade" style="background:linear-gradient(to right, rgba(0,0,0,.8), rgba(0,0,0,.35) 40%, transparent 60%)"></div><span class="tx" style="left:4cqw;top:3.4cqw;font-size:1.3cqw">Lumen Project //</span><span class="tx" style="right:4cqw;top:3.4cqw;font-size:1.3cqw;letter-spacing:.12em">Program · Artists · About</span><div class="m" style="left:4cqw;top:22cqw;width:30cqw"><img src="logos/lumen-project-stacked-step-light.svg" alt=""></div><span class="tx" style="left:4cqw;bottom:4cqw;font-size:1.5cqw">Next: Artist name · Venue · Date</span></div><figcaption>Website hero 16:9</figcaption></figure>
+      <figure class="c7"><div class="ph" style="aspect-ratio:1920/1005"><img class="bg" src="photos/lumenproject-051.jpg" style="object-position:50% 40%" alt=""><div class="m" style="left:6cqw;top:9cqw;width:16cqw"><img src="logos/lumen-symbol-fine-light.svg" alt=""></div><span class="tx big" style="left:6cqw;bottom:7cqw;font-size:4.4cqw">Artist name<br>Venue · Date</span></div><figcaption>Facebook event 1920 × 1005</figcaption></figure>
+      <figure class="c5"><div class="ph" style="aspect-ratio:1"><img class="bg" src="photos/lumenproject-032.jpg" style="object-position:40% 50%" alt=""><div class="shade" style="background:radial-gradient(circle at 50% 42%, rgba(0,0,0,.45), transparent 60%)"></div><div class="m" style="left:28cqw;right:28cqw;top:12cqw"><img src="logos/lumen-lp-ring-light.svg" alt=""></div><span class="tx" style="left:0;right:0;text-align:center;bottom:7cqw;font-size:4cqw">Lumen Project // Season</span></div><figcaption>Square post 1:1</figcaption></figure>
+    </div>
+  </div>
+</section>
+
 <section id="downloads">
   <div class="wrap">
     <header>
-      <p class="label">07 Downloads</p>
+      <p class="label">08 Downloads</p>
       <h2>Files</h2>
       <p class="lede">The whole kit as one zip, or the ready-made sizes one by one. Every logo also has its own links in the family above.</p>
     </header>
