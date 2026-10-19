@@ -6,19 +6,19 @@
 <title>Lumen Project Brand</title>
 <meta name="description" content="The Lumen Project logo family in halftone script: word marks, the lp symbol, circles and figures, with downloads, colours, type and examples in use.">
 <link rel="icon" href="icons/icon-192.png" type="image/png">
+<link rel="stylesheet" href="https://use.typekit.net/iat0htw.css">   <!-- DIN 2014 and DIN 2014 Narrow: Adobe Fonts web project "lumen" -->
 <style>
-@font-face { font-family: "Barlow"; font-weight: 500; font-display: swap; src: url(../fonts/barlow-500-latin.woff2) format("woff2"); }
-@font-face { font-family: "Barlow"; font-weight: 600; font-display: swap; src: url(../fonts/barlow-600-latin.woff2) format("woff2"); }
-@font-face { font-family: "Barlow"; font-weight: 700; font-display: swap; src: url(../fonts/barlow-700-latin.woff2) format("woff2"); }
 
 :root {
-  --font: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  /* DIN 2014 (Adobe Fonts: the web project's names first, then the desktop activation), else the DIN that ships with macOS */
+  --font: "din-2014", "DIN 2014", "DIN Alternate", "Helvetica Neue", Arial, sans-serif;
+  --font-narrow: "din-2014-narrow", "DIN 2014 Narrow", "DIN Condensed", var(--font);
   --night: #000; --lumen: #ece9df; --grey: #8c8c8c; --line: #262626; --tile: #0f0f0f;
   color-scheme: dark;
 }
 *, *::before, *::after { box-sizing: border-box; }
 html, body { margin: 0; }
-body { font: 500 15px/1.5 var(--font); background: var(--night); color: var(--lumen); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+body { font: 400 15px/1.5 var(--font); background: var(--night); color: var(--lumen); -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 img { display: block; max-width: 100%; }
 a { color: inherit; }
 .wrap { max-width: 1240px; margin: 0 auto; padding: 0 32px; }
@@ -33,7 +33,7 @@ p { margin: 0; }
 
 header.top { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; padding: 24px 0; border-bottom: 1px solid var(--line); }
 header.top .brand { font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; font-size: 13px; }
-header.top .brand span { color: var(--grey); font-weight: 500; }
+header.top .brand span { color: var(--grey); font-weight: 400; }
 header.top .get { order: 3; font-size: 12px; font-weight: 600; text-decoration: none; height: 32px; padding: 0 14px; border-radius: 999px; background: var(--lumen); color: var(--night); display: inline-flex; align-items: center; white-space: nowrap; }
 header.top { flex-wrap: wrap; align-items: center; }
 header.top nav { display: flex; gap: 18px; flex-wrap: wrap; font-size: 13px; }
@@ -84,9 +84,9 @@ section > .wrap > header { display: grid; gap: 6px; margin-bottom: 36px; }
 .swatch .meta { padding: 14px 16px; display: grid; gap: 2px; font-size: 13px; }
 .swatch .meta span { color: var(--grey); font-variant-numeric: tabular-nums; }
 .typeset { display: grid; gap: 28px; }
-.typeset .big { font-size: clamp(36px, 7vw, 84px); font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1; }
+.typeset .big { font-family: var(--font-narrow); font-size: clamp(40px, 8vw, 96px); font-weight: 700; text-transform: uppercase; letter-spacing: 0.02em; line-height: 1; }
 .typeset .row { display: grid; gap: 6px; padding-bottom: 24px; border-bottom: 1px solid var(--line); }
-.typeset .w500 { font-weight: 500; font-size: 22px; } .typeset .w600 { font-weight: 600; font-size: 22px; } .typeset .w700 { font-weight: 700; font-size: 22px; }
+.typeset .w400 { font-weight: 400; font-size: 22px; } .typeset .w600 { font-weight: 600; font-size: 22px; } .typeset .w700 { font-weight: 700; font-size: 22px; } .typeset .narrow { font-family: var(--font-narrow); font-weight: 700; font-size: 26px; }
 .rules { display: grid; gap: 20px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); counter-reset: r; }
 .rules li { list-style: none; border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 6px; counter-increment: r; }
 .rules li::before { content: counter(r, decimal-leading-zero); font-size: 11px; font-weight: 700; letter-spacing: 0.14em; color: var(--grey); }
@@ -113,7 +113,7 @@ ol.rules { padding: 0; margin: 0; }
 .ph .m { position: absolute; }
 .ph .m img { width: 100%; }
 .ph .tx { position: absolute; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; line-height: 1.25; color: var(--lumen); }
-.ph .tx.big { font-weight: 700; letter-spacing: 0.01em; line-height: 0.95; }
+.ph .tx.big { font-family: var(--font-narrow); font-weight: 700; letter-spacing: 0.01em; line-height: 0.95; }
 .files { display: grid; gap: 10px; }
 .files a { display: flex; justify-content: space-between; gap: 16px; padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; text-decoration: none; }
 .files a span:last-child { color: var(--grey); font-size: 13px; }
@@ -190,12 +190,12 @@ footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--g
   <div class="wrap">
     <header>
       <p class="label">04 Type</p>
-      <h2>Barlow</h2>
-      <p class="lede">The script is for the marks only. Everything set in type is Barlow, the lumenproject.se typeface: uppercase with open tracking for headers, sentence case for running text.</p>
+      <h2>DIN 2014</h2>
+      <p class="lede">The script is for the marks only. Everything set in type is DIN 2014 (ParaType, via Adobe Fonts): uppercase with open tracking for labels, DIN 2014 Narrow Bold for big headlines, sentence case for running text.</p>
     </header>
     <div class="typeset">
-      <div class="row"><p class="label">Header · 700 uppercase</p><div class="big">Lumen Project //</div></div>
-      <div class="row"><p class="label">Weights</p><div class="w500">Barlow Medium 500: Lumen Project 0123456789</div><div class="w600">Barlow SemiBold 600: Lumen Project 0123456789</div><div class="w700">Barlow Bold 700: Lumen Project 0123456789</div></div>
+      <div class="row"><p class="label">Headline · Narrow Bold uppercase</p><div class="big">Lumen Project //</div></div>
+      <div class="row"><p class="label">Weights</p><div class="w400">DIN 2014 Regular: Lumen Project 0123456789</div><div class="w600">DIN 2014 Demi: Lumen Project 0123456789</div><div class="w700">DIN 2014 Bold: Lumen Project 0123456789</div><div class="narrow">DIN 2014 NARROW BOLD: LUMEN PROJECT 0123456789</div></div>
     </div>
   </div>
 </section>
