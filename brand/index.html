@@ -120,6 +120,29 @@ ol.rules { padding: 0; margin: 0; }
 .files a:hover { border-color: var(--grey); }
 footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--grey); font-size: 13px; }
 
+/* — tune: the lab's family settings, drawn live into every logo on the sheet — */
+.tune-open { position: fixed; right: 16px; bottom: 16px; z-index: 20; font: 600 12px/1 var(--font); height: 36px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--line); background: var(--night); color: var(--lumen); cursor: pointer; }
+.tune-open:hover { border-color: var(--grey); }
+.tune { position: fixed; top: 0; right: 0; bottom: 0; width: 320px; z-index: 30; background: #0b0b0b; border-left: 1px solid var(--line); padding: 20px 20px 28px; overflow-y: auto; display: none; flex-direction: column; gap: 16px; }
+.tune.open { display: flex; }
+body.tuning { padding-right: 320px; }
+body.tuning .tune-open, body.board .tune-open { display: none; }
+.tune .head { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.tune .head button { background: none; border: 0; color: var(--grey); font: 400 22px/1 var(--font); cursor: pointer; padding: 0 4px; }
+.tune .note { color: var(--grey); font-size: 12px; }
+.tune .row { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; font-size: 13px; }
+.tune .row output { color: var(--grey); font-variant-numeric: tabular-nums; font-size: 12px; }
+.tune .row input[type=range] { grid-column: 1 / -1; width: 100%; margin: 0; accent-color: var(--lumen); }
+.tune .row input[type=color] { width: 44px; height: 28px; padding: 0; border: 1px solid var(--line); border-radius: 4px; background: none; }
+.tune .acts { display: flex; gap: 8px; }
+.tune .acts button { flex: 1; height: 32px; font: 600 12px/1 var(--font); border-radius: 999px; border: 1px solid var(--line); background: none; color: var(--lumen); cursor: pointer; }
+.tune .acts button:hover { border-color: var(--grey); }
+.tune code { font-size: 11px; color: var(--grey); word-break: break-all; }
+.tune .status { font-size: 12px; color: var(--grey); min-height: 1.5em; }
+iframe.lab { position: absolute; left: -9999px; top: 0; width: 600px; height: 400px; border: 0; opacity: 0; pointer-events: none; }
+@media (max-width: 1100px) { body.tuning { padding-right: 0; } }
+@media (max-width: 640px) { .tune { top: auto; width: 100%; height: 60vh; border-left: 0; border-top: 1px solid var(--line); padding: 16px 16px 24px; } }
+
 </style>
 </head>
 <body>
@@ -179,8 +202,8 @@ footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--g
       <p class="lede">Light on black is the home ground. On paper, flip it: black dots on Lumen white, never grey on grey.</p>
     </header>
     <div class="swatches">
-      <div class="swatch"><div class="chip" style="background:#000;border-bottom:1px solid var(--line)"></div><div class="meta"><b>Night</b><span>#000000 · RGB 0 0 0</span><span>CMYK 60 40 40 100 (rich black)</span></div></div>
-      <div class="swatch"><div class="chip" style="background:#ece9df"></div><div class="meta"><b>Lumen</b><span>#ECE9DF · RGB 236 233 223</span><span>CMYK about 6 5 11 0, proof first</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--night);border-bottom:1px solid var(--line)"></div><div class="meta"><b>Night</b><span data-hex="night">#000000 · RGB 0 0 0</span><span>CMYK 60 40 40 100 (rich black)</span></div></div>
+      <div class="swatch"><div class="chip" style="background:var(--lumen)"></div><div class="meta"><b>Lumen</b><span data-hex="lumen">#ECE9DF · RGB 236 233 223</span><span>CMYK about 6 5 11 0, proof first</span></div></div>
       <div class="swatch"><div class="chip" style="background:#8c8c8c"></div><div class="meta"><b>Grey</b><span>#8C8C8C · RGB 140 140 140</span><span>Secondary text only</span></div></div>
     </div>
   </div>
@@ -262,6 +285,16 @@ footer { padding: 40px 0 60px; border-top: 1px solid var(--line); color: var(--g
 
 <footer><div class="wrap">Lumen Project // Logos are drawn and exported in the <a href="../logo/">logo lab</a>; regenerate this kit with <code>logo/kit.sh</code> and <code>brand/build.sh</code>.</div></footer>
 
+<button class="tune-open" id="tuneOpen" type="button">Tune the logo</button>
+<aside class="tune" id="tune" aria-label="Logo settings">
+  <div class="head"><h2 style="margin:0">Tune the logo</h2><button type="button" id="tuneClose" aria-label="Close">×</button></div>
+  <p class="note">The lab's family settings. Every logo on this sheet redraws from the lab as you move them, and the SVG and PNG links on the cards download what you see. Download all stays the published kit.</p>
+  <div id="tuneRows" style="display:grid;gap:14px"></div>
+  <div class="acts"><button type="button" id="tuneReset">Reset</button><button type="button" id="tuneCopy">Copy settings</button></div>
+  <code id="tuneJson"></code>
+  <div class="status" id="tuneStat"></div>
+</aside>
+
 <script>
 // the tiles show the SVGs (dots stay sharp at any size; a scaled-down PNG greys out). the logo family: file slug, name, note, and whether it is primary, secondary or still in progress
 const LOGOS = [
@@ -293,6 +326,91 @@ const card = ([s, name, note, kind]) => `<article class="card">
 </article>`;
 document.getElementById("primary").innerHTML = LOGOS.filter(l => l[4] === "wide").map(card).join("");
 document.getElementById("secondary").innerHTML = LOGOS.filter(l => l[4] !== "wide").map(card).join("");
+// tune: the lab (../logo/) is loaded in a hidden frame and draws every logos/<name>-light|dark.svg on the sheet through window.LUMEN,
+// from the family settings in the panel. Untouched settings leave the published files in place and never load the lab.
+if (new URLSearchParams(location.search).has("board")) document.body.classList.add("board");   // build.sh's screenshot: no panel button
+const TUNE = [
+  ["stroke", "Pen weight", 0.6, 1.6, 0.01, 1, "×"], ["spacing", "Dot pitch", 0.6, 2, 0.01, 1, "×"], ["dotMax", "Dot size", 0.2, 0.9, 0.005, 0.47],
+  ["soft", "Edge softness", 0.3, 3, 0.01, 1, "×"], ["gamma", "Size curve", 0.3, 2.5, 0.01, 0.8], ["minDot", "Smallest dot", 0, 0.3, 0.005, 0.1],
+  ["slant", "Slant", -0.2, 0.5, 0.01, 0.16], ["wobble", "Hand", 0, 1, 0.01, 0.3], ["joinFade", "Join fade", 0, 1, 0.01, 0.6],
+  ["shadowStr", "Under-pass shadow", 0, 1.5, 0.01, 1, "×"],
+];
+const INK = { lumen: "#ece9df", night: "#000000" }, TKEY = "lumen-brand-tune-v1";
+const T = Object.fromEntries([...TUNE.map(r => [r[0], r[5]]), ...Object.entries(INK)]);
+try { Object.assign(T, JSON.parse(localStorage.getItem(TKEY) || "{}")); } catch (e) {}
+const fmt = v => (+v).toFixed(2), tuneEl = document.getElementById("tune"), stat = document.getElementById("tuneStat");
+const changes = () => Object.fromEntries(Object.entries(T).filter(([k, v]) => v !== (TUNE.find(r => r[0] === k) || [, , , , , INK[k]])[5]));
+document.getElementById("tuneRows").innerHTML = TUNE.map(([k, l, lo, hi, st, d, x]) =>
+  `<label class="row">${l}<output id="o-${k}">${x || ""}${fmt(T[k])}</output><input type="range" data-k="${k}" min="${lo}" max="${hi}" step="${st}" value="${T[k]}"></label>`).join("") +
+  Object.keys(INK).map(k => `<label class="row">${k[0].toUpperCase() + k.slice(1)} (ink and page)<input type="color" data-k="${k}" value="${T[k]}"></label>`).join("");
+// every logo file on the sheet, keyed by kit name, with its ink; the card links keep their published href to fall back to
+const imgs = [...document.querySelectorAll("img")].filter(i => /logos\/.+-(light|dark)\.svg$/.test(i.getAttribute("src")));
+const links = [...document.querySelectorAll("a[download]")].filter(a => /logos\/.+-(light|dark)\.(svg|png)$/.test(a.getAttribute("href")));
+[...imgs, ...links].forEach(e => { const m = (e.getAttribute("src") || e.getAttribute("href")).match(/logos\/(.+)-(light|dark)\.(svg|png)$/); Object.assign(e.dataset, { kit: m[1], ink: m[2], fmt: m[3], file: m[0] }); });
+let labP = null, gen = 0, urls = [];
+const lab = () => labP || (labP = new Promise((ok, no) => {
+  const f = document.createElement("iframe"); f.className = "lab"; f.tabIndex = -1; f.setAttribute("aria-hidden", "true");
+  f.src = "../logo/index.html?render=1&v=Lp"; f.onload = () => f.contentWindow.LUMEN ? ok(f.contentWindow.LUMEN) : no(); document.body.appendChild(f);
+}));
+function paintColours() {
+  const r = document.documentElement.style; r.setProperty("--lumen", T.lumen); r.setProperty("--night", T.night);
+  document.querySelectorAll("[data-hex]").forEach(e => { const h = T[e.dataset.hex]; e.textContent = `${h.toUpperCase()} · RGB ${[1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)).join(" ")}`; });
+}
+async function redraw() {
+  const g = ++gen, diff = changes();
+  try { localStorage.setItem(TKEY, JSON.stringify(diff)); } catch (e) {}
+  document.getElementById("tuneJson").textContent = Object.keys(diff).length ? JSON.stringify(diff) : "";
+  paintColours();
+  urls.forEach(u => URL.revokeObjectURL(u)); urls = [];
+  if (!Object.keys(diff).length) {   // the published files
+    imgs.forEach(i => i.src = i.dataset.file); links.forEach(a => a.href = a.dataset.file); stat.textContent = ""; return;
+  }
+  let L; try { L = await lab(); } catch (e) { stat.textContent = "The lab did not load"; return; }
+  const tune = Object.fromEntries(TUNE.map(r => [r[0], T[r[0]]]));
+  // nearest the viewport first, so what is on screen changes at once
+  const dist = n => Math.min(...imgs.filter(i => i.dataset.kit === n).map(i => { const b = i.getBoundingClientRect(); return b.bottom < 0 ? -b.bottom : Math.max(0, b.top - innerHeight); }));
+  const names = [...new Set(imgs.map(i => i.dataset.kit))].sort((a, b) => dist(a) - dist(b));
+  for (const [n, name] of names.entries()) {
+    await new Promise(r => setTimeout(r, 0)); if (g !== gen) return;
+    stat.textContent = `Drawing ${n + 1} of ${names.length}`;
+    const light = L.svg(name, tune, T.lumen); if (!light) continue;
+    const svg = { light, dark: light.split(`fill="${T.lumen}"`).join(`fill="${T.night}"`) }, url = {};
+    for (const ink in svg) { url[ink] = URL.createObjectURL(new Blob([svg[ink]], { type: "image/svg+xml" })); urls.push(url[ink]); }
+    imgs.filter(i => i.dataset.kit === name).forEach(i => i.src = url[i.dataset.ink]);
+    links.filter(a => a.dataset.kit === name && a.dataset.fmt === "svg").forEach(a => a.href = url[a.dataset.ink]);
+  }
+  stat.textContent = `${names.length} logos drawn from the lab`;
+}
+// a tuned PNG is drawn on click, at the kit's 4096 px
+links.filter(a => a.dataset.fmt === "png").forEach(a => a.addEventListener("click", async e => {
+  if (!Object.keys(changes()).length) return;
+  e.preventDefault(); stat.textContent = "Drawing the PNG";
+  const L = await lab(), tune = Object.fromEntries(TUNE.map(r => [r[0], T[r[0]]]));
+  const d = document.createElement("a"); d.href = L.png(a.dataset.kit, tune, a.dataset.ink === "dark" ? T.night : T.lumen, 4096); d.download = a.dataset.file.slice(6);
+  document.body.appendChild(d); d.click(); d.remove(); stat.textContent = "";
+}));
+links.filter(a => a.dataset.fmt === "svg").forEach(a => a.download = a.dataset.file.slice(6));
+let wait = 0;
+tuneEl.addEventListener("input", e => {
+  const k = e.target.dataset.k; if (!k) return;
+  T[k] = e.target.type === "color" ? e.target.value : +e.target.value;
+  const r = TUNE.find(r => r[0] === k); if (r) document.getElementById("o-" + k).textContent = (r[6] || "") + fmt(T[k]);
+  if (e.target.type === "color") paintColours();
+  clearTimeout(wait); wait = setTimeout(redraw, 120);
+});
+const openTune = on => { tuneEl.classList.toggle("open", on); document.body.classList.toggle("tuning", on); };
+document.getElementById("tuneOpen").onclick = () => { openTune(true); lab().catch(() => {}); };
+document.getElementById("tuneClose").onclick = () => openTune(false);
+document.getElementById("tuneReset").onclick = () => {
+  Object.assign(T, Object.fromEntries(TUNE.map(r => [r[0], r[5]])), INK);
+  tuneEl.querySelectorAll("[data-k]").forEach(i => { i.value = T[i.dataset.k]; const r = TUNE.find(r => r[0] === i.dataset.k); if (r) document.getElementById("o-" + r[0]).textContent = (r[6] || "") + fmt(T[r[0]]); });
+  redraw();
+};
+document.getElementById("tuneCopy").onclick = async () => {
+  const txt = JSON.stringify(changes());
+  try { await navigator.clipboard.writeText(txt); stat.textContent = "Copied: paste it to Claude to set the lab's family defaults"; } catch (e) { stat.textContent = "Select the line above to copy it"; }
+};
+if (Object.keys(changes()).length) redraw();
 // ?rects: build.sh reads each section's place on the page from #rects to cut the PDF into one page per section
 if (new URLSearchParams(location.search).has("rects")) addEventListener("load", () => {
   const r = [...document.querySelectorAll(".hero, section, footer")].map(e => { const b = e.getBoundingClientRect(); return [Math.round(b.top + scrollY), Math.round(b.height)]; });

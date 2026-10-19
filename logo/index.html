@@ -1116,6 +1116,28 @@ function flash(msg) { stat.textContent = msg; setTimeout(draw, 1500); }
 
 stage.classList.toggle("editing", !!P.edit);
 draw();
+// the brand sheet (brand/index.html) loads this lab in a hidden frame and draws its logos through LUMEN, live from its own panel.
+// tune holds family values: stroke, spacing, soft and shadowStr scale every version's own; the rest move every version by
+// the same step away from FAM (a version that sets its own slant or join fade keeps its difference from the family)
+const TUNE_SCALE = ["stroke", "spacing", "soft", "shadowStr"], TUNE_STEP = { dotMax: [0.1, 0.95], gamma: [0.2, 3], minDot: [0, 0.4], slant: [-0.4, 0.6], wobble: [0, 1], joinFade: [0, 1] };
+function tuned(p, t) {
+  const q = Object.assign({}, p);
+  TUNE_SCALE.forEach(k => { if (t[k] != null) q[k] = p[k] * t[k]; });
+  Object.entries(TUNE_STEP).forEach(([k, [lo, hi]]) => { if (t[k] != null) q[k] = Math.min(hi, Math.max(lo, p[k] + t[k] - FAM[k])); });
+  return q;
+}
+function kitVersion(name, tune, fg) {
+  const label = Object.keys(KIT_NAMES).find(l => KIT_NAMES[l] === name);
+  const b = label && [...document.querySelectorAll(".text button")].find(b => b.textContent.trim() === label);
+  if (!b) return null;
+  return [b.dataset.t, tuned(Object.assign({}, DEFAULTS, presetOf(b.dataset.preset), { transparent: true }, fg ? { fg } : {}), tune || {})];
+}
+function withText(t, f) { const keep = [TEXT, G]; TEXT = t; G = DEFAULT_GLYPHS; try { return f(); } finally { [TEXT, G] = keep; } }
+window.LUMEN = {
+  FAM, ink: { light: DEFAULTS.fg, dark: PRESETS.Inverted.fg },
+  svg(name, tune, fg) { const v = kitVersion(name, tune, fg); return v && withText(v[0], () => svgText(v[1], true)); },
+  png(name, tune, fg, px) { const v = kitVersion(name, tune, fg); return v && withText(v[0], () => pngTight(v[1], px || 2048)); },
+};
 // brand kit: ?render=1&v=<version>&out=svg|png&ink=light|dark&px=2048 puts the file, tight on its ink, in #out for headless --dump-dom (kit.sh)
 if (RENDER && QS.get("out")) {
   const p = Object.assign({}, P, QS.get("ink") === "dark" ? { fg: PRESETS.Inverted.fg } : {}, { transparent: true });

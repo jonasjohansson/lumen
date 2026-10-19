@@ -26,7 +26,7 @@ tmp=$(mktemp -d)
 rects=$("$chrome" --headless=new --disable-gpu --window-size=1440,4000 --virtual-time-budget=8000 --user-data-dir=$tmp/u1 --dump-dom "$url?rects" 2>/dev/null |
   python3 -c 'import sys,re,html; print(html.unescape(re.findall(r"<pre id=\"rects\" hidden=\"\">(.*?)</pre>", sys.stdin.read(), re.S)[-1]))')
 h=$(python3 -c "import json,sys; print(json.loads(sys.argv[1])['h'])" "$rects")
-"$chrome" --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1.5 --window-size=1440,$h --virtual-time-budget=10000 --user-data-dir=$tmp/u2 --screenshot=$tmp/full.png "$url" 2>/dev/null
+"$chrome" --headless=new --disable-gpu --hide-scrollbars --force-device-scale-factor=1.5 --window-size=1440,$h --virtual-time-budget=10000 --user-data-dir=$tmp/u2 --screenshot=$tmp/full.png "$url?board" 2>/dev/null
 magick $tmp/full.png -resize 66.67% -quality 88 lumen-brand-board.jpg
 python3 -c "
 import json,sys; r=json.loads(sys.argv[1])['r']; r[-2][1]=r[-1][0]+r[-1][1]-r[-2][0]
