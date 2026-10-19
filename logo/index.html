@@ -104,6 +104,7 @@ textarea {
     <input id="text" value="Lp" spellcheck="false" aria-label="Text">
     <button data-t="Lp">Lp</button>
     <button data-t="Lumen Project">Full name</button>
+    <button data-t="Lumen" data-preset="Snake circle">Circle</button>
   </div>
   <div class="presets" id="presets"></div>
   <div id="controls"></div>
@@ -130,10 +131,11 @@ textarea {
 // A single point stroke { pts:[[x,y]] } is a round dot of stroke width.
 // entry / exit: where a cursive join arrives / leaves (defaults: first point of the first line stroke, last point of
 // the last stroke; exit:false = no join out of this letter). tail:true marks a stroke that is replaced by the join.
+// entryVia: points (this letter's coordinates) a join passes just before it enters this letter.
 // joins: { "<next char>": [[x,y],…], "*": […] } — hand-drawn via points (this letter's coordinates) for a pair,
 // the way a script font draws each connection for its pair rather than one rule for all.
 const DEFAULT_GLYPHS = {
-  "L": { adv: 3.3, strokes: [ { pts: [[0.2,6.9],[0.05,3.4],[0,1.2],[0.3,0.35],[1.2,0],[7.6,0]], smooth: true, tail: true } ] },
+  "L": { adv: 3.3, entry: [0.3,0.3], strokes: [ { pts: [[0.2,6.9],[0.05,3.4],[0,1.2],[0.3,0.35],[1.2,0],[7.6,0]], smooth: true, tail: true } ] },
   "p": { adv: 4.6, entry: [1.0,0.1], exit: [0,-2.4], joins: { "*": [[1.3,-1.7],[3.1,-2.15]] }, strokes: [ { pts: [[1.0,0.1],[2.3,0.2],[3.7,0.9],[4.2,2.3],[3.6,3.8],[2.1,4.4],[0.6,3.8],[0,2.3],[0,0],[0,-2.4]], smooth: true } ] },
   "P": { adv: 4.6, entry: [1.0,0.1], exit: [0,-2.4], joins: { "*": [[1.3,-1.7],[3.1,-2.15]] }, strokes: [ { pts: [[1.0,0.1],[2.3,0.2],[3.7,0.9],[4.2,2.3],[3.6,3.8],[2.1,4.4],[0.6,3.8],[0,2.3],[0,0],[0,-2.4]], smooth: true } ] },
   "u": { adv: 4.6, strokes: [ { pts: [[0,4.4],[0,1.3],[0.9,0],[2.2,0],[3.1,1.3],[3.1,4.4]], smooth: true }, { pts: [[3.1,4.4],[3.1,0]] } ] },
@@ -165,6 +167,13 @@ const SPEC = [
     { k: "wobble",   l: "Hand (bend strokes)", min: 0, max: 1, step: 0.01, d: 0.25 },
     { k: "stack",    l: "On top",           type: "select", opts: { later: "Later letter", earlier: "Earlier letter" }, d: "later" },
     { k: "edit",     l: "Edit letters",     type: "check", d: false },
+  ]},
+  { group: "Circle (snake)", open: true, items: [
+    { k: "circle",    l: "Wrap word around a circle", type: "check", d: false },
+    { k: "circleCover", l: "Word covers (of the ring)", min: 0.3, max: 1, step: 0.01, d: 0.45 },
+    { k: "circleBend",  l: "Bend letters with the ring", min: 0, max: 1, step: 0.01, d: 0.25 },
+    { k: "circleH",     l: "Letter height",   min: 0.4, max: 1.3, step: 0.01, d: 0.85 },
+    { k: "circleRot", l: "Rotate",           min: -180, max: 180, step: 1, d: 0 },
   ]},
   { group: "Blobs", open: true, items: [
     { k: "spacing", l: "Grid spacing",      min: 0.1, max: 0.8, step: 0.005, d: 0.4 },
@@ -205,6 +214,7 @@ const PRESETS = {
   "Hard edges": { soft: 0.1, gamma: 1 },
   "Blurred": { blur: 0.5, glow: 3, glowStr: 0.35 },
   "Scattered": { sizeJit: 0.35, posJit: 0.2 },
+  "Snake circle": { circle: true, connect: true, stroke: 0.8, spacing: 0.2, soft: 0.3, tracking: 0.4, slant: 0.12, wobble: 0.3, joinFade: 0.35 },
   "Word mark": { connect: true, stroke: 0.8, spacing: 0.22, soft: 0.3, tracking: 0.3, slant: 0.15, wobble: 0.3 },
   "Geometric": { wobble: 0, connect: false },
   "Deep shadow": { shadowW: 1.4, shadowStr: 1, shadowSoft: 0.9, shadowDy: 0.35, lift: 1.08 },
@@ -212,7 +222,7 @@ const PRESETS = {
   "Inverted": { fg: "#000000", bg: "#ffffff" },
 };
 const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d));
-const KEY = "lumen-logo-lab-v11", GKEY = "lumen-logo-lab-glyphs-v17", TKEY = "lumen-logo-lab-text-v2";
+const KEY = "lumen-logo-lab-v15", GKEY = "lumen-logo-lab-glyphs-v19", TKEY = "lumen-logo-lab-text-v2";
 let P = Object.assign({}, DEFAULTS);
 let G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS));
 let TEXT = "Lp";
@@ -271,7 +281,12 @@ function syncInputs() {
 const textEl = document.getElementById("text");
 textEl.value = TEXT;
 textEl.oninput = () => { TEXT = textEl.value; changed(); };
-document.querySelectorAll(".text button").forEach(b => b.onclick = () => { TEXT = b.dataset.t; textEl.value = TEXT; changed(); });
+document.querySelectorAll(".text button").forEach(b => b.onclick = () => {
+  TEXT = b.dataset.t; textEl.value = TEXT;
+  if (b.dataset.preset) { P = Object.assign({}, DEFAULTS, PRESETS[b.dataset.preset]); syncInputs(); }
+  else if (P.circle) { P.circle = false; syncInputs(); }
+  changed();
+});
 
 const presetsEl = document.getElementById("presets");
 Object.keys(PRESETS).forEach(name => {
@@ -356,6 +371,25 @@ function joinPts(a, b) { // the pen travels on to the next letter: flat along th
 function layout(p) {
   const inst = []; let x = 0;
   const chars = [...TEXT];
+  // circle: the word covers a share of one full turn; the rest is the tail that joins back into the first letter
+  let total = 0; for (const ch of chars) { const g = glyphOf(ch); total += (g ? g.adv : 3) + p.tracking; }
+  const circ = !!p.circle && chars.length > 0, W = total / (p.circleCover || 1);
+  const R = W / (2 * Math.PI), H = p.circleH || 1, rot = (p.circleRot || 0) * Math.PI / 180, bend = p.circleBend || 0;
+  const ang = u => Math.PI / 2 + rot - (u - total / 2 + p.tracking / 2) / R;
+  const warp = q => { const th = ang(q[0]), r = R + q[1] * H; return [r * Math.cos(th), r * Math.sin(th)]; };
+  // rigid frame of a letter centred at u: the letter is rotated onto the ring, not bent
+  const rigid = u => { const th = ang(u), c = Math.cos(th), sn = Math.sin(th);
+    return { f: q => { const d = q[0] - u, h = q[1] * H; return [(R + h) * c + d * sn, (R + h) * sn - d * c]; },
+             inv: (x, y) => { const h = x * c + y * sn - R, d = x * sn - y * c; return [u + d, h / H]; } }; };
+  const frame = u => { const r = rigid(u); return { f: q => { const a = r.f(q); if (!bend) return a; const b = warp(q); return [a[0] + (b[0] - a[0]) * bend, a[1] + (b[1] - a[1]) * bend]; }, inv: r.inv }; };
+  const resample = poly => { // returns points plus each point's fractional index in the source polyline
+    const out = [poly[0]], idx = [0];
+    for (let i = 1; i < poly.length; i++) {
+      const a = poly[i - 1], b = poly[i], n = circ ? Math.max(1, Math.ceil(Math.hypot(b[0] - a[0], b[1] - a[1]) / 0.2)) : 1;
+      for (let k = 1; k <= n; k++) { out.push([a[0] + (b[0] - a[0]) * k / n, a[1] + (b[1] - a[1]) * k / n]); idx.push(i - 1 + k / n); }
+    }
+    return { out, idx };
+  };
   for (let ci = 0; ci < chars.length; ci++) {
     const ch = chars[ci], g = glyphOf(ch);
     if (!g) { x += 3 + p.tracking; continue; }
@@ -364,15 +398,23 @@ function layout(p) {
     // cursive join to the next letter (in local coordinates of this letter)
     let join = null, via = [];
     if (p.connect) {
-      const nch = chars[ci + 1], ng = nch ? glyphOf(nch) : null, ex = exitOf(g), en = ng ? entryOf(ng) : null;
+      const wrap = circ && ci === chars.length - 1;
+      const nch = wrap ? chars[0] : chars[ci + 1], ng = nch ? glyphOf(nch) : null, ex = exitOf(g), en = ng ? entryOf(ng) : null;
       if (ng && ng.strokes.length && ex && en) {
-        join = [g.adv + p.tracking + en[0], en[1]];
+        const nx = (wrap ? W : x + g.adv + p.tracking) - x;   // next letter's origin, in this letter's coordinates
+        join = [nx + en[0], en[1]];
         // hand-drawn join for this pair (points in this letter's coordinates), else the letter's default join
         const J = g.joins || {};
-        via = J[nch] || J[nch.toLowerCase()] || J["*"] || [];
+        via = (J[nch] || J[nch.toLowerCase()] || J["*"] || []).concat((ng.entryVia || []).map(q => [nx + q[0], q[1]]));
       }
     }
     const makeJoin = a => via.length ? [a, ...via, join] : joinPts(a, join);
+    const me = frame(x + g.adv / 2);
+    let nextFrame = me;
+    if (circ && join) {
+      const wrap = ci === chars.length - 1, ng = glyphOf(wrap ? chars[0] : chars[ci + 1]);
+      nextFrame = frame((wrap ? W : x + g.adv + p.tracking) + ng.adv / 2);
+    }
     const strokes = [];
     let tailed = false;
     for (const st of g.strokes) {
@@ -383,20 +425,38 @@ function layout(p) {
       else strokes.push(st);
     }
     if (join && !tailed) strokes.push({ pts: makeJoin(exitOf(g)), smooth: true, fadeFrom: 0 });
-    strokes.forEach((st, si) => {
+    strokes.forEach((st0, si) => {
+      let st = st0;
+      if (st.ring && circ) { // rings become polylines so they bend with the circle
+        const [cx, cy, r] = st.ring, rp = [];
+        for (let a = 0; a <= 48; a++) rp.push([cx + r * Math.cos(a / 48 * Math.PI * 2), cy + r * Math.sin(a / 48 * Math.PI * 2)]);
+        st = { pts: rp };
+      }
       if (st.ring) { const [cx, cy, r] = st.ring; rings.push([cx + x + cy * p.slant, cy, r, p.slant]); pts.push([cx + x + cy * p.slant - r, cy], [cx + x + cy * p.slant + r, cy], [cx + x + cy * p.slant, cy + r], [cx + x + cy * p.slant, cy - r]); return; }
       const bent = st.smooth ? st.pts : wob(st.pts, p.wobble, ci * 31 + si);
       const smooth = st.smooth || bent !== st.pts;
-      const poly = (smooth ? catmull(bent, 8) : bent).map(tx);
-      // weight along the stroke: 1, except a join, which fades towards the next letter
-      const n = poly.length - 1, fs = st.fadeFrom == null ? Infinity : st.fadeFrom * (smooth ? 8 : 1);
-      const w = idx => idx <= fs || n <= fs ? 1 : 1 - p.joinFade * (idx - fs) / (n - fs);
+      const flat = (smooth ? catmull(bent, 8) : bent).map(tx);
+      const rs = circ ? resample(flat) : { out: flat, idx: flat.map((_, i) => i) };
+      // join parameter along the stroke: 0 on the letter itself, rising to 1 where the join reaches the next letter
+      const nf = flat.length - 1, fsf = st.fadeFrom == null ? Infinity : st.fadeFrom * (smooth ? 8 : 1);
+      const jt = rs.idx.map(i => i <= fsf || nf <= fsf ? 0 : (i - fsf) / (nf - fsf));
+      // length of the join part, so long joins can follow the ring and only ease into the letters at their ends
+      let jl = 0; for (let i = 1; i < rs.out.length; i++) if (jt[i] > 0) jl += Math.hypot(rs.out[i][0] - rs.out[i - 1][0], rs.out[i][1] - rs.out[i - 1][1]);
+      const ss = v => { v = Math.max(0, Math.min(1, v)); return v * v * (3 - 2 * v); }, ease = 1.6;
+      const poly = !circ ? rs.out : rs.out.map((q, i) => {
+        const a = me.f(q); if (!jt[i]) return a;
+        // ease out of this letter's frame into the next one's, following the ring itself in between
+        const b = nextFrame.f(q), t = ss(jt[i]), c = warp(q), m = Math.min(ss(jt[i] * jl / ease), ss((1 - jt[i]) * jl / ease));
+        const r = [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+        return [r[0] + (c[0] - r[0]) * m, r[1] + (c[1] - r[1]) * m];
+      });
+      const w = i => 1 - p.joinFade * jt[i];
       if (poly.length === 1) segs.push([poly[0], poly[0], 1, 1]);
       for (let i = 0; i < poly.length - 1; i++) segs.push([poly[i], poly[i + 1], w(i), w(i + 1)]);
       pts.push(...poly);
     });
     const xs = pts.map(q => q[0]), ys = pts.map(q => q[1]);
-    inst.push({ ch, g, ox: x, segs, rings, bbox: pts.length ? [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)] : null });
+    inst.push({ ch, g, ox: x, frame: circ ? me : null, segs, rings, bbox: pts.length ? [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)] : null });
     x += g.adv + p.tracking;
   }
   return inst;
@@ -531,14 +591,17 @@ function handles(p, inst) {
   if (!view) return [];
   const { k, cx, cy } = view, out = [];
   inst.forEach(I => {
+    const S = q => { const w = I.frame ? I.frame.f(q) : q; return [cx + w[0] * k, cy - w[1] * k]; };
+    const local = (x, y) => I.frame ? I.frame.inv(x, y) : [x, y];
     I.g.strokes.forEach((st, si) => {
       if (st.ring) {
         const [rx, ry, rr] = st.ring;
-        const c = [rx + I.ox + ry * p.slant, ry];
-        out.push({ sx: cx + c[0] * k, sy: cy - c[1] * k, kind: "c", set: (x, y) => { st.ring[0] = x - I.ox - y * p.slant; st.ring[1] = y; } });
-        out.push({ sx: cx + (c[0] + rr) * k, sy: cy - c[1] * k, kind: "r", set: (x, y) => { st.ring[2] = Math.max(0.2, Math.hypot(x - c[0], y - c[1])); } });
+        const c = [rx + I.ox + ry * p.slant, ry], sc = S(c), sr = S([c[0] + rr, c[1]]);
+        out.push({ sx: sc[0], sy: sc[1], kind: "c", set: (x, y) => { [x, y] = local(x, y); st.ring[0] = x - I.ox - y * p.slant; st.ring[1] = y; } });
+        out.push({ sx: sr[0], sy: sr[1], kind: "r", set: (x, y) => { [x, y] = local(x, y); st.ring[2] = Math.max(0.2, Math.hypot(x - c[0], y - c[1])); } });
       } else st.pts.forEach((q, qi) => {
-        out.push({ sx: cx + (q[0] + I.ox + q[1] * p.slant) * k, sy: cy - q[1] * k, kind: "p", set: (x, y) => { q[0] = x - I.ox - y * p.slant; q[1] = y; } });
+        const sq = S([q[0] + I.ox + q[1] * p.slant, q[1]]);
+        out.push({ sx: sq[0], sy: sq[1], kind: "p", set: (x, y) => { [x, y] = local(x, y); q[0] = x - I.ox - y * p.slant; q[1] = y; } });
       });
     });
   });
