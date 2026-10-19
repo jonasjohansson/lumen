@@ -49,6 +49,7 @@ FORMATS.forEach((f) => (views[f.id] = { fx: 0.5, fy: 0.5, zoom: 1 }));
 function load() {
   try {
     const saved = JSON.parse(localStorage.getItem(STORE_KEY) || "{}");
+    if (!["400", "600", "700"].includes(saved.weight)) delete saved.weight;   // the DIN kit has no 500 (Barlow Medium)
     return { ...DEFAULTS, ...saved, enabled: { ...DEFAULTS.enabled, ...(saved.enabled || {}) } };
   } catch {
     return structuredClone(DEFAULTS);
@@ -179,7 +180,7 @@ function lines(text) {
 }
 
 function fontSpec(px) {
-  return `${state.weight} ${px}px Barlow, "Helvetica Neue", Arial, sans-serif`;
+  return `${state.weight} ${px}px din-2014, "Helvetica Neue", Arial, sans-serif`;
 }
 
 function draw(ctx, fmt, source) {

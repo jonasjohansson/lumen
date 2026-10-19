@@ -16,7 +16,8 @@ browser: nothing is uploaded anywhere.
   smaller than the export and has to be upscaled.
 - Drop an image anywhere, including onto a preview; each format has its own crop: drag to
   move, pinch or the zoom slider to zoom, double-click to reset.
-- Type is Barlow (the lumenproject.se typeface) at the size and margins measured from the
+- Type is DIN 2014 (the lumenproject.se typeface, from the Adobe Fonts web project "lumen",
+  kit `iat0htw`) at the size and margins measured from the
   Instagram posts; size, margin, weight and colour are adjustable.
 - Text settings are remembered in the browser (Reset restores the defaults); the image is not.
 
