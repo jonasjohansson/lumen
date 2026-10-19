@@ -108,6 +108,7 @@ textarea {
     <button data-t="Lumen" data-preset="Word mark">Lumen</button>
     <button data-t="Lumen Project" data-preset="Word mark">Lumen Project</button>
     <button data-t="Lumen" data-preset="Snake circle">Circle</button>
+    <button data-t="*" data-preset="Lu-man">Lu-man</button>
   </div>
   <div class="presets" id="presets"></div>
   <div id="controls"></div>
@@ -134,6 +135,7 @@ textarea {
 // A single point stroke { pts:[[x,y]] } is a round dot of stroke width.
 // entry / exit: where a cursive join arrives / leaves (defaults: first point of the first line stroke, last point of
 // the last stroke; exit:false = no join out of this letter). tail:true marks a stroke that is replaced by the join.
+// width: [start, end] tapers a stroke, in multiples of the stroke width ("*" is the Lu-man mascot).
 // entryVia: points (this letter's coordinates) a join passes just before it enters this letter.
 // joins: { "<next char>": [[x,y],…], "*": […] } — hand-drawn via points (this letter's coordinates) for a pair,
 // the way a script font draws each connection for its pair rather than one rule for all.
@@ -157,6 +159,13 @@ const DEFAULT_GLYPHS = {
   "a": { adv: 4.8, entry: [0,2.2], strokes: [ { ring: [1.9, 2.2, 1.9] }, { pts: [[3.8,4.4],[3.8,0]] } ] },
   "s": { adv: 4.0, strokes: [ { pts: [[2.9,3.8],[1.8,4.4],[0.6,3.8],[0.9,2.6],[2.2,2.0],[3.0,1.0],[2.2,0],[0.4,0.3]], smooth: true } ] },
   " ": { adv: 3.0, strokes: [] },
+  "*": { adv: 11, exit: false, strokes: [
+    { pts: [[0,3.4],[-2.4,4.6],[-5.0,6.4]], smooth: true, width: [3.0, 0.35] },
+    { pts: [[0,3.4],[2.4,4.6],[5.0,6.4]], smooth: true, width: [3.0, 0.35] },
+    { pts: [[0,3.0],[-1.5,0.4],[-3.1,-3.0]], smooth: true, width: [3.0, 0.4] },
+    { pts: [[0,3.0],[1.5,0.4],[3.1,-3.0]], smooth: true, width: [3.0, 0.4] },
+    { pts: [[0,2.6],[0,5.0]], width: [3.2, 1.6] },
+    { pts: [[0,7.1]], width: [2.6, 2.6] } ] },
 };
 
 // ============ parameter spec ============
@@ -218,6 +227,7 @@ const PRESETS = {
   "Blurred": { blur: 0.5, glow: 3, glowStr: 0.35 },
   "Scattered": { sizeJit: 0.35, posJit: 0.2 },
   "Snake circle": { circle: true, connect: true, stroke: 0.8, spacing: 0.2, soft: 0.3, tracking: 0.4, slant: 0.12, wobble: 0.3, joinFade: 0.35 },
+  "Lu-man": { connect: false, stroke: 1.0, spacing: 0.3, soft: 0.6, gamma: 0.9, minDot: 0.05, wobble: 0, slant: 0 },
   "Word mark": { connect: true, stroke: 0.8, spacing: 0.22, soft: 0.3, tracking: 0.3, slant: 0.15, wobble: 0.3 },
   "Geometric": { wobble: 0, connect: false },
   "Deep shadow": { shadowW: 1.4, shadowStr: 1, shadowSoft: 0.9, shadowDy: 0.35, lift: 1.08 },
@@ -225,7 +235,7 @@ const PRESETS = {
   "Inverted": { fg: "#000000", bg: "#ffffff" },
 };
 const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d));
-const KEY = "lumen-logo-lab-v15", GKEY = "lumen-logo-lab-glyphs-v19", TKEY = "lumen-logo-lab-text-v2";
+const KEY = "lumen-logo-lab-v15", GKEY = "lumen-logo-lab-glyphs-v20", TKEY = "lumen-logo-lab-text-v2";
 let P = Object.assign({}, DEFAULTS);
 let G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS));
 let TEXT = "Lp";
@@ -396,7 +406,7 @@ function layout(p) {
   for (let ci = 0; ci < chars.length; ci++) {
     const ch = chars[ci], g = glyphOf(ch);
     if (!g) { x += 3 + p.tracking; continue; }
-    const segs = [], rings = [], pts = [];
+    const segs = [], rings = [], pts = []; let maxF = 1;
     const tx = (q) => [q[0] + x + q[1] * p.slant, q[1]];
     // cursive join to the next letter (in local coordinates of this letter)
     let join = null, via = [];
@@ -454,12 +464,16 @@ function layout(p) {
         return [r[0] + (c[0] - r[0]) * m, r[1] + (c[1] - r[1]) * m];
       });
       const w = i => 1 - p.joinFade * jt[i];
-      if (poly.length === 1) segs.push([poly[0], poly[0], 1, 1]);
-      for (let i = 0; i < poly.length - 1; i++) segs.push([poly[i], poly[i + 1], w(i), w(i + 1)]);
+      // width along the stroke (multiples of the stroke width), eased so a limb swells into the body
+      const wd = st.width, f = i => { if (!wd) return 1; const t = nf ? rs.idx[i] / nf : 0, e = 1 - Math.pow(1 - t, 1.6); return wd[0] + (wd[1] - wd[0]) * e; };
+      if (poly.length === 1) segs.push([poly[0], poly[0], 1, 1, f(0), f(0)]);
+      for (let i = 0; i < poly.length - 1; i++) segs.push([poly[i], poly[i + 1], w(i), w(i + 1), f(i), f(i + 1)]);
+      if (wd) maxF = Math.max(maxF, wd[0], wd[1]);
       pts.push(...poly);
     });
+    const grow = (maxF - 1) * p.stroke / 2;
     const xs = pts.map(q => q[0]), ys = pts.map(q => q[1]);
-    inst.push({ ch, g, ox: x, frame: circ ? me : null, segs, rings, bbox: pts.length ? [Math.min(...xs), Math.min(...ys), Math.max(...xs), Math.max(...ys)] : null });
+    inst.push({ ch, g, ox: x, frame: circ ? me : null, segs, rings, bbox: pts.length ? [Math.min(...xs) - grow, Math.min(...ys) - grow, Math.max(...xs) + grow, Math.max(...ys) + grow] : null });
     x += g.adv + p.tracking;
   }
   return inst;
@@ -475,13 +489,14 @@ function sdRing(x, y, r) {
   const ux = x - y * r[3] - (r[0] - r[1] * r[3]);
   return Math.abs(Math.hypot(ux, y - r[1]) - r[2]);
 }
-let lastW = 1; // weight of the segment nearest to the last distInst() point
+let lastW = 1, HW = 0.5; // weight of the segment nearest to the last distInst() point; half stroke width
 function distInst(x, y, I) {
   let d = Infinity; lastW = 1;
   for (const s of I.segs) {
     const a = s[0], b = s[1], px = x - a[0], py = y - a[1], bx = b[0] - a[0], by = b[1] - a[1], l2 = bx * bx + by * by;
     const h = l2 ? Math.max(0, Math.min(1, (px * bx + py * by) / l2)) : 0;
-    const v = Math.hypot(px - bx * h, py - by * h);
+    // a wider stroke reads as a point that is closer to its centreline
+    const v = Math.hypot(px - bx * h, py - by * h) - HW * ((s[4] + (s[5] - s[4]) * h) - 1);
     if (v < d) { d = v; lastW = s[2] + (s[3] - s[2]) * h; }
   }
   for (const r of I.rings) { const v = sdRing(x, y, r); if (v < d) { d = v; lastW = 1; } }
@@ -503,7 +518,7 @@ function hash(i, j, seed) { let h = (i * 374761393 + j * 668265263 + seed * 2246
 
 function dots(p) {
   const inst = layout(p);
-  const hw = p.stroke / 2, reach = hw + 2.5 * p.soft, B = bounds(p, inst);
+  const hw = p.stroke / 2, reach = hw + 2.5 * p.soft, B = bounds(p, inst); HW = hw;
   const s = p.spacing, rMax = s * p.dotMax, rMin = s * p.minDot;
   // coverage of the stroke after a gaussian blur of sigma = soft: flat inside, fading over the edge
   const depth = d => d >= reach ? 0 : Math.pow(0.5 * (1 + erf((hw - d) / (p.soft * Math.SQRT2))), p.gamma);
@@ -648,7 +663,7 @@ function download(name, blob) {
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 2000);
 }
-function slug() { return "lumen-" + (TEXT.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-") || "logo"); }
+function slug() { return "lumen-" + (TEXT.trim() === "*" ? "luman" : TEXT.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-") || "logo"); }
 document.getElementById("png").onclick = () => {
   const size = +document.getElementById("pngSize").value;
   const B = bounds(P, layout(P)), ar = (B.x1 - B.x0) / (B.y1 - B.y0);
