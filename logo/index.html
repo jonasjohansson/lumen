@@ -193,6 +193,8 @@ const SPEC = [
     { k: "circleCover", l: "Word covers (of the ring)", min: 0.3, max: 1, step: 0.01, d: 0.45 },
     { k: "circleBend",  l: "Bend letters with the ring", min: 0, max: 1, step: 0.01, d: 0.25 },
     { k: "circleH",     l: "Letter height",   min: 0.4, max: 1.3, step: 0.01, d: 0.85 },
+    { k: "wordGap",   l: "Gap between words", min: 0, max: 8, step: 0.1, d: 0 },
+    { k: "circleBridge", l: "Join across the word gap", type: "check", d: false },
     { k: "circleRot", l: "Rotate",           min: -180, max: 180, step: 1, d: 0 },
   ]},
   { group: "Blobs", open: true, items: [
@@ -234,7 +236,7 @@ const PRESETS = {
   "Hard edges": { soft: 0.1, gamma: 1 },
   "Blurred": { blur: 0.5, glow: 3, glowStr: 0.35 },
   "Scattered": { sizeJit: 0.35, posJit: 0.2 },
-  "Project circle": { circle: true, connect: true, circleCover: 0.94, circleH: 0.8, circleBend: 1, stroke: 0.75, spacing: 0.2, soft: 0.28, tracking: 0.5, slant: 0, wobble: 0, joinFade: 0.2 },
+  "Project circle": { circle: true, connect: true, circleCover: 0.88, wordGap: 2.5, circleBridge: false, circleH: 0.8, circleBend: 1, stroke: 0.75, spacing: 0.2, soft: 0.28, tracking: 0.5, slant: 0, wobble: 0, joinFade: 0.2 },
   "Snake circle": { circle: true, connect: true, circleCover: 1, circleH: 0.42, circleBend: 1, stroke: 0.7, spacing: 0.18, soft: 0.26, tracking: 0.8, slant: 0, wobble: 0, joinFade: 0.15 },
   "Lu-man": { connect: false, stroke: 0.75, spacing: 0.22, soft: 0.3, gamma: 0.8, minDot: 0.05, wobble: 0, slant: 0 },
   "Lu-star": { connect: false, stroke: 0.8, spacing: 0.22, soft: 0.38, gamma: 0.8, minDot: 0.05, wobble: 0, slant: 0 },
@@ -245,7 +247,7 @@ const PRESETS = {
   "Inverted": { fg: "#000000", bg: "#ffffff" },
 };
 const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d));
-const KEY = "lumen-logo-lab-v21", GKEY = "lumen-logo-lab-glyphs-v25", TKEY = "lumen-logo-lab-text-v2";
+const KEY = "lumen-logo-lab-v22", GKEY = "lumen-logo-lab-glyphs-v25", TKEY = "lumen-logo-lab-text-v2";
 let P = Object.assign({}, DEFAULTS);
 let G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS));
 let TEXT = "Lp";
@@ -395,8 +397,11 @@ function layout(p) {
   const inst = []; let x = 0;
   const chars = [...TEXT];
   // circle: the word covers a share of one full turn; the rest is the tail that joins back into the first letter
-  let total = 0; for (const ch of chars) { const g = glyphOf(ch); total += (g ? g.adv : 3) + p.tracking; }
-  const circ = !!p.circle && chars.length > 0, W = total / (p.circleCover || 1);
+  const circ = !!p.circle && chars.length > 0;
+  // word spaces can be widened around the circle so the two words stand apart
+  const advOf = ch => { const g = glyphOf(ch); if (!g) return 3; return g.adv + (circ && !g.strokes.length ? (p.wordGap || 0) : 0); };
+  let total = 0; for (const ch of chars) total += advOf(ch) + p.tracking;
+  const W = total / (p.circleCover || 1);
   const R = W / (2 * Math.PI), H = p.circleH || 1, rot = (p.circleRot || 0) * Math.PI / 180, bend = p.circleBend || 0;
   const ang = u => Math.PI / 2 + rot - (u - total / 2 + p.tracking / 2) / R;
   const warp = q => { const th = ang(q[0]), r = R + q[1] * H; return [r * Math.cos(th), r * Math.sin(th)]; };
@@ -422,7 +427,7 @@ function layout(p) {
     let join = null, via = [];
     // next letter to join into; around a circle the pen carries on over word spaces so the ring stays one stroke
     let ni = ci + 1, nxo = x + g.adv + p.tracking;
-    if (circ) while (ni < chars.length && glyphOf(chars[ni]) && !glyphOf(chars[ni]).strokes.length) { nxo += glyphOf(chars[ni]).adv + p.tracking; ni++; }
+    if (circ && p.circleBridge) while (ni < chars.length && glyphOf(chars[ni]) && !glyphOf(chars[ni]).strokes.length) { nxo += advOf(chars[ni]) + p.tracking; ni++; }
     const wrap = circ && ni >= chars.length;
     if (wrap) nxo = W;
     if (p.connect) {
@@ -488,7 +493,7 @@ function layout(p) {
     const grow = (maxF - 1) * p.stroke / 2;
     const xs = pts.map(q => q[0]), ys = pts.map(q => q[1]);
     inst.push({ ch, g, ox: x, frame: circ ? me : null, segs, rings, bbox: pts.length ? [Math.min(...xs) - grow, Math.min(...ys) - grow, Math.max(...xs) + grow, Math.max(...ys) + grow] : null });
-    x += g.adv + p.tracking;
+    x += advOf(ch) + p.tracking;
   }
   return inst;
 }
