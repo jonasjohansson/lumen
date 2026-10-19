@@ -130,21 +130,23 @@ textarea {
 // A single point stroke { pts:[[x,y]] } is a round dot of stroke width.
 // entry / exit: where a cursive join arrives / leaves (defaults: first point of the first line stroke, last point of
 // the last stroke; exit:false = no join out of this letter). tail:true marks a stroke that is replaced by the join.
+// joins: { "<next char>": [[x,y],…], "*": […] } — hand-drawn via points (this letter's coordinates) for a pair,
+// the way a script font draws each connection for its pair rather than one rule for all.
 const DEFAULT_GLYPHS = {
   "L": { adv: 3.3, strokes: [ { pts: [[0.2,6.9],[0.05,3.4],[0,1.2],[0.3,0.35],[1.2,0],[7.6,0]], smooth: true, tail: true } ] },
-  "p": { adv: 4.6, entry: [1.0,0.1], exit: false, strokes: [ { pts: [[1.0,0.1],[2.3,0.2],[3.7,0.9],[4.2,2.3],[3.6,3.8],[2.1,4.4],[0.6,3.8],[0,2.3],[0,0],[0,-2.4]], smooth: true } ] },
-  "P": { adv: 4.6, entry: [1.0,0.1], exit: false, strokes: [ { pts: [[1.0,0.1],[2.3,0.2],[3.7,0.9],[4.2,2.3],[3.6,3.8],[2.1,4.4],[0.6,3.8],[0,2.3],[0,0],[0,-2.4]], smooth: true } ] },
+  "p": { adv: 4.6, entry: [1.0,0.1], exit: [0,-2.4], joins: { "*": [[1.3,-1.7],[3.1,-2.15]] }, strokes: [ { pts: [[1.0,0.1],[2.3,0.2],[3.7,0.9],[4.2,2.3],[3.6,3.8],[2.1,4.4],[0.6,3.8],[0,2.3],[0,0],[0,-2.4]], smooth: true } ] },
+  "P": { adv: 4.6, entry: [1.0,0.1], exit: [0,-2.4], joins: { "*": [[1.3,-1.7],[3.1,-2.15]] }, strokes: [ { pts: [[1.0,0.1],[2.3,0.2],[3.7,0.9],[4.2,2.3],[3.6,3.8],[2.1,4.4],[0.6,3.8],[0,2.3],[0,0],[0,-2.4]], smooth: true } ] },
   "u": { adv: 4.6, strokes: [ { pts: [[0,4.4],[0,1.3],[0.9,0],[2.2,0],[3.1,1.3],[3.1,4.4]], smooth: true }, { pts: [[3.1,4.4],[3.1,0]] } ] },
-  "m": { adv: 7.3, strokes: [ { pts: [[0,4.4],[0,0]] },
+  "m": { adv: 7.3, entry: [0,0], strokes: [ { pts: [[0,4.4],[0,0]] },
                                { pts: [[0,2.5],[0.6,4.2],[1.7,4.4],[2.7,3.6],[2.9,2.4],[2.9,0]], smooth: true },
                                { pts: [[2.9,2.5],[3.5,4.2],[4.6,4.4],[5.6,3.6],[5.8,2.4],[5.8,0]], smooth: true } ] },
-  "n": { adv: 4.4, strokes: [ { pts: [[0,4.4],[0,0]] }, { pts: [[0,2.5],[0.6,4.2],[1.7,4.4],[2.7,3.6],[2.9,2.4],[2.9,0]], smooth: true } ] },
+  "n": { adv: 4.4, entry: [0,0], strokes: [ { pts: [[0,4.4],[0,0]] }, { pts: [[0,2.5],[0.6,4.2],[1.7,4.4],[2.7,3.6],[2.9,2.4],[2.9,0]], smooth: true } ] },
   "e": { adv: 4.6, entry: [0.3,2.3], exit: [3.3,0.6], strokes: [ { pts: [[0.3,2.3],[3.3,2.3],[3.3,3.4],[2.2,4.4],[0.9,4.0],[0,2.5],[0.4,0.7],[1.8,0],[3.3,0.5]], smooth: true } ] },
-  "r": { adv: 3.4, strokes: [ { pts: [[0,4.4],[0,0]] }, { pts: [[0,2.6],[0.5,4.0],[1.5,4.4],[2.5,4.0]], smooth: true } ] },
-  "o": { adv: 5.4, entry: [0,2.2], exit: [2.2,4.4], strokes: [ { ring: [2.2, 2.2, 2.2] } ] },
+  "r": { adv: 3.4, entry: [0,0], exit: [2.5,4.0], strokes: [ { pts: [[0,0],[0,2.9],[0.45,3.95],[1.5,4.4],[2.5,4.0]], smooth: true } ] },
+  "o": { adv: 5.4, entry: [1.1,4.1], exit: [3.3,4.1], strokes: [ { ring: [2.2, 2.2, 2.2] } ] },
   "j": { adv: 2.4, entry: [0,4.4], exit: [1.5,0.6], strokes: [ { pts: [[0,4.4],[0,-0.9],[-0.35,-2.2],[-1.2,-2.6],[-1.6,-2.0],[-0.9,-0.9],[0.4,-0.1],[1.5,0.6]], smooth: true, tail: true }, { pts: [[0,6.3]] } ] },
-  "c": { adv: 4.4, entry: [0.35,3.2], exit: [3.2,0.7], strokes: [ { pts: [[3.1,3.7],[2.1,4.4],[0.9,4.0],[0.1,2.4],[0.4,0.8],[1.6,0],[3.2,0.7]], smooth: true } ] },
-  "t": { adv: 3.6, entry: [0.9,0.9], strokes: [ { pts: [[0.9,6.0],[0.9,0.9],[1.6,0],[2.6,0.5]], smooth: true }, { pts: [[-0.3,4.4],[2.4,4.4]] } ] },
+  "c": { adv: 4.6, entry: [0.35,3.2], exit: [3.2,0.7], joins: { "t": [[3.95,1.7],[4.2,3.75]] }, strokes: [ { pts: [[2.9,3.9],[2.1,4.4],[0.9,4.0],[0.1,2.4],[0.4,0.8],[1.6,0],[3.2,0.7]], smooth: true } ] },
+  "t": { adv: 3.6, entry: [-0.4,4.4], strokes: [ { pts: [[0.9,6.0],[0.9,0.9],[1.6,0],[2.6,0.5]], smooth: true }, { pts: [[-0.4,4.4],[2.4,4.4]] } ] },
   "i": { adv: 2.2, strokes: [ { pts: [[0,4.4],[0,0]] }, { pts: [[0,6.3]] } ] },
   "l": { adv: 2.2, strokes: [ { pts: [[0,7.2],[0,0]] } ] },
   "a": { adv: 4.8, entry: [0,2.2], strokes: [ { ring: [1.9, 2.2, 1.9] }, { pts: [[3.8,4.4],[3.8,0]] } ] },
@@ -210,7 +212,7 @@ const PRESETS = {
   "Inverted": { fg: "#000000", bg: "#ffffff" },
 };
 const DEFAULTS = {}; SPEC.forEach(g => g.items.forEach(i => DEFAULTS[i.k] = i.d));
-const KEY = "lumen-logo-lab-v11", GKEY = "lumen-logo-lab-glyphs-v15", TKEY = "lumen-logo-lab-text-v2";
+const KEY = "lumen-logo-lab-v11", GKEY = "lumen-logo-lab-glyphs-v17", TKEY = "lumen-logo-lab-text-v2";
 let P = Object.assign({}, DEFAULTS);
 let G = JSON.parse(JSON.stringify(DEFAULT_GLYPHS));
 let TEXT = "Lp";
@@ -360,21 +362,27 @@ function layout(p) {
     const segs = [], rings = [], pts = [];
     const tx = (q) => [q[0] + x + q[1] * p.slant, q[1]];
     // cursive join to the next letter (in local coordinates of this letter)
-    let join = null;
+    let join = null, via = [];
     if (p.connect) {
-      const ng = chars[ci + 1] ? glyphOf(chars[ci + 1]) : null, ex = exitOf(g), en = ng ? entryOf(ng) : null;
-      if (ng && ng.strokes.length && ex && en) join = [g.adv + p.tracking + en[0], en[1]];
+      const nch = chars[ci + 1], ng = nch ? glyphOf(nch) : null, ex = exitOf(g), en = ng ? entryOf(ng) : null;
+      if (ng && ng.strokes.length && ex && en) {
+        join = [g.adv + p.tracking + en[0], en[1]];
+        // hand-drawn join for this pair (points in this letter's coordinates), else the letter's default join
+        const J = g.joins || {};
+        via = J[nch] || J[nch.toLowerCase()] || J["*"] || [];
+      }
     }
+    const makeJoin = a => via.length ? [a, ...via, join] : joinPts(a, join);
     const strokes = [];
     let tailed = false;
     for (const st of g.strokes) {
       if (st.tail && join) { // keep the tail's own curve, swap its last point for the join to the next letter
         const base = st.pts.length > 1 ? st.pts.slice(0, -1) : st.pts;
-        strokes.push({ pts: base.concat(joinPts(base[base.length - 1], join).slice(1)), smooth: true, fadeFrom: base.length - 1 }); tailed = true;
+        strokes.push({ pts: base.concat(makeJoin(base[base.length - 1]).slice(1)), smooth: true, fadeFrom: base.length - 1 }); tailed = true;
       }
       else strokes.push(st);
     }
-    if (join && !tailed) strokes.push({ pts: joinPts(exitOf(g), join), smooth: true, fadeFrom: 0 });
+    if (join && !tailed) strokes.push({ pts: makeJoin(exitOf(g)), smooth: true, fadeFrom: 0 });
     strokes.forEach((st, si) => {
       if (st.ring) { const [cx, cy, r] = st.ring; rings.push([cx + x + cy * p.slant, cy, r, p.slant]); pts.push([cx + x + cy * p.slant - r, cy], [cx + x + cy * p.slant + r, cy], [cx + x + cy * p.slant, cy + r], [cx + x + cy * p.slant, cy - r]); return; }
       const bent = st.smooth ? st.pts : wob(st.pts, p.wobble, ci * 31 + si);
